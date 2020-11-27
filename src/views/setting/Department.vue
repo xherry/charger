@@ -25,9 +25,10 @@
           <li><p>Department</p></li>
         </ul>
         <ul class="uldatas w100 ">
-          <li>
+          <li @click="isShowSlete=!isShowSlete">
             <p>Hung Hom</p>
-            <img class="seleters" src="../../assets/index/setting/10.png" alt="" />
+            <img class="seleters" :style="{ transform: `rotate(${isShowSlete ? '180' : '0'}deg)` }" src="../../assets/index/setting/10.png" alt="" />
+            <div class="sleterMain" :style="{ height: isShowSlete ? '200px' : '0px' }"></div>
           </li >
           <li><p>Assess Controol</p></li>
         </ul>
@@ -40,17 +41,15 @@
 export default {
   name: "Department",
   data() {
-    return {};
+    return {
+      isShowSlete:false
+    };
   },
 };
 </script>
 
 <style scoped>
-.seleters{
-  width: 18px;
-  height: 10px;
-  margin-left: 43px;
-}
+
 .dm-left,
 .dm-right {
   border: 2px solid #205cbf;

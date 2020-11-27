@@ -1,0 +1,45 @@
+<template>
+  <div class="DataReport flex rz mt50">
+    <div class="overLeft">
+      <p>Data & Report</p>
+      <div :class="[seletNavIndex == item.id ? 'ol-item1' : 'ol-item2', 'flex', 'flex-Updown-between']" @click="$router.push(item.RouterPush), (seletNavIndex = item.id)" v-for="item in leftNavs" :key="item.id">
+        <span>{{ item.name }}</span>
+      </div>
+    </div>
+    <div>
+      <div>
+        <router-view />
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "DataReport",
+  data() {
+    return {
+      seletNavIndex: 1,
+      leftNavs: [
+        {
+          name: "Up-to-date Status",
+          id: 1,
+          RouterPush: "UptodateStatus",
+        },
+        {
+          name: "date Status",
+          id: 2,
+          RouterPush: "dateStatus",
+        },
+        {
+          name: "date Status（Report）",
+          id: 3,
+          RouterPush: "dSReport",
+        },
+      ],
+    };
+  },
+};
+</script>
+
+<style scoped></style>

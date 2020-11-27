@@ -5,7 +5,7 @@
     <div>
       <router-view />
     </div>
-     <div v-if="$store.state.IsShowBottom"  @click="$router.push('/index')" class="ol-item2 flex flex-Updown-between ol-bottom">
+     <div v-if="$store.state.IsShowBottom"  @click="$router.push('/home/index')" class="ol-item2 flex flex-Updown-between ol-bottom">
       <span>Back to Main</span>
       <img class="mr27" src="../assets/index/overview/05.png" alt="" />
     </div> 

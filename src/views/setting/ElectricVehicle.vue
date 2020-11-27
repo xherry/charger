@@ -12,7 +12,7 @@
           <li><p>LMS Supported</p></li>
           <li><p>Manufacturer / Brand</p></li>
         </ul>
-        <ul class="uldatas w100" >
+        <ul class="uldatas w100" @click="$router.push('chargerDetails')">
           <li><p>1</p></li>
           <li><p>Polyu AC Medium Charger</p></li>
           <li><p>AC</p></li>
@@ -31,6 +31,9 @@ export default {
   name: "ElectricVehicle",
   data() {
     return {};
+  },
+  methods:{
+   
   },
 };
 </script>

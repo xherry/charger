@@ -50,7 +50,7 @@
         </div>
       </div>
       <div class="buttons7 flex flex-Updown-between">
-        <div class="flex flex-Updown ">
+        <div class="flex flex-Updown">
           <div class="blues button">Enable</div>
           <div class="greens button">Disable</div>
         </div>
@@ -59,7 +59,7 @@
           <div class="greens button">Stop</div>
         </div>
         <div class="flex flex-Updown">
-          <div class="blues button ">LMS</div>
+          <div class="blues button">LMS</div>
           <div class="greens button">Full</div>
         </div>
       </div>
@@ -96,23 +96,24 @@ export default {
 </script>
 
 <style scoped>
-.blues,.greens{
+.blues,
+.greens {
   width: 160px;
   height: 44px;
   color: #ffffff;
   font-size: 16px;
   line-height: 44px;
 }
-.blues{
-  background: url('../../assets/index/says/04.png') no-repeat;
+.blues {
+  background: url("../../assets/index/says/04.png") no-repeat;
   background-size: 100% 100%;
 }
-.greens{
-  background: url('../../assets/index/says/05.png') no-repeat;
+.greens {
+  background: url("../../assets/index/says/05.png") no-repeat;
   background-size: 100% 100%;
   margin-left: 40px;
 }
-.buttons7{
+.buttons7 {
   width: 100%;
   bottom: 20px;
   position: absolute;
@@ -128,7 +129,7 @@ export default {
   background: url("../../assets/index/says/03.png") no-repeat;
   background-size: 100% 100%;
 }
-.dialog06 .cartword{
+.dialog06 .cartword {
   margin-top: 150px;
   margin-left: 60px;
 }
@@ -223,6 +224,7 @@ export default {
   border-radius: 5px;
   font-size: 18px;
   color: #ffffff;
+  box-sizing: border-box;
 }
 .seleter > img {
   width: 14px;

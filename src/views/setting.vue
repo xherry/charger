@@ -79,18 +79,6 @@ export default {
 </script>
 
 <style scoped>
-.operation {
-  width: 297px;
-  height: 50px;
-  background: #33a0fe;
-  border-radius: 4px;
-  color: #fff;
-  font-size: 24px;
-  line-height: 50px;
-  margin-top: 17px;
-  margin-left: 101px;
-}
-
 .overRight {
   height: 773px;
 }

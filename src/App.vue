@@ -125,6 +125,8 @@ ul > li {
   justify-content: center;
   height: 100%;
   cursor: pointer;
+  position: relative;
+  text-align: center;
 }
 .ultit {
   width: 100%;
@@ -141,5 +143,75 @@ ul > li {
   margin-top: 25px;
   /*  padding: 0 49px 0 29px; */
   box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.seleters {
+  width: 18px;
+  height: 10px;
+  margin-left: 43px;
+  transition: all 0.2s linear;
+}
+.sleterMain {
+  width: 100%;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  transition: all 0.2s linear;
+  background: #1d56b3;
+}
+.operation {
+  width: 297px;
+  height: 50px;
+  background: #33a0fe;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 24px;
+  line-height: 50px;
+  margin-top: 17px;
+  margin-left: 101px;
+}
+
+.blueInput {
+  width: 365px;
+  height: 46px;
+  border: 1px solid #63d1ff;
+  border-radius: 4px;
+  background: transparent;
+  padding: 0 20px 0 36px;
+  box-sizing: border-box;
+  color: #fff;
+  font-size: 18px;
+  outline: 0;
+}
+.overRights {
+  width: 1508px;
+  height: 744px;
+  background: url("./assets/index/useraccount/bg03.png") no-repeat;
+  background-size: 100% 100%;
+}
+.UpdateCancel {
+  line-height: 38px;
+}
+.UpdateCancels,
+.UpdateCancel {
+  width: 236px;
+  height: 38px;
+  background: linear-gradient(0deg, #2d74ac, #1f4fbd);
+  border-radius: 8px;
+  font-size: 20px;
+  margin-top: 33px;
+}
+.seleterBody {
+  width: 224px;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  height: 300px;
+  background: #205cbf;
+  z-index: 66;
+  overflow-x: hidden;
+  overflow-y: auto;
+  transition: all 0.2s linear;
 }
 </style>
