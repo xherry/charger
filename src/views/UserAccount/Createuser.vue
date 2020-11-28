@@ -9,25 +9,29 @@
       <div class="create flex">
         <div class="createleft">
           <p class="leftTit">User information↓</p>
-          <div class="cdltopitem flex flex-Updown-between" @click="isShowSlete1 = !isShowSlete1">
+          <div class="cdltopitem flex flex-Updown-between">
             <span>User type</span>
-            <p class="flex flex-Updown-between">
-              <span>what why</span>
+            <p class="flex flex-Updown-between" @click="isShowSlete1 = !isShowSlete1">
+              <span>{{ utypes.value }}</span>
               <img :style="{ transform: `rotate(${isShowSlete1 ? '180' : '0'}deg)` }" src="../../assets/index/setting/10.png" alt="" />
             </p>
-            <div class="seleterBody" :style="{ height: isShowSlete1 ? '200px' : '0px' }"></div>
+            <div class="seleterBody" :style="{ height: isShowSlete1 ? '200px' : '0px' }">
+              <div class="button seleter_item" v-for="(item, index) in userTypes" :key="index" @click="(utypes.userType = item.userType), (utypes.value = item.value), (isShowSlete1 = false)">{{ item.value }}</div>
+            </div>
           </div>
           <div class="cdltopitem flex flex-Updown-between">
             <span>User ID</span>
             <input type="text" value="User  ID" />
           </div>
-          <div class="cdltopitem flex flex-Updown-between" @click="isShowSlete2 = !isShowSlete2">
+          <div class="cdltopitem flex flex-Updown-between">
             <span>Centre (optional)</span>
-            <p class="flex flex-Updown-between">
-              <span>LEAF</span>
+            <p class="flex flex-Updown-between" @click="isShowSlete2 = !isShowSlete2">
+              <span>{{ ctypes.value }}</span>
               <img :style="{ transform: `rotate(${isShowSlete2 ? '180' : '0'}deg)` }" src="../../assets/index/setting/10.png" alt="" />
             </p>
-            <div class="seleterBody" :style="{ height: isShowSlete2 ? '200px' : '0px' }"></div>
+            <div class="seleterBody" :style="{ height: isShowSlete2 ? '200px' : '0px' }">
+              <div class="button seleter_item" v-for="(item, index) in centerType" :key="index" @click="(ctypes.centreId = item.centreId), (ctypes.value = item.value), (isShowSlete2 = false)">{{ item.value }}</div>
+            </div>
           </div>
           <div class="cdltopitem flex flex-Updown-between">
             <span>Department (optional)</span>
@@ -55,7 +59,7 @@
           <p class="js">Creator cannot create a new user with accessrights higher than</p>
           <div class="cdltopitem cdltopitem2 mr40 flex flex-Updown-between">
             <span>User type</span>
-            <input type="text" value="" placeholder="what  why" />
+            <input type="text" v-model="utypes.value" placeholder="what  why" />
           </div>
           <p class="createrightbottom">Access Rights:</p>
           <div></div>
@@ -66,11 +70,11 @@
           </div>
           <div class="cdltopitem2 ctb mr40 flex flex-Updown-between" v-for="(item, index) in prmselete" :key="index">
             <span>{{ item.name }}</span>
-            <div class="mr56" @click="item.isChoose=!item.isChoose">
+            <div class="mr56" @click="item.isChoose = !item.isChoose">
               <img v-if="item.isChoose" src="../../assets/index/useraccount/04.png" alt="" />
               <img v-else src="../../assets/index/useraccount/03.png" alt="" />
             </div>
-            <div class="mr86" @click="item.isChoose=!item.isChoose">
+            <div class="mr86" @click="item.isChoose = !item.isChoose">
               <img v-if="item.isChoose" src="../../assets/index/useraccount/03.png" alt="" />
               <img v-else src="../../assets/index/useraccount/04.png" alt="" />
             </div>
@@ -106,16 +110,40 @@ export default {
         { name: "Create User", isChoose: false },
         { name: "Configure System", isChoose: false },
       ],
+      utypes: {
+        userType: "",
+        value: "",
+      },
+      userTypes: [
+        { userType: 0, value: "guest" },
+        { userType: 1, value: "generalUser" },
+        { userType: 2, value: "operator" },
+        { userType: 3, value: "superUser" },
+        { userType: 4, value: "adminstrator" },
+        { userType: 5, value: "systemManager" },
+      ],
+      ctypes: {
+        centreId: "",
+        value: "",
+      },
+      centerType: [
+        { centreId: 0, value: "Shatin Centre" },
+        { centreId: 1, value: "Hung HoM HQ" },
+        { centreId: 2, value: "Sham Shui Po Centre" },
+        { centreId: 3, value: "Tsing Yi Centre" },
+        { centreId: 4, value: "Yuen Long Centre" },
+        { centreId: 5, value: "Shek Wu Hui Centre" },
+      ],
     };
   },
 };
 </script>
 
 <style scoped>
-.createright .ctb{
+.createright .ctb {
   margin-top: 20px;
 }
-.ctb p{
+.ctb p {
   width: 25px;
   height: 25px;
   text-align: center;
@@ -178,7 +206,8 @@ export default {
   padding: 0 17px 0 23px;
   box-sizing: border-box;
   color: #63d1ff;
-  font-size: 18px;
+  font-size: 17px;
+  cursor: pointer;
 }
 .cdltopitem input {
   outline: 0;

@@ -207,11 +207,22 @@ ul > li {
   position: absolute;
   right: 0;
   top: 100%;
-  height: 300px;
-  background: #205cbf;
+  background: #255197;
   z-index: 66;
   overflow-x: hidden;
   overflow-y: auto;
   transition: all 0.2s linear;
+}
+input::-webkit-input-placeholder {
+  color: #ffffff;
+}
+.seleterBody .seleter_item{
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  font-size: 16px;
+  border-bottom: 1px solid #ffffff80;
+  border-radius: 0px !important;
+  cursor: pointer;
 }
 </style>

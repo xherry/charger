@@ -8,8 +8,11 @@ import 'lib-flexible';
 // 引入公共组件
 import './components/components';
 
+
+
+// 路由守卫
 router.beforeEach((to, from, next) => {
-    if (to.name === 'index') {
+    if (to.name === 'index' || to.name === 'login') {
         store.commit('changeShowBottom', false)
     } else {
         store.commit('changeShowBottom', true)
