@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="flex flex-between tops" v-for="(p, i) in num" :key="i" :class="i == 0 ? 'pf' : ''">
-      <div class="top1"></div>
+      <div class="top1"> <img src="../assets/icon.png" alt=""> </div>
       <div class="top2">Intelligent EV Charging System</div>
       <div class="top3">2020-11-19 15:36</div>
     </div>
@@ -31,6 +31,18 @@ export default {
   align-items: flex-start;
   width: 100%;
 }
+.top1{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.top1>img{
+  width: 120px;
+  height: 30px;
+  margin-top: 8px;
+}
+
 .top1,
 .top2,
 .top3 {

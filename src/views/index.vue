@@ -18,6 +18,7 @@
       </div>
     </div>
     <div class="indexRight">
+        <img src="../assets/icon.png" class="plogo" alt="">
       <div class="flex flex-center nav1 w100 navItems">
         <div class="navs-item" @click="$router.push('overview')">
           <img class="navsimg" src="../assets/index/01.png" alt="" />
@@ -72,6 +73,13 @@ export default {
 </script>
 
 <style scoped>
+.plogo{
+  width: 280px;
+  height: 65px;
+  position: absolute;
+  top: 120px;
+  left: 886px;
+}
 .indexLeft{
   position: relative;
   z-index: 99999;
