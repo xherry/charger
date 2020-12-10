@@ -6,38 +6,93 @@
         <p class="wtl">Welcome to login</p>
         <div class="login-input userID">
           <img src="../../assets/index/login/04.png" alt="" />
-          <input type="text" placeholder="User ID（if any）" />
+          <input type="text" v-model="userInfo.userId" placeholder="User ID（if any）" />
         </div>
         <div class="login-input Password">
           <img src="../../assets/index/login/03.png" alt="" />
-          <input type="password" placeholder="Password ( if any )）" />
+          <input
+            type="password"
+            v-model="userInfo.password"
+            placeholder="Password ( if any )）"
+          />
         </div>
         <div class="login-input Charger">
           <img src="../../assets/index/login/05.png" alt="" />
-          <input type="text" placeholder="Charger Number" />
+          <input
+            type="text"
+            v-model="userInfo.chargerNumber"
+            placeholder="Charger Number"
+          />
         </div>
         <div class="login-input Vehicle">
           <img src="../../assets/index/login/02.png" alt="" />
-          <input type="text" placeholder="Vehicle Number" />
+          <input
+            type="text"
+            v-model="userInfo.vehicleNumber"
+            placeholder="Vehicle Number"
+          />
         </div>
-        <div class="button loginButton" @click="iscode = true">login</div>
+        <div class="button loginButton" @click="toLogin">login</div>
       </div>
       <div id="inputCode" v-else>
-        <input type="text" class="codeValue" placeholder="Security Code" />
-        <p class="explaincode">Please enter the security code , which has been sent to your mobile phone</p>
-        <div class="button loginButton enter" @click="iscode = true,$router.push('index')">Enter</div>
+        <input
+          type="text"
+          class="codeValue"
+          v-model="phoneCode"
+          placeholder="Security Code"
+        />
+        <p class="explaincode">
+          Please enter the security code , which has been sent to your mobile phone
+        </p>
+        <div class="button loginButton enter" @click="toIndex">Enter</div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { Login, loginTwo } from "../../common/api";
 export default {
   name: "login",
   data() {
     return {
       iscode: false,
+      userInfo: {
+        userId: "123456",
+        password: "123456",
+        chargerNumber: "",
+        vehicleNumber: "",
+      },
+      phoneCode: "",
     };
+  },
+  methods: {
+    toLogin() {
+      try {
+        if (!this.userInfo.userId) throw "Please enter the User ID";
+        if (!this.userInfo.password) throw "Please enter the Password";
+      } catch (err) {
+        return this.$message.warning(err);
+      }
+      Login(this.userInfo).then((res) => {
+        console.log(res);
+        if (res.code == 200) {
+          this.iscode = true;
+          
+        }
+      });
+    },
+    //
+    toIndex() {
+      if (!this.phoneCode) {
+        this.$message.warning("Please enter the security code");
+        return;
+      }
+      loginTwo({ ...this.userInfo, phoneCode: this.phoneCode }).then((res) => {
+        console.log(res);
+        this.$router.push("index");
+      });
+    },
   },
 };
 </script>
@@ -114,7 +169,7 @@ export default {
   border: 1px solid #00ffff;
   padding-left: 76px;
   box-sizing: border-box;
-  color: #333;
+  color: #ffffff !important;
   font-size: 20px;
   outline: 0;
 }

@@ -5,11 +5,11 @@
       <div class="flex SummaryTable Yauto">
         <div class="SummaryTable-left">
           <div class="firstitem"></div>
-          <p class="slItem" v-for="(item, index) in leftTable1" :key="index">{{ item }}</p>
+          <p class="slItem" v-for="(item, index) in leftTable1" :key="index+'1'">{{ item }}</p>
           <div style="height: 10px"></div>
-          <p class="slItem" v-for="(item, index) in leftTable2" :key="index">{{ item }}</p>
+          <p class="slItem" v-for="(item, index) in leftTable2" :key="index+'2'">{{ item }}</p>
           <div style="height: 10px"></div>
-          <p class="slItem" v-for="(item, index) in leftTable3" :key="index">{{ item }}</p>
+          <p class="slItem" v-for="(item, index) in leftTable3" :key="index+'3'">{{ item }}</p>
         </div>
         <div class="SummaryTable-right">
           <p class="srtit">centre</p>
@@ -32,7 +32,7 @@
               <p>Long</p>
             </li>
           </ul>
-          <ul class="srul-main srul" v-for="item in 4" :key="item">
+          <ul class="srul-main srul" v-for="item in 4" :key="item+'4'">
             <li><p></p></li>
             <li><p></p></li>
             <li><p></p></li>
@@ -41,7 +41,7 @@
             <li><p></p></li>
           </ul>
           <div style="height: 10px"></div>
-          <ul class="srul-main srul" v-for="item in 4" :key="item">
+          <ul class="srul-main srul" v-for="item in 4" :key="item+'5'">
             <li><p></p></li>
             <li><p></p></li>
             <li><p></p></li>
@@ -50,7 +50,7 @@
             <li><p></p></li>
           </ul>
           <div style="height: 10px"></div>
-          <ul class="srul-main srul" v-for="item in 2" :key="item">
+          <ul class="srul-main srul" v-for="item in 2" :key="item+'6'">
             <li><p></p></li>
             <li><p></p></li>
             <li><p></p></li>

@@ -8,6 +8,8 @@ import 'lib-flexible';
 // 引入公共组件
 import './components/components';
 
+// 引入element-ui;
+import "./common/element";
 
 
 // 路由守卫

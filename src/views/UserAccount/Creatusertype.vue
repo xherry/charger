@@ -28,7 +28,11 @@
             </ul>
           </div>
         </div>
-        <div class="flex userTable bp">
+        <div
+          class="flex userTable bp"
+          v-for="(item, index) in roleKeyList"
+          :key="'r' + index"
+        >
           <ul class="userTable-left bp">
             <li><span>1</span></li>
             <li><span>Name</span></li>
@@ -75,16 +79,38 @@
 </template>
 
 <script>
+import { roleKeyFindAll,roleKeySOE } from "../../common/api";
 export default {
   name: "Creatusertype",
   data() {
-    return {};
+    return {
+      roleKeyList: [],
+      page: 1,
+    };
+  },
+  created() {
+    this.getRoleList();
+  },
+  methods: {
+    getRoleList() {
+      let data = {
+        userId: 1,
+        page: this.page,
+        limit: 10,
+      };
+      roleKeyFindAll(data).then((res) => {
+        console.log(res);
+        if (res.code == 100) {
+          this.roleKeyList = res.extend.roleKeyList;
+        }
+      });
+    },
   },
 };
 </script>
 
 <style scoped>
-.overRights{
+.overRights {
   height: 792px;
 }
 .bp {

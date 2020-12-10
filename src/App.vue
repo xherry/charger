@@ -214,7 +214,7 @@ ul > li {
   transition: all 0.2s linear;
 }
 input::-webkit-input-placeholder {
-  color: #ffffff;
+  color: #666666;
 }
 .seleterBody .seleter_item{
   width: 100%;
@@ -225,4 +225,8 @@ input::-webkit-input-placeholder {
   border-radius: 0px !important;
   cursor: pointer;
 }
+input::-ms-input-placeholder{
+  color:#666
+}
+
 </style>
