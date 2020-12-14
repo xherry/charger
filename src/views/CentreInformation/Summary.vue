@@ -65,6 +65,7 @@
 </template>
 
 <script>
+import { CDFindById, CDFindAll } from "../../common/api";
 export default {
   name: "Summary",
   data() {
@@ -73,6 +74,13 @@ export default {
       leftTable2: ["Total No. of Charging", "Total Charging Time", "Total Charging Energy", "Estimated Carbon Sav ing"],
       leftTable3: ["Average Charging Time", "Average Charging Energy"],
     };
+  },
+  created(){
+  },
+  methods:{
+     //
+    //
+    
   },
 };
 </script>

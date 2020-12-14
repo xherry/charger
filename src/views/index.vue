@@ -1,6 +1,6 @@
 <template>
   <div class="indexMain flex">
-    <div class="indexLeft"  @click="$router.push('UserInformation')">
+    <div class="indexLeft" @click="$router.push('UserInformation')">
       <div class="userName">
         <p>Welcome</p>
         <p>Mr Y P Chu</p>
@@ -18,7 +18,7 @@
       </div>
     </div>
     <div class="indexRight">
-        <img src="../assets/icon.png" class="plogo" alt="">
+      <img src="../assets/icon.png" class="plogo" alt="" />
       <div class="flex flex-center nav1 w100 navItems">
         <div class="navs-item" @click="$router.push('overview')">
           <img class="navsimg" src="../assets/index/01.png" alt="" />
@@ -29,7 +29,7 @@
           <p>Centre Information</p>
         </div>
       </div>
-      <div class="flex flex-center nav2 w100 navItems" >
+      <div class="flex flex-center nav2 w100 navItems">
         <div class="navs-item" @click="$router.push('ChargerControl')">
           <img class="navsimg" src="../assets/index/02.png" alt="" />
           <p>Charger Control</p>
@@ -54,6 +54,7 @@
 </template>
 
 <script>
+import { utype, ctype } from "../common/common";
 export default {
   name: "Home",
   data() {
@@ -69,18 +70,36 @@ export default {
       ],
     };
   },
+  created() {},
+  mounted() {
+    this.getUserInfo();
+  },
+  methods: {
+    getUserInfo() {
+      let userInfo = this.$store.state.userInfo;
+      this.userInfo = [
+        { key: "User Type：", name: utype(userInfo.userType) },
+        { key: "User ID：", name: userInfo.userId },
+        { key: "Staff ID：", name: userInfo.staffId },
+        { key: "Centre：", name: ctype(userInfo.centreId) },
+        { key: "Department： ", name: userInfo.department },
+        { key: "Email：", name: userInfo.email },
+        { key: "Mobile：", name: userInfo.phone },
+      ];
+    },
+  },
 };
 </script>
 
 <style scoped>
-.plogo{
+.plogo {
   width: 280px;
   height: 65px;
   position: absolute;
   top: 120px;
   left: 886px;
 }
-.indexLeft{
+.indexLeft {
   position: relative;
   z-index: 99999;
 }

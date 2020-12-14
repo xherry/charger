@@ -4,6 +4,19 @@
   </div>
 </template>
 
+<script>
+export default {
+  data() {
+    return {};
+  },
+  created() {
+    if (localStorage.getItem("userId")) {
+      this.$store.commit("setUserInfo");
+    }
+  },
+};
+</script>
+
 <style>
 @import "./common/common.css";
 @import "./common/comm.css";
@@ -111,6 +124,14 @@ ul li {
 .uldatas > li {
   color: #63d1ff;
 }
+.uldatas > li input {
+  width: 100%;
+  background: transparent;
+  outline: 0;
+  text-align: center;
+  border: 0;
+  color: #fff;
+}
 ul {
   height: 57px;
 }
@@ -155,10 +176,13 @@ ul > li {
 .sleterMain {
   width: 100%;
   position: absolute;
+  right: 0;
   top: 100%;
-  left: 0;
+  background: #255197;
+  z-index: 66;
+  overflow-x: hidden;
+  overflow-y: auto;
   transition: all 0.2s linear;
-  background: #1d56b3;
 }
 .operation {
   width: 297px;
@@ -214,9 +238,9 @@ ul > li {
   transition: all 0.2s linear;
 }
 input::-webkit-input-placeholder {
-  color: #666666;
+  color: #ffffff90;
 }
-.seleterBody .seleter_item{
+.seleterBody .seleter_item,.sleterMain .seleter_item {
   width: 100%;
   height: 50px;
   line-height: 50px;
@@ -225,8 +249,7 @@ input::-webkit-input-placeholder {
   border-radius: 0px !important;
   cursor: pointer;
 }
-input::-ms-input-placeholder{
-  color:#666
+input::-ms-input-placeholder {
+  color: #666;
 }
-
 </style>

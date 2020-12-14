@@ -12,6 +12,11 @@ import './components/components';
 import "./common/element";
 
 
+// 
+import "./common/common";
+
+
+
 // 路由守卫
 router.beforeEach((to, from, next) => {
     if (to.name === 'index' || to.name === 'login') {

@@ -4,14 +4,27 @@
       <div class="ct-item flex flex-Updown-between" @click="isShowSlete = !isShowSlete">
         <span>Centre</span>
         <div class="seleter flex flex-Updown-between">
-          <p>namename</p>
-          <img :style="{ transform: `rotate(${isShowSlete ? '-180' : '0'}deg)` }" src="../../assets/index/says/02.png" alt="" />
+          <p>{{ ctypes.value }}</p>
+          <img
+            :style="{ transform: `rotate(${isShowSlete ? '-180' : '0'}deg)` }"
+            src="../../assets/index/says/02.png"
+            alt=""
+          />
         </div>
-        <div class="seleterBody" :style="{ height: isShowSlete ? '200px' : '0px' }"></div>
+        <div class="seleterBody" :style="{ height: isShowSlete ? '200px' : '0px' }">
+          <div
+            class="button seleter_item"
+            v-for="(item, index) in centerType"
+            :key="index"
+            @click="seleteCenter(item)"
+          >
+            {{ item.value }}
+          </div>
+        </div>
       </div>
       <div class="ct-item flex flex-Updown-between">
         <span>Location</span>
-        <input type="text" value="wherehere " />
+        <input type="text" value="" placeholder="wherehere" />
       </div>
       <div class="Confirm button">Confirm</div>
     </div>
@@ -23,7 +36,11 @@
           <li><p>Enable</p></li>
           <li><p>Disable</p></li>
         </ul>
-        <ul class="uldatas w100" >
+        <ul
+          class="uldatas w100"
+          v-for="(item, index) in centreDepartmentList"
+          :key="index"
+        >
           <li><p>SSPO-001</p></li>
           <li>
             <img v-if="''" src="../../assets/index/useraccount/04.png" alt="" />
@@ -45,7 +62,29 @@ export default {
   data() {
     return {
       isShowSlete: false,
+      ctypes: {
+        centreId: "",
+        value: "",
+      },
+      centerType: [
+        { centreId: 0, value: "Shatin Centre" },
+        { centreId: 1, value: "Hung HoM HQ" },
+        { centreId: 2, value: "Sham Shui Po Centre" },
+        { centreId: 3, value: "Tsing Yi Centre" },
+        { centreId: 4, value: "Yuen Long Centre" },
+        { centreId: 5, value: "Shek Wu Hui Centre" },
+      ],
+      centreDepartmentList:[]
     };
+  },
+  created() {
+  },
+  methods: {
+     seleteCenter(prop) {
+      this.ctypes.centreId = prop.centreId;
+      this.ctypes.value = prop.value;
+      this.isShowSlete2 = false;
+    },
   },
 };
 </script>
@@ -91,7 +130,7 @@ export default {
 .seleter > img {
   width: 14px;
   height: 8px;
-  transition: all .2s linear;
+  transition: all 0.2s linear;
 }
 
 .ct-item {

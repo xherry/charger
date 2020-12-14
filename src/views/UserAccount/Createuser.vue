@@ -92,7 +92,6 @@
             <span>Verification code</span>
             <div class="getcode">
               <input type="text" v-model="addUsers.code" placeholder="code" />
-              <div class="flex flex-center" @click="sendCode"><span></span> send</div>
             </div>
           </div>
         </div>
@@ -164,7 +163,7 @@
         class="button UpdateCancels flex flex-center"
         style="margin-right: 144px; font-size: 14px"
       >
-        <div>
+        <div @click="sendCode">
           <div>Send confirmation</div>
           <div>SMS to notice user</div>
         </div>
@@ -175,7 +174,7 @@
 </template>
 
 <script>
-import { addOrUpdEntity, sendSms } from "../../common/api";
+import { addOrUpdEntity, sendSms, roleKeySOE } from "../../common/api";
 export default {
   name: "Createuser",
   data() {
@@ -191,11 +190,11 @@ export default {
         { name: "Create User", isChoose: false },
         { name: "Configure System", isChoose: false },
       ],
-      utypes: {
+      utypes1: {
         userType: "",
         value: "",
       },
-      utypes1: {
+      utypes: {
         userType: "",
         value: "",
       },
@@ -240,22 +239,38 @@ export default {
       };
       addOrUpdEntity(data).then((res) => {
         console.log(res);
+        if (res.code == 100) {
+          let soeObj = {
+            userId: this.$store.state.userId,
+            checkStatus: this.prmselete[0].isChoose ? 0 : 1,
+            controlOwnCharger: this.prmselete[1].isChoose ? 0 : 1,
+            controlOtherChargers: this.prmselete[2].isChoose ? 0 : 1,
+            viewGeneralData: this.prmselete[3].isChoose ? 0 : 1,
+            dataReport: "",
+            createAccount: this.prmselete[4].isChoose ? 0 : 1,
+            configureSystem: this.prmselete[5].isChoose ? 0 : 1,
+            userIdPassword: this.addUsers.password,
+            smsPasscode: this.addUsers.code,
+          };
+          roleKeySOE(soeObj).then((result) => {
+            console.log("添加权限", result);
+          });
+        }
       });
-      
     },
-    sendCode(){
+    sendCode() {
       sendSms({
-        account:this.addUsers.phone
-      }).then(res=>{
-        console.log(res)
-      })
+        account: this.addUsers.phone,
+      }).then((res) => {
+        console.log(res);
+      });
     },
   },
 };
 </script>
 
 <style scoped>
-.getcode input{
+.getcode input {
   padding-right: 80px !important;
 }
 .getcode div {
@@ -268,7 +283,7 @@ export default {
   font-size: 14px;
   cursor: pointer;
 }
-.getcode div span{
+.getcode div span {
   width: 1px;
   height: 20px;
   background-color: #ffffff;

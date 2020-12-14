@@ -13,10 +13,6 @@
           <router-view />
         </div>
       </div>
-      <div class="flex flex-Updown">
-        <div class="button operation">Update</div>
-        <div class="button operation">Cancel</div>
-      </div>
     </div>
   </div>
 </template>
@@ -58,7 +54,7 @@ export default {
           RouterPush: "Numbering",
         },
         {
-          name: "Vehicle Numbere",
+          name: "Vehicle Number",
           img: require("../assets/index/setting/06.png"),
           seletImg: require("../assets/index/setting/014.png"),
           id: 5,

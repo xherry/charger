@@ -35,37 +35,120 @@
         >
           <ul class="userTable-left bp">
             <li><span>1</span></li>
-            <li><span>Name</span></li>
+            <li>
+              <span>{{ item.userType | utype }}</span>
+            </li>
           </ul>
           <div class="userTableMiddle bp">
             <ul class="userUl">
               <li>
-                <img class="dui" src="../../assets/index/useraccount/01.png" alt="" />
+                <img
+                  v-if="item.checkStatus == 0"
+                  class="dui"
+                  src="../../assets/index/useraccount/01.png"
+                  alt=""
+                />
+                <img
+                  v-else
+                  class="cuo"
+                  src="../../assets/index/useraccount/02.png"
+                  alt=""
+                />
               </li>
               <li>
-                <img class="cuo" src="../../assets/index/useraccount/02.png" alt="" />
+                <img
+                  v-if="item.controlOwnCharger == 0"
+                  class="dui"
+                  src="../../assets/index/useraccount/01.png"
+                  alt=""
+                />
+                <img
+                  v-else
+                  class="cuo"
+                  src="../../assets/index/useraccount/02.png"
+                  alt=""
+                />
               </li>
               <li>
-                <img class="dui" src="../../assets/index/useraccount/01.png" alt="" />
+                <img
+                  v-if="item.controlOtherChargers == 0"
+                  class="dui"
+                  src="../../assets/index/useraccount/01.png"
+                  alt=""
+                />
+                <img
+                  v-else
+                  class="cuo"
+                  src="../../assets/index/useraccount/02.png"
+                  alt=""
+                />
               </li>
               <li>
-                <img class="dui" src="../../assets/index/useraccount/01.png" alt="" />
+                <img
+                  v-if="item.viewGeneralData == 0"
+                  class="dui"
+                  src="../../assets/index/useraccount/01.png"
+                  alt=""
+                />
+                <img
+                  v-else
+                  class="cuo"
+                  src="../../assets/index/useraccount/02.png"
+                  alt=""
+                />
               </li>
               <li>
-                <img class="dui" src="../../assets/index/useraccount/01.png" alt="" />
+                <img
+                  v-if="item.dataReport == 0"
+                  class="dui"
+                  src="../../assets/index/useraccount/01.png"
+                  alt=""
+                />
+                <img
+                  v-else
+                  class="cuo"
+                  src="../../assets/index/useraccount/02.png"
+                  alt=""
+                />
               </li>
               <li>
-                <img class="cuo" src="../../assets/index/useraccount/02.png" alt="" />
+                <img
+                  v-if="item.createAccount == 0"
+                  class="dui"
+                  src="../../assets/index/useraccount/01.png"
+                  alt=""
+                />
+                <img
+                  v-else
+                  class="cuo"
+                  src="../../assets/index/useraccount/02.png"
+                  alt=""
+                />
               </li>
               <li>
-                <img class="cuo" src="../../assets/index/useraccount/02.png" alt="" />
+                <img
+                  v-if="item.configureSystem == 0"
+                  class="dui"
+                  src="../../assets/index/useraccount/01.png"
+                  alt=""
+                />
+                <img
+                  v-else
+                  class="cuo"
+                  src="../../assets/index/useraccount/02.png"
+                  alt=""
+                />
               </li>
             </ul>
           </div>
           <div class="userTableRight bp">
             <ul>
-              <li><span>No</span></li>
-              <li><span>Yes</span></li>
+              <li>
+                <span>{{ item.userIdPassword == 0 ? "Yes" : "No" }}</span>
+              </li>
+              <li>
+                <span>{{ item.smsPasscode == 0 ? "Yes" : "No" }}</span>
+              </li>
             </ul>
           </div>
         </div>
@@ -79,7 +162,7 @@
 </template>
 
 <script>
-import { roleKeyFindAll,roleKeySOE } from "../../common/api";
+import { roleKeyFindAll, roleKeySOE } from "../../common/api";
 export default {
   name: "Creatusertype",
   data() {

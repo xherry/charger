@@ -2,9 +2,22 @@
   <div class="overview flex rz mt50">
     <div class="overLeft">
       <p>Overview</p>
-      <div :class="[navSeleted == item.id ? 'ol-item1' : 'ol-item2', 'flex', 'flex-Updown-between']" @click="navSeleted = item.id" v-for="item in navs" :key="item.id">
+      <div
+        :class="[
+          navSeleted == item.id ? 'ol-item1' : 'ol-item2',
+          'flex',
+          'flex-Updown-between',
+        ]"
+        @click="navSeleted = item.id"
+        v-for="item in navs"
+        :key="item.id"
+      >
         <span>{{ item.name }}</span>
-        <img class="ml27" :src="navSeleted == item.id ? item.seletImg : item.img" alt="" />
+        <img
+          class="ml27"
+          :src="navSeleted == item.id ? item.seletImg : item.img"
+          alt=""
+        />
       </div>
     </div>
     <div v-if="navSeleted == 1">
@@ -68,6 +81,7 @@ export default {
     this.intWord();
   },
   methods: {
+    //
     intWord() {
       var myChart = echarts.init(document.getElementById("main"));
       // 假数据 模拟数据
@@ -128,7 +142,7 @@ export default {
       });
 
       myChart.setOption({
-        backgroundColor: 'transparent',
+        backgroundColor: "transparent",
         visualMap: {
           //图例值控制
           min: 0,
@@ -169,7 +183,7 @@ export default {
 
 <style scoped>
 .world {
-  height:700px;
+  height: 700px;
   width: 1128px;
   margin-top: 70px;
 }

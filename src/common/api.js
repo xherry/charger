@@ -20,13 +20,41 @@ export const $Post = (api, value) => {
         }).then(res => {
             resolve(res.data)
             if (res.data.code != 100) {
-                Message.warning(res.data.msg)
+                Message.warning(res.data.extend.msg || res.data.extend.error)
             }
         }).catch(err => {
             reject(err)
         })
     })
 }
+export const imageUpload = (formData) => {
+    return new Promise((resolve, reject) => {
+        let api = "http://192.168.1.2:8233/test/upload/list";
+        // let formData = new FormData();
+        // formData.append("userId", "1");
+        // for (var i = 0; i < this.fileList.length; i++) {
+        //     formData.append("picList", this.fileList[i]);
+        // }
+        // formData.append("picList", this.fileList);
+        this.$axios({
+                url: api,
+                method: "POST",
+                data: formData,
+                headers: {
+                    "Content-Type": `multipart/form-data;boundary=${new Date().getTime()}`,
+                },
+            })
+            .then((res) => {
+                console.log(res);
+                resolve(res)
+            })
+            .catch((err) => {
+                console.log(err);
+                reject(err)
+            });
+    })
+}
+
 
 // 通用
 // 发送短信验证码
@@ -56,6 +84,8 @@ export const addOrUpdEntity = (data) => $Post("/api/pcUser/addOrUpdEntity", data
 export const delEntity = (data) => $Post("/api/pcUser/delEntity", data);
 //  根据用户ID查询信息
 export const findById = (data) => $Post("/api/pcUser/findById", data);
+// 查询所有用户
+export const pcUserFindByAll = (data) => $Post("/api/pcUser/findByAll", data);
 
 
 

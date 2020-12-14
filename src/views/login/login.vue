@@ -35,12 +35,23 @@
         <div class="button loginButton" @click="toLogin">login</div>
       </div>
       <div id="inputCode" v-else>
-        <input
-          type="text"
-          class="codeValue"
-          v-model="phoneCode"
-          placeholder="Security Code"
-        />
+        <div class="codeValue" style="margin-bottom: 0">
+          <input
+            type="text"
+            class="childAll"
+            v-model="phone"
+            placeholder="Mobile Phone"
+          />
+          <p class="button" @click="sendCode">send</p>
+        </div>
+        <div class="codeValue" style="margin-top: 10px">
+          <input
+            type="text"
+            class="childAll"
+            v-model="phoneCode"
+            placeholder="Security Code"
+          />
+        </div>
         <p class="explaincode">
           Please enter the security code , which has been sent to your mobile phone
         </p>
@@ -51,7 +62,7 @@
 </template>
 
 <script>
-import { Login, loginTwo } from "../../common/api";
+import { Login, loginTwo, sendSms } from "../../common/api";
 export default {
   name: "login",
   data() {
@@ -64,9 +75,17 @@ export default {
         vehicleNumber: "",
       },
       phoneCode: "",
+      phone: "",
     };
   },
   methods: {
+    sendCode() {
+      sendSms({
+        account: this.phone,
+      }).then((res) => {
+        console.log(res, "发送验证码");
+      });
+    },
     toLogin() {
       try {
         if (!this.userInfo.userId) throw "Please enter the User ID";
@@ -76,9 +95,11 @@ export default {
       }
       Login(this.userInfo).then((res) => {
         console.log(res);
-        if (res.code == 200) {
+        if (res.code == 100) {
           this.iscode = true;
-          
+          localStorage.setItem("userId", res.extend.pcUser.id);
+          localStorage.setItem("roleKey", JSON.stringify(res.extend.roleKey));
+          this.$store.commit("getUserInfo", res.extend);
         }
       });
     },
@@ -109,18 +130,35 @@ export default {
 .codeValue {
   width: 418px;
   height: 50px;
+  position: relative;
+  margin: 0 auto;
+  margin-bottom: 30px;
+  margin-top: 220px;
+}
+.codeValue input {
   padding: 0 40px;
   background: #1db9fd80;
   border: 1px solid #00ffff80;
   color: #fff;
   font-size: 20px;
-  margin: 0 auto;
-  margin-bottom: 66px;
-  margin-top: 220px;
   outline: 0;
   display: block;
 }
-.codeValue::placeholder {
+.codeValue p {
+  height: 100%;
+  font-size: 22px;
+  right: 0px;
+  width: 80px;
+  text-align: center;
+  line-height: 50px;
+  position: absolute;
+  top: 0;
+  cursor: pointer;
+  /* color: ; */
+  background: #00ffff50;
+  border-radius: 0;
+}
+.codeValue input::placeholder {
   text-align: center;
 }
 .loginButton {
@@ -174,7 +212,7 @@ export default {
   outline: 0;
 }
 .login-input > input::-webkit-input-placeholder {
-  color: #ffffff;
+  /* color: #ffffff; */
   font-size: 20px;
 }
 .wtl {

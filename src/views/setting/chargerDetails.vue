@@ -8,13 +8,23 @@
             <span>EV Manufacturer</span>
             <input type="text" value="Nissan" />
           </div>
-          <div class="cdltopitem flex flex-Updown-between" @click="isShowSlete = !isShowSlete">
+          <div
+            class="cdltopitem flex flex-Updown-between"
+            @click="isShowSlete = !isShowSlete"
+          >
             <span>EV Model</span>
             <p class="flex flex-Updown-between">
               <span>LEAF</span>
-              <img :style="{ transform: `rotate(${isShowSlete ? '180' : '0'}deg)` }" src="../../assets/index/setting/10.png" alt="" />
+              <img
+                :style="{ transform: `rotate(${isShowSlete ? '180' : '0'}deg)` }"
+                src="../../assets/index/setting/10.png"
+                alt=""
+              />
             </p>
-            <div class="seleterBody" :style="{ height: isShowSlete ? '200px' : '0px' }"></div>
+            <div
+              class="seleterBody"
+              :style="{ height: isShowSlete ? '200px' : '0px' }"
+            ></div>
           </div>
           <div class="cdltopitem flex flex-Updown-between">
             <span>Image </span>
@@ -42,16 +52,43 @@
         </div>
       </div>
     </div>
+    <div class="flex flex-Updown mt30">
+      <div class="button operation">Update</div>
+      <div class="button operation">Cancel</div>
+    </div>
   </div>
 </template>
 
 <script>
+import { EVFindById, EVFindBySelect } from "../../common/api";
 export default {
   name: "chargerDetails",
   data() {
     return {
       isShowSlete: false,
     };
+  },
+  created() {
+    this.getCarDeatils();
+    this.getOptions();
+  },
+  methods: {
+    // 获取下拉框信息
+    getOptions() {
+      let data = {};
+      EVFindBySelect(data).then((res) => {
+        console.log("获取下拉框信息", res);
+      });
+    },
+    getCarDeatils() {
+      let data = {
+        userId: 2,
+        electricVehicleId: 1,
+      };
+      EVFindById(data).then((res) => {
+        console.log("查询单个车辆信息", res);
+      });
+    },
   },
 };
 </script>

@@ -1,11 +1,35 @@
 <template>
   <div>
     <div class="chargerTop flex flex-Updown">
-      <div class="ct-item flex flex-Updown-between" v-for="(item, index) in navList" :key="index">
+      <div class="ct-item flex flex-Updown-between" @click="isShowSlete = !isShowSlete">
+        <span>Centre</span>
+        <div class="seleter flex flex-Updown-between p15">
+          <p>{{ ctypes.value }}</p>
+          <img
+            :style="{ transform: `rotate(${isShowSlete ? '-180' : '0'}deg)` }"
+            src="../../assets/index/says/02.png"
+            alt=""
+          />
+        </div>
+        <div class="seleterBody" :style="{ height: isShowSlete ? '200px' : '0px' }">
+          <div
+            class="button seleter_item"
+            v-for="(item, index) in centerType"
+            :key="index"
+            @click="seleteCenter(item)"
+          >
+            {{ item.value }}
+          </div>
+        </div>
+      </div>
+      <div
+        class="ct-item flex flex-Updown-between"
+        v-for="(item, index) in navList"
+        :key="index"
+      >
         <span>{{ item.name }}</span>
         <div class="seleter flex flex-Updown-between">
-          <p>{{ item.children[0].name }}</p>
-          <img src="../../assets/index/says/02.png" alt="" />
+          <input type="text" placeholder="namename" v-model="item.value" />
         </div>
       </div>
     </div>
@@ -68,34 +92,74 @@
 </template>
 
 <script>
+import { findBIC } from "../../common/api";
 export default {
   name: "ownCharg",
   data() {
     return {
+      isShowSlete: false,
+      ctypes: {
+        centreId: "0",
+        value: "",
+      },
+      centerType: [
+        { centreId: 0, value: "Shatin Centre" },
+        { centreId: 1, value: "Hung HoM HQ" },
+        { centreId: 2, value: "Sham Shui Po Centre" },
+        { centreId: 3, value: "Tsing Yi Centre" },
+        { centreId: 4, value: "Yuen Long Centre" },
+        { centreId: 5, value: "Shek Wu Hui Centre" },
+      ],
       navList: [
         {
-          name: "Centre",
-          children: [{ name: "namename" }],
-        },
-        {
           name: "Location",
-          children: [{ name: "namename" }],
+          value: "111",
         },
         {
           name: "Charger NO.",
-          children: [{ name: "namename" }],
+          value: "222",
         },
         {
           name: "Vehicle No.",
-          children: [{ name: "namename" }],
+          value: "333",
         },
       ],
+      chargerInfo: {},
     };
+  },
+  mounted() {
+    this.getIndividualCharger();
+  },
+  methods: {
+    //根据条件查询充电状态
+    getIndividualCharger() {
+      let data = {
+        userId: localStorage.getItem("userId"),
+        centre: this.ctypes.centreId,
+        location: this.navList[0].value,
+        chargerNo: this.navList[1].value,
+        vehicleNo: this.navList[2].value,
+      };
+      findBIC(data).then((res) => {
+        console.log("根据条件查询充电状态", res);
+        if (res.code == 100) {
+          this.chargerInfo = res.extend.chargerInfo;
+        }
+      });
+    },
+    seleteCenter(prop) {
+      this.ctypes.centreId = prop.centreId;
+      this.ctypes.value = prop.value;
+      this.isShowSlete2 = false;
+    },
   },
 };
 </script>
 
 <style scoped>
+.p15 {
+  padding: 0 15px 0 15px;
+}
 .blues,
 .greens {
   width: 160px;
@@ -216,9 +280,8 @@ export default {
 }
 
 .seleter {
-  width: 200px;
+  width: 230px;
   height: 38px;
-  padding: 0 24px 0 15px;
   margin-left: 20px;
   border: 1px solid #acd1fe;
   border-radius: 5px;
@@ -226,15 +289,29 @@ export default {
   color: #ffffff;
   box-sizing: border-box;
 }
+.seleterBody {
+  width: 230px;
+}
 .seleter > img {
   width: 14px;
   height: 8px;
+  transition: all 0.2s linear;
 }
 .ct-item {
   margin-right: 40px;
+  position: relative;
 }
 .ct-item > span {
   color: #ffffff;
   font-size: 18px;
+}
+.ct-item input {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  outline: 0;
+  border: 0;
+  padding: 0 24px 0 15px;
+  color: #fff;
 }
 </style>
