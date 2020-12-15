@@ -9,8 +9,17 @@ const routes = [{
     name: 'Home',
     component: () =>
         import ( /* webpackChunkName: "about" */ '../views/Home.vue'),
-    redirect: { name: 'login' }, // 跳转到下一级第一个
+    redirect: { name: 'Selectlogin' }, // 跳转到下一级第一个
     children: [{
+            path: 'Selectlogin',
+            name: 'Selectlogin',
+            // route level code-splitting
+            // this generates a separate chunk (about.[hash].js) for this route
+            // which is lazy-loaded when the route is visited.
+            component: () =>
+                import ( /* webpackChunkName: "about" */ '../views/Selectlogin.vue'),
+        },
+        {
             path: 'login',
             name: 'login',
             // route level code-splitting

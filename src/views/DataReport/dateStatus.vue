@@ -4,16 +4,43 @@
       <p class="ortoptit">Search Conditions</p>
       <div class="dsmain flex">
         <div class="dsmaincontent">
-          <div v-for="(item, index) in searchs" :key="index" class="dsmleftitem cdltopitem flex flex-Updown-between" @click="optionsId = optionsId == item.id ? '' : item.id">
+          <div
+            v-for="(item, index) in searchs"
+            :key="index"
+            class="dsmleftitem cdltopitem flex flex-Updown-between"
+            @click="optionsId = item.id == 1 ? (optionsId == 1 ? '' : 1) : ''"
+          >
             <span>{{ item.name }}</span>
-            <p class="flex flex-Updown-between">
+            <p class="flex flex-Updown-between" v-if="item.children != 0">
               <span>{{ item.value }}</span>
-              <img :style="{ transform: `rotate(${optionsId == item.id ? '180' : '0'}deg)` }" src="../../assets/index/setting/10.png" alt="" />
+              <img
+                :style="{ transform: `rotate(${optionsId == 1 ? '180' : '0'}deg)` }"
+                src="../../assets/index/setting/10.png"
+                alt=""
+              />
             </p>
-            <div class="seleterBody" :style="{ height: optionsId == item.id ? '200px' : '0px' }"></div>
+            <input type="text" v-model="item.value" v-else />
+            <div
+              class="seleterBody"
+              :style="{ height: optionsId == item.id ? '200px' : '0px' }"
+            >
+              <div
+                class="button seleter_item"
+                v-for="(p, i) in item.children"
+                :key="i + 'ss'"
+                @click="seleteCenter(p)"
+              >
+                {{ p.name }}
+              </div>
+            </div>
           </div>
           <p class="dttit">Data Type：</p>
-          <div class="dtatas flex flex-Updown" v-for="item in DataTypes" :key="'d' + item.id" @click="item.choose = !item.choose">
+          <div
+            class="dtatas flex flex-Updown"
+            v-for="item in DataTypes"
+            :key="'d' + item.id"
+            @click="item.choose = !item.choose"
+          >
             <img v-if="item.choose" src="../../assets/index/useraccount/04.png" alt="" />
             <img v-else src="../../assets/index/useraccount/03.png" alt="" />
             <p>{{ item.name }}</p>
@@ -29,7 +56,7 @@
               <li><p>SOC[%]</p></li>
               <li><p>Mileage Travelled[km]</p></li>
             </ul>
-            <template v-if="tableDatas.length!=0">
+            <template v-if="tableDatas.length != 0">
               <ul class="uldatas w100" v-for="item in tableDatas" :key="item + 's'">
                 <li><p></p></li>
                 <li><p></p></li>
@@ -55,15 +82,29 @@
 </template>
 
 <script>
+import { findByParamsAll } from "../../common/api";
 export default {
   name: "dateStatus",
   data() {
     return {
-      tableDatas:[],
+      tableDatas: [],
       isShowSlete: false,
       optionsId: "",
       searchs: [
-        { name: "Centre", value: "", children: [], id: 1 },
+        {
+          name: "Centre",
+          value: "",
+          cid: "0",
+          children: [
+            { centreId: 0, name: "Shatin Centre" },
+            { centreId: 1, name: "Hung HoM HQ" },
+            { centreId: 2, name: "Sham Shui Po Centre" },
+            { centreId: 3, name: "Tsing Yi Centre" },
+            { centreId: 4, name: "Yuen Long Centre" },
+            { centreId: 5, name: "Shek Wu Hui Centre" },
+          ],
+          id: 1,
+        },
         { name: "Location", value: "", children: [], id: 2 },
         { name: "Charger Type", value: "", children: [], id: 3 },
         { name: "Charger No.", value: "", children: [], id: 4 },
@@ -82,7 +123,38 @@ export default {
         { name: "SoC Before Charging【%】", choose: false, id: "6" },
         { name: "Mileage Travelled Before Charging【km】", choose: false, id: "7" },
       ],
+      page: 1,
     };
+  },
+  mounted() {
+    this.getParams();
+  },
+  methods: {
+    seleteCenter(value) {
+      this.searchs[0].value = value.name;
+      this.searchs[0].cid = value.centreId;
+      this.optionsId = "";
+    },
+    //条件筛选查询
+    getParams() {
+      let data = {
+        userIds: localStorage.getItem("userId"),
+        page: this.page,
+        limit: 10,
+        centre: this.searchs[0].cid,
+        location: this.searchs[1].value,
+        chargerType: this.searchs[2].value,
+        chargerNo: this.searchs[3].value,
+        manufacturer: this.searchs[4].value,
+        model: this.searchs[5].value,
+        vehicleNo: this.searchs[6].value,
+        startDate: this.searchs[7].value,
+        endDate: this.searchs[8].value,
+      };
+      findByParamsAll(data).then((res) => {
+        console.log(res);
+      });
+    },
   },
 };
 </script>

@@ -151,6 +151,7 @@ export default {
       this.ctypes.centreId = prop.centreId;
       this.ctypes.value = prop.value;
       this.isShowSlete2 = false;
+      this.getIndividualCharger();
     },
   },
 };
