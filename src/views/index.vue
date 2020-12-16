@@ -25,11 +25,13 @@
           <p>Overview</p>
         </div>
         <div class="navs-item" @click="$router.push('CentreInformation')">
-          <img class="navsimg" src="../assets/index/03.png" alt="" />
-          <p>Centre Information</p>
+          <texmplate v-if="loginType != '1'">
+            <img class="navsimg" src="../assets/index/03.png" alt="" />
+            <p>Centre Information</p>
+          </texmplate>
         </div>
       </div>
-      <div class="flex flex-center nav2 w100 navItems">
+      <div class="flex flex-center nav2 w100 navItems" v-if="loginType != '1'">
         <div class="navs-item" @click="$router.push('ChargerControl')">
           <img class="navsimg" src="../assets/index/02.png" alt="" />
           <p>Charger Control</p>
@@ -39,7 +41,7 @@
           <p>User Account</p>
         </div>
       </div>
-      <div class="flex flex-center nav3 w100 navItems">
+      <div class="flex flex-center nav3 w100 navItems" v-if="loginType != '1'">
         <div class="navs-item" @click="$router.push('DataReport')">
           <img class="navsimg" src="../assets/index/05.png" alt="" />
           <p>Data Report</p>
@@ -60,32 +62,38 @@ export default {
   data() {
     return {
       userInfo: [
-        { key: "User Type：", name: "Administrator" },
-        { key: "User ID：", name: "1234" },
-        { key: "Staff ID：", name: "1234" },
-        { key: "Centre：", name: "Tsing Yi" },
-        { key: "Department： ", name: "XXX" },
-        { key: "Email：", name: "XXX" },
-        { key: "Mobile：", name: "9123654798" },
+        { key: "User Type：", name: "" },
+        { key: "User ID：", name: "" },
+        { key: "Staff ID：", name: "" },
+        { key: "Centre：", name: "" },
+        { key: "Department： ", name: "" },
+        { key: "Email：", name: "" },
+        { key: "Mobile：", name: "" },
       ],
+      loginType: "",
     };
   },
-  created() {},
+  created() {
+    this.loginType = localStorage.getItem("loginType");
+  },
   mounted() {
     this.getUserInfo();
   },
   methods: {
     getUserInfo() {
       let userInfo = this.$store.state.userInfo;
-      this.userInfo = [
-        { key: "User Type：", name: utype(userInfo.userType) },
-        { key: "User ID：", name: userInfo.userId },
-        { key: "Staff ID：", name: userInfo.staffId },
-        { key: "Centre：", name: ctype(userInfo.centreId) },
-        { key: "Department： ", name: userInfo.department },
-        { key: "Email：", name: userInfo.email },
-        { key: "Mobile：", name: userInfo.phone },
-      ];
+      // console.log(userInfo);
+      if (Object.keys(userInfo).length != 0) {
+        this.userInfo = [
+          { key: "User Type：", name: utype(userInfo.userType) },
+          { key: "User ID：", name: userInfo.userId },
+          { key: "Staff ID：", name: userInfo.staffId },
+          { key: "Centre：", name: ctype(userInfo.centreId) },
+          { key: "Department： ", name: userInfo.department },
+          { key: "Email：", name: userInfo.email },
+          { key: "Mobile：", name: userInfo.phone },
+        ];
+      }
     },
   },
 };
@@ -127,9 +135,17 @@ export default {
 .navs-item {
   text-align: center;
 }
+.navs-item:hover{
+   opacity: .7;
+}
+.navs-item:active{
+  opacity: .7;
+}
 .navs-item .navsimg {
   width: 92px;
   height: 92px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px 0 #fff;
 }
 .indexRight {
   width: 1849px;

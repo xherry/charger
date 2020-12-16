@@ -3,36 +3,55 @@
     <div class="login-img"></div>
     <div class="login-input-box">
       <div id="inputValue" v-if="!iscode">
-        <p class="wtl">Welcome to login</p>
-        <div class="login-input userID">
-          <img src="../../assets/index/login/04.png" alt="" />
-          <input type="text" v-model="userInfo.userId" placeholder="User ID（if any）" />
+        <template v-if="!isVisitors">
+          <p class="wtl">Welcome to login</p>
+          <div class="login-input userID">
+            <img src="../../assets/index/login/04.png" alt="" />
+            <input
+              type="text"
+              v-model="userInfo.userId"
+              placeholder="User ID（if any）"
+            />
+          </div>
+          <div class="login-input Password">
+            <img src="../../assets/index/login/03.png" alt="" />
+            <input
+              type="password"
+              v-model="userInfo.password"
+              placeholder="Password ( if any )）"
+            />
+          </div>
+          <div class="login-input Charger" style="margin-bottom: 0px">
+            <img src="../../assets/index/login/05.png" alt="" />
+            <input
+              type="text"
+              v-model="userInfo.chargerNumber"
+              placeholder="Charger Number"
+            />
+          </div>
+          <div class="elseor">
+            <p>or</p>
+          </div>
+          <div class="login-input Vehicle">
+            <img src="../../assets/index/login/02.png" alt="" />
+            <input
+              type="text"
+              v-model="userInfo.vehicleNumber"
+              placeholder="Vehicle Number"
+            />
+          </div>
+          <div class="button loginButton" @click="toLogin">login</div>
+          <p class="clgs vtl" @click="isVisitors=true">Visitors to login</p>
+        </template>
+        <div class="visitors" v-else>
+          <img src="../../assets/icon.png" alt="" />
+          <div class="button loginButton" @click="visitorLogin">
+            Visitors to login
+          </div>
+          <div class="button loginButton clg" @click="isVisitors = false">
+            Account password login
+          </div>
         </div>
-        <div class="login-input Password">
-          <img src="../../assets/index/login/03.png" alt="" />
-          <input
-            type="password"
-            v-model="userInfo.password"
-            placeholder="Password ( if any )）"
-          />
-        </div>
-        <div class="login-input Charger">
-          <img src="../../assets/index/login/05.png" alt="" />
-          <input
-            type="text"
-            v-model="userInfo.chargerNumber"
-            placeholder="Charger Number"
-          />
-        </div>
-        <div class="login-input Vehicle">
-          <img src="../../assets/index/login/02.png" alt="" />
-          <input
-            type="text"
-            v-model="userInfo.vehicleNumber"
-            placeholder="Vehicle Number"
-          />
-        </div>
-        <div class="button loginButton" @click="toLogin">login</div>
       </div>
       <div id="inputCode" v-else>
         <div class="codeValue" style="margin-bottom: 0">
@@ -67,6 +86,7 @@ export default {
   name: "login",
   data() {
     return {
+      isVisitors: true,
       iscode: false,
       userInfo: {
         userId: "123456",
@@ -79,6 +99,13 @@ export default {
     };
   },
   methods: {
+    // 游客登录
+    visitorLogin(){
+      this.$router.push('index');
+      localStorage.clear();
+      this.$store.commit("getUserInfo",{})  
+      localStorage.setItem('loginType',"1");
+    },
     sendCode() {
       sendSms({
         account: this.phone,
@@ -119,6 +146,38 @@ export default {
 </script>
 
 <style scoped>
+.clg {
+  /* width: 100%;
+  text-align: right;
+  font-size: 18px; */
+  color: #fff;
+  margin-top: 20px !important;
+}
+.vtl{
+  text-align: right;
+  width: 418px;
+  margin: 0 auto;
+  margin-top: 20px;
+  font-size: 18px;
+}
+.visitors > img {
+  width: 250px;
+  height: 60px;
+  margin-bottom: 50px;
+  margin-top: 50px;
+}
+.visitors {
+  margin-top: 50%;
+  display: inline-block;
+  text-align: center;
+  margin-left: 50%;
+  transform: translate(-50%, -50%);
+}
+.elseor {
+  font-size: 20px;
+  text-align: center;
+  margin: 5px 0;
+}
 .explaincode {
   font-size: 24px;
   line-height: 36px;
@@ -218,8 +277,8 @@ export default {
 .wtl {
   font-size: 36px;
   text-align: center;
-  margin-bottom: 39px;
-  margin-top: 195px;
+  margin-bottom: 28px;
+  margin-top: 175px;
 }
 
 .login-img {
