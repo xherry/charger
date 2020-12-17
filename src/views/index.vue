@@ -3,7 +3,7 @@
     <div class="indexLeft" @click="$router.push('UserInformation')">
       <div class="userName">
         <p>Welcome</p>
-        <p>Mr Y P Chu</p>
+        <p>{{ $store.state.userInfo.name ? $store.state.userInfo.name : "" }}</p>
       </div>
       <div class="lines"></div>
       <div class="userItem" v-for="(item, index) in userInfo" :key="index">
@@ -20,34 +20,52 @@
     <div class="indexRight">
       <img src="../assets/icon.png" class="plogo" alt="" />
       <div class="flex flex-center nav1 w100 navItems">
-        <div class="navs-item" @click="$router.push('overview')">
-          <img class="navsimg" src="../assets/index/01.png" alt="" />
+        <div :class="['navs-item']" @click="routerPush('overview')">
+          <img :class="['navsimg', 'bs']" src="../assets/index/01.png" alt="" />
           <p>Overview</p>
         </div>
-        <div class="navs-item" @click="$router.push('CentreInformation')">
-          <texmplate v-if="loginType != '1'">
-            <img class="navsimg" src="../assets/index/03.png" alt="" />
-            <p>Centre Information</p>
-          </texmplate>
+        <div class="navs-item" @click="routerPush('CentreInformation')">
+          <img
+            :class="['navsimg', loginType == 1 ? '' : 'bs']"
+            src="../assets/index/03.png"
+            alt=""
+          />
+          <p>Centre Information</p>
         </div>
       </div>
-      <div class="flex flex-center nav2 w100 navItems" v-if="loginType != '1'">
-        <div class="navs-item" @click="$router.push('ChargerControl')">
-          <img class="navsimg" src="../assets/index/02.png" alt="" />
+      <div class="flex flex-center nav2 w100 navItems">
+        <div class="navs-item" @click="routerPush('ChargerControl')">
+          <img
+            :class="['navsimg', loginType != '1' ? 'bs' : '']"
+            src="../assets/index/02.png"
+            alt=""
+          />
           <p>Charger Control</p>
         </div>
-        <div class="navs-item" @click="$router.push('UserAccount')">
-          <img class="navsimg" src="../assets/index/04.png" alt="" />
+        <div class="navs-item" @click="routerPush('UserAccount')">
+          <img
+            :class="['navsimg', loginType != '1' ? 'bs' : '']"
+            src="../assets/index/04.png"
+            alt=""
+          />
           <p>User Account</p>
         </div>
       </div>
-      <div class="flex flex-center nav3 w100 navItems" v-if="loginType != '1'">
-        <div class="navs-item" @click="$router.push('DataReport')">
-          <img class="navsimg" src="../assets/index/05.png" alt="" />
+      <div class="flex flex-center nav3 w100 navItems">
+        <div class="navs-item" @click="routerPush('DataReport')">
+          <img
+            :class="['navsimg', loginType != '1' ? 'bs' : '']"
+            src="../assets/index/05.png"
+            alt=""
+          />
           <p>Data Report</p>
         </div>
-        <div class="navs-item" @click="$router.push('setting')">
-          <img class="navsimg" src="../assets/index/06.png" alt="" />
+        <div class="navs-item" @click="routerPush('setting')">
+          <img
+            :class="['navsimg', loginType != '1' ? 'bs' : '']"
+            src="../assets/index/06.png"
+            alt=""
+          />
           <p>System Settings</p>
         </div>
       </div>
@@ -80,9 +98,18 @@ export default {
     this.getUserInfo();
   },
   methods: {
+    // 路由跳转
+    routerPush(routerName) {
+      let loginType = this.loginType;
+      if (loginType == "1" && routerName == "overview") {
+        return this.$router.push("overview");
+      } else if (loginType !== "1") {
+        this.$router.push(routerName);
+      }
+    },
+    //
     getUserInfo() {
       let userInfo = this.$store.state.userInfo;
-      // console.log(userInfo);
       if (Object.keys(userInfo).length != 0) {
         this.userInfo = [
           { key: "User Type：", name: utype(userInfo.userType) },
@@ -135,16 +162,18 @@ export default {
 .navs-item {
   text-align: center;
 }
-.navs-item:hover{
-   opacity: .7;
+.navs-item:hover {
+  opacity: 0.7;
 }
-.navs-item:active{
-  opacity: .7;
+.navs-item:active {
+  opacity: 0.7;
 }
 .navs-item .navsimg {
   width: 92px;
   height: 92px;
   border-radius: 50%;
+}
+.bs {
   box-shadow: 0 0 10px 0 #fff;
 }
 .indexRight {

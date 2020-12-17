@@ -41,13 +41,11 @@
             />
           </div>
           <div class="button loginButton" @click="toLogin">login</div>
-          <p class="clgs vtl" @click="isVisitors=true">Visitors to login</p>
+          <p class="clgs vtl" @click="isVisitors = true">Visitors to login</p>
         </template>
         <div class="visitors" v-else>
           <img src="../../assets/icon.png" alt="" />
-          <div class="button loginButton" @click="visitorLogin">
-            Visitors to login
-          </div>
+          <div class="button loginButton" @click="visitorLogin">Visitors to login</div>
           <div class="button loginButton clg" @click="isVisitors = false">
             Account password login
           </div>
@@ -100,11 +98,11 @@ export default {
   },
   methods: {
     // 游客登录
-    visitorLogin(){
-      this.$router.push('index');
+    visitorLogin() {
       localStorage.clear();
-      this.$store.commit("getUserInfo",{})  
-      localStorage.setItem('loginType',"1");
+      localStorage.setItem("loginType", "1");
+      this.$store.commit("getUserInfo", { pcUser: {} });
+      this.$router.push("overview");
     },
     sendCode() {
       sendSms({
@@ -123,10 +121,14 @@ export default {
       Login(this.userInfo).then((res) => {
         console.log(res);
         if (res.code == 100) {
-          this.iscode = true;
           localStorage.setItem("userId", res.extend.pcUser.id);
           localStorage.setItem("roleKey", JSON.stringify(res.extend.roleKey));
           this.$store.commit("getUserInfo", res.extend);
+          if (res.extend.roleKey.smsPasscode == 0) {
+            this.iscode = true;
+          } else {
+            this.$router.push("index");
+          }
         }
       });
     },
@@ -139,6 +141,7 @@ export default {
       loginTwo({ ...this.userInfo, phoneCode: this.phoneCode }).then((res) => {
         console.log(res);
         this.$router.push("index");
+        localStorage.setItem("loginType", "0");
       });
     },
   },
@@ -153,7 +156,7 @@ export default {
   color: #fff;
   margin-top: 20px !important;
 }
-.vtl{
+.vtl {
   text-align: right;
   width: 418px;
   margin: 0 auto;

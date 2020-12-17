@@ -16,16 +16,8 @@ import "./common/element";
 import "./common/common";
 
 
-
 // 路由守卫
-router.beforeEach((to, from, next) => {
-    if (to.name === 'index' || to.name === 'login' || to.name === 'Selectlogin') {
-        store.commit('changeShowBottom', false)
-    } else {
-        store.commit('changeShowBottom', true)
-    }
-    return next()
-})
+import "./common/routingGuard";
 
 
 

@@ -2,22 +2,9 @@
   <div class="overview flex rz mt50">
     <div class="overLeft">
       <p>Overview</p>
-      <div
-        :class="[
-          navSeleted == item.id ? 'ol-item1' : 'ol-item2',
-          'flex',
-          'flex-Updown-between',
-        ]"
-        @click="navSeleted = item.id"
-        v-for="item in navs"
-        :key="item.id"
-      >
-        <span>{{ item.name }}</span>
-        <img
-          class="ml27"
-          :src="navSeleted == item.id ? item.seletImg : item.img"
-          alt=""
-        />
+      <div class="ol-item1 flex flex-Updown-between">
+        <span>Charger Network</span>
+        <img class="ml27" src="../assets/index/says/01.png" alt="" />
       </div>
     </div>
     <!-- <div v-if="navSeleted == 1">
@@ -43,7 +30,7 @@
         </div>
       </div>
     </div> -->
-    <div >
+    <div>
       <own-charg></own-charg>
     </div>
   </div>

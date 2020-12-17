@@ -73,7 +73,7 @@
           <p class="diaValue">20 A</p>
         </div>
       </div>
-      <div class="buttons7 flex flex-Updown-between">
+      <!-- <div class="buttons7 flex flex-Updown-between">
         <div class="flex flex-Updown">
           <div class="blues button">Enable</div>
           <div class="greens button">Disable</div>
@@ -86,7 +86,7 @@
           <div class="blues button">LMS</div>
           <div class="greens button">Full</div>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
