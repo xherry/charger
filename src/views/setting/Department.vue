@@ -8,32 +8,62 @@
           <li><p>Address</p></li>
           <li><p>Location ( Carpark / Floor )</p></li>
         </ul>
-        <ul class="uldatas w100">
-          <li><p>Hung Hom</p></li>
+        <ul class="uldatas w100" v-for="(item, index) in 9" :key="'s' + index">
+          <li @click="isShowSlete = isShowSlete === 's' + index ? '' : 's' + index">
+            <p>Hung Hom</p>
+            <img
+              class="seleters imgSelete"
+              :style="{
+                transform: `rotate(${isShowSlete === 's' + index ? '180' : '0'}deg)`,
+              }"
+              src="../../assets/index/setting/10.png"
+              alt=""
+            />
+            <div
+              class="sleterMain"
+              :style="{ height: isShowSlete === 's' + index ? '200px' : '0px' }"
+            >
+              <div
+                class="button seleter_item"
+                v-for="(item, index) in centerType"
+                :key="index"
+                @click="seleteCenter(item)"
+              >
+                {{ item.value }}
+              </div>
+            </div>
+          </li>
           <li><p>Laguna Verde</p></li>
           <li><p>Laguna verde B2</p></li>
         </ul>
-        <ul class="uldatas w100">
-          <li><p>Sham Shui Po</p></li>
-          <li><p>Fuk Wah Street</p></li>
-          <li><p>G/F</p></li>
-        </ul>
+        <div class="pagination">
+          <el-pagination
+            @current-change="sizeChange1"
+            background
+            layout=" prev, pager, next, jumper, ->, total, slot"
+            :total="count1"
+          >
+          </el-pagination>
+        </div>
       </div>
       <div class="dm-right">
         <ul class="ultit">
           <li><p>Center</p></li>
           <li><p>Department</p></li>
         </ul>
-        <ul class="uldatas w100">
-          <li @click="isShowSlete = !isShowSlete">
-            <p>{{ctypes.value}}</p>
+        <ul class="uldatas w100" v-for="(item, index) in 2" :key="item">
+          <li @click="isShowSlete = isShowSlete === index ? '' : index">
+            <p>{{ ctypes.value }}</p>
             <img
-              class="seleters"
-              :style="{ transform: `rotate(${isShowSlete ? '180' : '0'}deg)` }"
+              class="seleters imgSelete"
+              :style="{ transform: `rotate(${isShowSlete === index ? '180' : '0'}deg)` }"
               src="../../assets/index/setting/10.png"
               alt=""
             />
-            <div class="sleterMain" :style="{ height: isShowSlete ? '200px' : '0px' }">
+            <div
+              class="sleterMain"
+              :style="{ height: isShowSlete === index ? '200px' : '0px' }"
+            >
               <div
                 class="button seleter_item"
                 v-for="(item, index) in centerType"
@@ -46,6 +76,15 @@
           </li>
           <li><p>Assess Controol</p></li>
         </ul>
+         <div class="pagination">
+          <el-pagination
+            @current-change="sizeChange2"
+            background
+            layout=" prev, pager, next, jumper, ->, total, slot"
+            :total="count2"
+          >
+          </el-pagination>
+        </div>
       </div>
     </div>
     <div class="flex flex-Updown mt30">
@@ -61,12 +100,16 @@ export default {
   name: "Department",
   data() {
     return {
-      isShowSlete: false,
+      isShowSlete: "",
       centreDepartmentList: [],
       count: 0,
       ctypes: {
         centreId: "",
         value: "Shatin Centre",
+      },
+      utypes: {
+        userType: "",
+        value: "",
       },
       centerType: [
         { centreId: 0, value: "Shatin Centre" },
@@ -76,6 +119,8 @@ export default {
         { centreId: 4, value: "Yuen Long Centre" },
         { centreId: 5, value: "Shek Wu Hui Centre" },
       ],
+      count1:0,
+      count2:0
     };
   },
   created() {},
@@ -83,6 +128,14 @@ export default {
     this.getList();
   },
   methods: {
+    // 
+    sizeChange1(){
+
+    },
+    sizeChange2(){
+      
+    },
+    // 
     seleteCenter(prop) {
       this.ctypes.centreId = prop.centreId;
       this.ctypes.value = prop.value;
@@ -118,6 +171,7 @@ export default {
 .dm-right {
   border: 2px solid #205cbf;
   border-radius: 20px;
+  position: relative;
 }
 .dm-left {
   width: 810px;

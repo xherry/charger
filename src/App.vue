@@ -182,6 +182,7 @@ ul > li {
   overflow-x: hidden;
   overflow-y: auto;
   transition: all 0.2s linear;
+  box-shadow: 0 0 3px #fff;
 }
 .operation {
   width: 297px;
@@ -212,6 +213,7 @@ ul > li {
   height: 744px;
   background: url("./assets/index/useraccount/bg03.png") no-repeat;
   background-size: 100% 100%;
+  position: relative;
 }
 .UpdateCancel {
   line-height: 38px;
@@ -235,11 +237,13 @@ ul > li {
   overflow-x: hidden;
   overflow-y: auto;
   transition: all 0.2s linear;
+  box-shadow: 0 0 3px #fff;
 }
 input::-webkit-input-placeholder {
   color: #ffffff90;
 }
-.seleterBody .seleter_item,.sleterMain .seleter_item {
+.seleterBody .seleter_item,
+.sleterMain .seleter_item {
   width: 100%;
   height: 50px;
   line-height: 50px;
@@ -250,5 +254,29 @@ input::-webkit-input-placeholder {
 }
 input::-ms-input-placeholder {
   color: #666;
+}
+li .imgSelete{
+  position: absolute;
+  right: 0;
+  /* top: 50%; */
+  /* transform: translateY(-50%); */
+  margin-left: 0;
+}
+.el-pager{
+  background: transparent !important;
+}
+.pagination{
+  width: 100%;
+  position: absolute;
+  bottom: 0px;
+  text-align: right;
+  padding-right: 35px;
+  box-sizing: border-box;
+}
+.el-pagination__jump,.el-pagination__total{
+  color: #fff !important;
+}
+.el-pagination.is-background .el-pager li:not(.disabled).active{
+  background: #143c7c !important;
 }
 </style>

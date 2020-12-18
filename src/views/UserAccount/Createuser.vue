@@ -99,15 +99,16 @@
           <p class="js">Creator cannot create a new user with accessrights higher than</p>
           <div class="cdltopitem cdltopitem2 mr40 flex flex-Updown-between">
             <span>User type</span>
-            <p class="flex flex-Updown-between" @click="isShowSlete3 = !isShowSlete3">
-              <span>{{ utypes1.value }}</span>
-              <img
+            <!--  @click="isShowSlete3 = !isShowSlete3" -->
+            <p class="flex flex-Updown-between">
+              <span>{{ roleKey.userType | utype }}</span>
+              <!-- <img
                 :style="{ transform: `rotate(${isShowSlete3 ? '180' : '0'}deg)` }"
                 src="../../assets/index/setting/10.png"
                 alt=""
-              />
+              /> -->
             </p>
-            <div class="seleterBody" :style="{ height: isShowSlete3 ? '200px' : '0px' }">
+            <!-- <div class="seleterBody" :style="{ height: isShowSlete3 ? '200px' : '0px' }">
               <div
                 class="button seleter_item"
                 v-for="(item, index) in userTypes"
@@ -120,7 +121,7 @@
               >
                 {{ item.value }}
               </div>
-            </div>
+            </div> -->
           </div>
           <p class="createrightbottom">Access Rights:</p>
           <div></div>
@@ -135,17 +136,17 @@
             :key="index"
           >
             <span>{{ item.name }}</span>
-            <div class="mr56" @click="item.isChoose = !item.isChoose">
+            <div class="mr56" @click="item.value = item.value == 0 ? 1 : 0">
               <img
-                v-if="item.isChoose"
+                v-if="item.value == 0"
                 src="../../assets/index/useraccount/04.png"
                 alt=""
               />
               <img v-else src="../../assets/index/useraccount/03.png" alt="" />
             </div>
-            <div class="mr86" @click="item.isChoose = !item.isChoose">
+            <div class="mr86" @click="item.value = item.value == 0 ? 1 : 0">
               <img
-                v-if="item.isChoose"
+                v-if="item.value == 0"
                 src="../../assets/index/useraccount/03.png"
                 alt=""
               />
@@ -168,7 +169,7 @@
           <div>SMS to notice user</div>
         </div>
       </div>
-      <div class="button UpdateCancel">Clear</div>
+      <div class="button UpdateCancel" @click="cleaUser">Clear</div>
     </div>
   </div>
 </template>
@@ -182,14 +183,7 @@ export default {
       isShowSlete1: false,
       isShowSlete2: false,
       isShowSlete3: false,
-      prmselete: [
-        { name: "Check  Status", isChoose: false },
-        { name: "Control  Own  Charger", isChoose: false },
-        { name: "Control Other Chargers", isChoose: false },
-        { name: "View Data", isChoose: false },
-        { name: "Create User", isChoose: false },
-        { name: "Configure System", isChoose: false },
-      ],
+      prmselete: [],
       utypes1: {
         userType: "",
         value: "",
@@ -228,9 +222,31 @@ export default {
         phone: "",
         code: "",
       },
+      roleKey: {},
     };
   },
+  created() {
+    this.roleKey = JSON.parse(localStorage.getItem("roleKey"));
+    this.prmselete = [
+      { name: "Check  Status", value: this.roleKey.checkStatus },
+      { name: "Control  Own  Charger", value: this.roleKey.controlOwnCharger },
+      { name: "Control Other Chargers", value: this.roleKey.controlOtherChargers },
+      { name: "View Data", value: this.roleKey.viewGeneralData },
+      { name: "Create User", value: this.roleKey.createAccount },
+      { name: "Configure System", value: this.roleKey.configureSystem },
+    ];
+  },
   methods: {
+    cleaUser() {
+      for (let key in this.addUsers) {
+        this.addUsers[key] = "";
+      }
+      this.utypes.userType = "";
+      this.utypes.value = "";
+      this.ctypes.centreId = "";
+      this.ctypes.value = "";
+    },
+    //
     createUser() {
       let data = {
         ...this.addUsers,
@@ -240,21 +256,14 @@ export default {
       addOrUpdEntity(data).then((res) => {
         console.log(res);
         if (res.code == 100) {
-          let soeObj = {
-            userId: this.$store.state.userId,
-            checkStatus: this.prmselete[0].isChoose ? 0 : 1,
-            controlOwnCharger: this.prmselete[1].isChoose ? 0 : 1,
-            controlOtherChargers: this.prmselete[2].isChoose ? 0 : 1,
-            viewGeneralData: this.prmselete[3].isChoose ? 0 : 1,
-            dataReport: "",
-            createAccount: this.prmselete[4].isChoose ? 0 : 1,
-            configureSystem: this.prmselete[5].isChoose ? 0 : 1,
-            userIdPassword: this.addUsers.password,
-            smsPasscode: this.addUsers.code,
-          };
-          roleKeySOE(soeObj).then((result) => {
-            console.log("添加权限", result);
-          });
+          this.$message.success("创建成功");
+          for (let key in this.addUsers) {
+            this.addUsers[key] = "";
+          }
+          this.utypes.userType = "";
+          this.utypes.value = "";
+          this.ctypes.centreId = "";
+          this.ctypes.value = "";
         }
       });
     },

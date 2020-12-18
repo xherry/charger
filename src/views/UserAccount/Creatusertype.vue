@@ -28,135 +28,157 @@
             </ul>
           </div>
         </div>
-        <div
-          class="flex userTable bp"
-          v-for="(item, index) in roleKeyList"
-          :key="'r' + index"
-        >
-          <ul class="userTable-left bp">
-            <li><span>1</span></li>
-            <li>
-              <span>{{ item.userType | utype }}</span>
-            </li>
-          </ul>
-          <div class="userTableMiddle bp">
-            <ul class="userUl">
+        <div v-for="(item, index) in roleKeyList" :key="'r' + index">
+          <div
+            :class="['flex', 'userTable', 'bp', roleKeyIndex === index ? 'bshow' : '']"
+            v-if="item.userType"
+            @click="seleteUl(index, item.id)"
+          >
+            <ul class="userTable-left bp">
+              <li><span>1</span></li>
               <li>
-                <img
-                  v-if="item.checkStatus == 0"
-                  class="dui"
-                  src="../../assets/index/useraccount/01.png"
-                  alt=""
-                />
-                <img
-                  v-else
-                  class="cuo"
-                  src="../../assets/index/useraccount/02.png"
-                  alt=""
-                />
-              </li>
-              <li>
-                <img
-                  v-if="item.controlOwnCharger == 0"
-                  class="dui"
-                  src="../../assets/index/useraccount/01.png"
-                  alt=""
-                />
-                <img
-                  v-else
-                  class="cuo"
-                  src="../../assets/index/useraccount/02.png"
-                  alt=""
-                />
-              </li>
-              <li>
-                <img
-                  v-if="item.controlOtherChargers == 0"
-                  class="dui"
-                  src="../../assets/index/useraccount/01.png"
-                  alt=""
-                />
-                <img
-                  v-else
-                  class="cuo"
-                  src="../../assets/index/useraccount/02.png"
-                  alt=""
-                />
-              </li>
-              <li>
-                <img
-                  v-if="item.viewGeneralData == 0"
-                  class="dui"
-                  src="../../assets/index/useraccount/01.png"
-                  alt=""
-                />
-                <img
-                  v-else
-                  class="cuo"
-                  src="../../assets/index/useraccount/02.png"
-                  alt=""
-                />
-              </li>
-              <li>
-                <img
-                  v-if="item.dataReport == 0"
-                  class="dui"
-                  src="../../assets/index/useraccount/01.png"
-                  alt=""
-                />
-                <img
-                  v-else
-                  class="cuo"
-                  src="../../assets/index/useraccount/02.png"
-                  alt=""
-                />
-              </li>
-              <li>
-                <img
-                  v-if="item.createAccount == 0"
-                  class="dui"
-                  src="../../assets/index/useraccount/01.png"
-                  alt=""
-                />
-                <img
-                  v-else
-                  class="cuo"
-                  src="../../assets/index/useraccount/02.png"
-                  alt=""
-                />
-              </li>
-              <li>
-                <img
-                  v-if="item.configureSystem == 0"
-                  class="dui"
-                  src="../../assets/index/useraccount/01.png"
-                  alt=""
-                />
-                <img
-                  v-else
-                  class="cuo"
-                  src="../../assets/index/useraccount/02.png"
-                  alt=""
-                />
+                <span>{{ item.userType | utype }}</span>
               </li>
             </ul>
+            <div class="userTableMiddle bp">
+              <ul class="userUl">
+                <li
+                  @click="
+                    item.checkStatus =
+                      roleKeyIndex === index ? (item.checkStatus == 0 ? 1 : 0) : ''
+                  "
+                >
+                  <img
+                    v-if="item.checkStatus == 0"
+                    class="dui"
+                    src="../../assets/index/useraccount/01.png"
+                    alt=""
+                  />
+                  <img
+                    v-else
+                    class="cuo"
+                    src="../../assets/index/useraccount/02.png"
+                    alt=""
+                  />
+                </li>
+                <li @click="item.controlOwnCharger = item.controlOwnCharger == 0 ? 1 : 0">
+                  <img
+                    v-if="item.controlOwnCharger == 0"
+                    class="dui"
+                    src="../../assets/index/useraccount/01.png"
+                    alt=""
+                  />
+                  <img
+                    v-else
+                    class="cuo"
+                    src="../../assets/index/useraccount/02.png"
+                    alt=""
+                  />
+                </li>
+                <li
+                  @click="
+                    item.controlOtherChargers = item.controlOtherChargers == 0 ? 1 : 0
+                  "
+                >
+                  <img
+                    v-if="item.controlOtherChargers == 0"
+                    class="dui"
+                    src="../../assets/index/useraccount/01.png"
+                    alt=""
+                  />
+                  <img
+                    v-else
+                    class="cuo"
+                    src="../../assets/index/useraccount/02.png"
+                    alt=""
+                  />
+                </li>
+                <li @click="item.viewGeneralData = item.viewGeneralData == 0 ? 1 : 0">
+                  <img
+                    v-if="item.viewGeneralData == 0"
+                    class="dui"
+                    src="../../assets/index/useraccount/01.png"
+                    alt=""
+                  />
+                  <img
+                    v-else
+                    class="cuo"
+                    src="../../assets/index/useraccount/02.png"
+                    alt=""
+                  />
+                </li>
+                <li @click="item.dataReport = item.dataReport == 0 ? 1 : 0">
+                  <img
+                    v-if="item.dataReport == 0"
+                    class="dui"
+                    src="../../assets/index/useraccount/01.png"
+                    alt=""
+                  />
+                  <img
+                    v-else
+                    class="cuo"
+                    src="../../assets/index/useraccount/02.png"
+                    alt=""
+                  />
+                </li>
+                <li @click="item.createAccount = item.createAccount == 0 ? 1 : 0">
+                  <img
+                    v-if="item.createAccount == 0"
+                    class="dui"
+                    src="../../assets/index/useraccount/01.png"
+                    alt=""
+                  />
+                  <img
+                    v-else
+                    class="cuo"
+                    src="../../assets/index/useraccount/02.png"
+                    alt=""
+                  />
+                </li>
+                <li @click="item.configureSystem = item.configureSystem == 0 ? 1 : 0">
+                  <img
+                    v-if="item.configureSystem == 0"
+                    class="dui"
+                    src="../../assets/index/useraccount/01.png"
+                    alt=""
+                  />
+                  <img
+                    v-else
+                    class="cuo"
+                    src="../../assets/index/useraccount/02.png"
+                    alt=""
+                  />
+                </li>
+              </ul>
+            </div>
+            <div class="userTableRight bp">
+              <ul>
+                <li @click="item.userIdPassword = item.userIdPassword == 0 ? 1 : 0">
+                  <span>{{ item.userIdPassword == 0 ? "Yes" : "No" }}</span>
+                </li>
+                <li @click="item.smsPasscode = item.smsPasscode == 0 ? 1 : 0">
+                  <span>{{ item.smsPasscode == 0 ? "Yes" : "No" }}</span>
+                </li>
+              </ul>
+            </div>
           </div>
-          <div class="userTableRight bp">
-            <ul>
-              <li>
-                <span>{{ item.userIdPassword == 0 ? "Yes" : "No" }}</span>
-              </li>
-              <li>
-                <span>{{ item.smsPasscode == 0 ? "Yes" : "No" }}</span>
-              </li>
-            </ul>
-          </div>
+        </div>
+        <div class="pagination">
+          <el-pagination
+            @current-change="sizeChange"
+            background
+            layout=" prev, pager, next, jumper, ->, total, slot"
+            :total="count"
+          >
+          </el-pagination>
         </div>
       </div>
     </div>
     <div class="flex flex-center">
-      <div class="button UpdateCancel" style="margin-right: 144px">Update</div>
-      <div class="button UpdateCancel">Cancel</div>
+      <div class="button UpdateCancel" style="margin-right: 144px" @click="updateRoleKey">
+        Update
+      </div>
+      <div class="button UpdateCancel" @click="Cancel">Cancel</div>
     </div>
   </div>
 </template>
@@ -168,23 +190,106 @@ export default {
   data() {
     return {
       roleKeyList: [],
+      oldRoleKeyList: [],
       page: 1,
+      roleKeyId: "",
+      roleKeyIndex: "",
+      count: 0,
     };
   },
-  created() {
+  created() {},
+  mounted() {
     this.getRoleList();
   },
   methods: {
+    // 页码切换
+    sizeChange() {
+      this.page += 1;
+      this.getRoleList();
+    },
+    // 取消修改
+    Cancel() {
+      this.roleKeyId = "";
+      this.roleKeyIndex = "";
+      this.getRoleList();
+    },
+    // 修改权限
+    updateRoleKey() {
+      let {
+        checkStatus,
+        configureSystem,
+        controlOtherChargers,
+        controlOwnCharger,
+        createAccount,
+        dataReport,
+        id,
+        smsPasscode,
+        userIdPassword,
+        viewGeneralData,
+      } = this.roleKeyList[this.roleKeyIndex];
+      let data = {
+        userId: localStorage.getItem("userId"),
+        roleKeyId: id,
+        checkStatus,
+        controlOwnCharger,
+        controlOtherChargers,
+        viewGeneralData,
+        dataReport,
+        createAccount,
+        configureSystem,
+        userIdPassword,
+        smsPasscode,
+      };
+      this.$msgbox({
+        title: "提示",
+        message: "确认修改权限？",
+        showCancelButton: true,
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        beforeClose: (action, instance, done) => {
+          if (action === "confirm") {
+            instance.confirmButtonLoading = true;
+            instance.confirmButtonText = "执行中...";
+            roleKeySOE(data).then((res) => {
+              console.log(res, "修改权限");
+              if (res.code == 100) {
+                instance.confirmButtonLoading = false;
+                this.roleKeyId = "";
+                this.roleKeyIndex = "";
+                this.getRoleList();
+                done();
+                this.$message.success("修改成功");
+              }
+            });
+          } else {
+            done();
+          }
+        },
+      });
+    },
+    // 选择修改列
+    seleteUl(roleKeyIndex, roleKeyId) {
+      if (this.roleKeyIndex != roleKeyIndex) {
+        this.roleKeyList = JSON.parse(JSON.stringify(this.oldRoleKeyList));
+      }
+      this.roleKeyId = roleKeyId;
+      this.roleKeyIndex = roleKeyIndex;
+    },
+    //
     getRoleList() {
       let data = {
         userId: 1,
         page: this.page,
-        limit: 10,
+        limit: 7,
       };
       roleKeyFindAll(data).then((res) => {
         console.log(res);
         if (res.code == 100) {
-          this.roleKeyList = res.extend.roleKeyList;
+          let dataList = res.extend.roleKeyList.reverse();
+          this.oldRoleKeyList = dataList;
+          console.log(this.oldRoleKeyList);
+          this.roleKeyList = JSON.parse(JSON.stringify(dataList));
+          this.count = res.extend.count;
         }
       });
     },
@@ -193,6 +298,9 @@ export default {
 </script>
 
 <style scoped>
+.bshow {
+  box-shadow: 0 0 10px 0 #ffffff;
+}
 .overRights {
   height: 792px;
 }
@@ -295,5 +403,6 @@ export default {
   display: inline-block;
   margin-left: 50%;
   transform: translateX(-50%);
+  position: relative;
 }
 </style>

@@ -14,6 +14,7 @@
           <li><p>Mobile No.</p></li>
         </ul>
         <ul class="uldatas w100" v-for="(item, index) in pcUserList" :key="index">
+          <!-- <li><p>ssssss</p></li> -->
           <li class="flex flex-Updown ssss">
             <div
               class="seletes"
@@ -43,11 +44,53 @@
           <li>
             <p><input type="text" v-model="item.name" /></p>
           </li>
-          <li>
-            <p><input type="text" v-model="item.users" /></p>
+          <li @click="isUserType = isUserType === item.id ? '' : item.id">
+            <p>{{ item.userType | utype }}</p>
+            <img
+              class="seleters imgSelete"
+              :style="{
+                transform: `rotate(${isUserType === item.id ? '180' : '0'}deg)`,
+              }"
+              src="../../assets/index/setting/10.png"
+              alt=""
+            />
+            <div
+              class="sleterMain"
+              :style="{ height: isUserType === item.id ? '200px' : '0px' }"
+            >
+              <div
+                class="button seleter_item"
+                v-for="(p, i) in $store.state.userTypes"
+                :key="i"
+                @click="item.userType = p.userType"
+              >
+                {{ p.value }}
+              </div>
+            </div>
           </li>
-          <li>
-            <p><input type="text" v-model="item.centrs" /></p>
+          <li @click="isCenterType = isCenterType === item.id ? '' : item.id">
+            <p>{{ item.centreId | ctype }}</p>
+            <img
+              class="seleters imgSelete"
+              :style="{
+                transform: `rotate(${isCenterType === item.id ? '180' : '0'}deg)`,
+              }"
+              src="../../assets/index/setting/10.png"
+              alt=""
+            />
+            <div
+              class="sleterMain"
+              :style="{ height: isCenterType === item.id ? '200px' : '0px' }"
+            >
+              <div
+                class="button seleter_item"
+                v-for="(p, i) in $store.state.centerType"
+                :key="i"
+                @click="item.centreId = p.centreId"
+              >
+                {{ p.value }}
+              </div>
+            </div>
           </li>
           <li>
             <p><input type="text" v-model="item.department" /></p>
@@ -59,6 +102,15 @@
             <p><input type="text" v-model="item.phone" /></p>
           </li>
         </ul>
+      </div>
+      <div class="pagination">
+        <el-pagination
+          @current-change="sizeChange"
+          background
+          layout=" prev, pager, next, jumper, ->, total, slot"
+          :total="count"
+        >
+        </el-pagination>
       </div>
     </div>
     <div class="flex flex-center">
@@ -83,13 +135,20 @@ export default {
       count: 0,
       uid: "",
       uinfo: {},
+      isCenterType: "",
+      isUserType: "",
     };
   },
-  created() {
+  created() {},
+  mounted() {
     this.getUserList();
   },
   filters: {},
   methods: {
+    sizeChange() {
+      this.page + 1;
+      this.getUserList();
+    },
     // 修改用户
     editUser() {
       if (!this.uid) return this.$message.warning("请选择用户");
@@ -97,8 +156,10 @@ export default {
       delete uinfo["choose"];
       delete uinfo["users"];
       delete uinfo["centrs"];
-      console.log(uinfo);
-      let uinfos = { userIds: localStorage.getItem("userId"), ...uinfo };
+      delete uinfo["createTime"];
+      let uinfos = { userIds: uinfo.id, ...uinfo };
+      delete uinfos["id"];
+      console.log(uinfos);
       CDSaveOrUpdEntity(uinfos).then((res) => {
         console.log(res);
       });
@@ -120,9 +181,9 @@ export default {
     //
     getUserList() {
       let data = {
-        userIds: 2, //this.$store.state.userId,
+        userIds: localStorage.getItem("userId"), //this.$store.state.userId,
         page: this.page,
-        limit: 10,
+        limit: 9,
       };
       pcUserFindByAll(data).then((res) => {
         console.log("获取用户列表", res);
@@ -142,11 +203,14 @@ export default {
 </script>
 
 <style scoped>
+li > p > input {
+  color: #63d1ff;
+}
 .urtable {
   width: 1486px;
   margin-left: 10px;
-  overflow-x: hidden;
-  overflow-y: auto;
+  /* overflow-x: hidden; */
+  /* overflow-y: auto; */
 }
 .userselete {
   width: 100%;
