@@ -36,7 +36,7 @@ export const imageUpload = (formData) => {
         //     formData.append("picList", this.fileList[i]);
         // }
         // formData.append("picList", this.fileList);
-        this.$axios({
+        axios({
                 url: api,
                 method: "POST",
                 data: formData,

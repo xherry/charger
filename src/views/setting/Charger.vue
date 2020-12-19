@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="Charger">
     <div class="">
       <p class="ortoptit">Electric Vehicle Charger</p>
       <div class="tables">
@@ -13,14 +13,39 @@
           <li><p>Manufacturer / Brand</p></li>
         </ul>
         <template v-if="chargerList.length != 0">
-          <ul class="uldatas w100" v-for="(item, index) in chargerList" :key="index">
-            <li><p>1</p></li>
-            <li><p>Polyu AC Medium Charger</p></li>
-            <li><p>AC</p></li>
-            <li><p>3</p></li>
-            <li><p>21</p></li>
-            <li><p>Yes</p></li>
-            <li><p>polyu</p></li>
+          <ul
+            :class="['uldatas', 'w100', isUpdate === index ? 'bshow' : '']"
+            v-for="(item, index) in chargerList"
+            :key="index"
+            @click="isUpdate = index"
+          >
+            <li>
+              <p><input type="text" disabled value="1" /></p>
+            </li>
+            <li>
+              <p>
+                <input
+                  type="text"
+                  :disabled="isUpdate != index"
+                  value="Polyu AC Medium Charger"
+                />
+              </p>
+            </li>
+            <li>
+              <p><input type="text" :disabled="isUpdate != index" value="AC" /></p>
+            </li>
+            <li>
+              <p><input type="text" :disabled="isUpdate != index" value="3" /></p>
+            </li>
+            <li>
+              <p><input type="text" :disabled="isUpdate != index" value="21" /></p>
+            </li>
+            <li>
+              <p><input type="text" :disabled="isUpdate != index" value="Yes" /></p>
+            </li>
+            <li>
+              <p><input type="text" value="polyu" /></p>
+            </li>
           </ul>
         </template>
         <template v-else>
@@ -30,15 +55,25 @@
         </template>
       </div>
     </div>
+    <div class="pagination">
+      <el-pagination
+        @current-change="sizeChange"
+        background
+        layout=" prev, pager, next, jumper, ->, total, slot"
+        :total="count"
+        hide-on-single-page
+      >
+      </el-pagination>
+    </div>
     <div class="flex flex-Updown mt30">
-      <div class="button operation">Update</div>
-      <div class="button operation">Cancel</div>
+      <div class="button operation" @click="updateCharge">Update</div>
+      <div class="button operation" @click="cancelUpdate">Cancel</div>
     </div>
   </div>
 </template>
 
 <script>
-import { ChargerFindAll } from "../../common/api";
+import { ChargerFindAll, ChargerSaveOrUpdEntity } from "../../common/api";
 export default {
   name: "Charger",
   data() {
@@ -46,6 +81,7 @@ export default {
       page: 1,
       count: 0,
       chargerList: [],
+      isUpdate: "",
     };
   },
   mounted() {
@@ -53,6 +89,57 @@ export default {
   },
   created() {},
   methods: {
+    // 修改
+    updateCharge() {
+      if (this.isUpdate === "") {
+        this.$message.warning("请选择修改项");
+        return;
+      }
+      this.$msgbox({
+        title: "提示",
+        message: "确认修改权限？",
+        showCancelButton: true,
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        beforeClose: (action, instance, done) => {
+          if (action.confirm) {
+            instance.confirmButtonLoading = true;
+            instance.confirmButtonText = "执行中...";
+            let value = this.chargerList[this.isUpdate];
+            let data = {
+              userId: localStorage.getItem("userId"),
+              chargerId: value.id,
+              chargerType: value.chargerType,
+              outputVoltage: value.outputVoltage,
+              noPhase: value.noPhase,
+              outputPower: value.outputPower,
+              lmsSupported: value.lmsSupported,
+              manufacturer: value.manufacturer,
+            };
+            ChargerSaveOrUpdEntity(data).then((res) => {
+              console.log(res);
+              if (res.code == 100) {
+                done();
+                instance.confirmButtonLoading = false;
+                this.isUpdate = "";
+                this.getChargeList();
+                this.$message.success("修改成功");
+              }
+            });
+          }
+        },
+      });
+    },
+    // 取消修改
+    cancelUpdate() {
+      this.isUpdate = "";
+      this.getChargeList;
+    },
+    sizeChange(value) {
+      this.page = value;
+      this.getChargeList;
+    },
+    //
     getChargeList() {
       let data = {
         userId: localStorage.getItem("userId"),
@@ -71,4 +158,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.Charger {
+  position: relative;
+}
+</style>

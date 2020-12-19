@@ -6,7 +6,7 @@
         <div class="cdltop">
           <div class="cdltopitem flex flex-Updown-between">
             <span>EV Manufacturer</span>
-            <input type="text" value="Nissan" />
+            <input type="text" v-model="evManufacturer" placeholder="Nissan" />
           </div>
           <div
             class="cdltopitem flex flex-Updown-between"
@@ -28,9 +28,18 @@
           </div>
           <div class="cdltopitem flex flex-Updown-between">
             <span>Image </span>
-            <input type="text" />
+            <div class="inputs">
+              <input type="text" v-model="imgName" placeholder="选择图片" />
+              <input
+                class="inputImg"
+                @change="seleteImg"
+                type="file"
+                accept="image/*"
+                id="file"
+              />
+            </div>
           </div>
-          <p>Upload image</p>
+          <p class="head" @click="uploadImg" id="uploadImg">Upload image</p>
         </div>
         <div class="cdlbottom">
           <ul class="ultit">
@@ -60,19 +69,66 @@
 </template>
 
 <script>
-import { EVFindById, EVFindBySelect } from "../../common/api";
+import {
+  EVFindById,
+  EVFindBySelect,
+  EVDelEntity,
+  imageUpload,
+  EVSaveOrUpdEntity,
+} from "../../common/api";
 export default {
   name: "chargerDetails",
   data() {
     return {
       isShowSlete: false,
+      imgName: "",
+      id: "",
+      evManufacturer: "",
+      evModel: "",
+      image: "",
     };
   },
   created() {
-    this.getCarDeatils();
-    this.getOptions();
+    // this.getCarDeatils();
+    // this.getOptions();
   },
   methods: {
+    // 修改车辆信息
+    updateCars() {
+      let data = {
+        userId: localStorage.getItem("userId"),
+        electricVehicleId: this.id,
+        evManufacturer: this.evManufacturer,
+        evModel: this.evModel,
+        image: this.image,
+      };
+      EVSaveOrUpdEntity(data).then((res) => {
+        if (res.code == 100) {
+          this.$message.success("修改成功");
+        }
+      });
+    },
+    // 选择图片
+    seleteImg(e) {
+      console.log(e);
+      let files = e.target.files[0];
+      this.imgName = files.name;
+    },
+    // 上传图片
+    uploadImg() {
+      let oFile = document.querySelector("#file"); //获取input file节点
+      console.log(oFile.files);
+      if (oFile.files.length == 0) {
+        this.$message.warning("请选择图片！");
+        return;
+      }
+      let data = new FormData();
+      data.append("file", oFile.files[0]);
+      imageUpload(data).then((res) => {
+        console.log(res, "上传图片");
+      });
+      // this.imgName = oFile.files[0].name;
+    },
     // 获取下拉框信息
     getOptions() {
       let data = {};
@@ -94,6 +150,21 @@ export default {
 </script>
 
 <style scoped>
+.inputImg {
+  position: absolute;
+  left: 0;
+  background: #f00;
+  width: 100%;
+  bottom: 0px;
+  opacity: 0;
+  /* visibility: hidden; */
+}
+.head {
+  cursor: pointer;
+}
+.head:active {
+  color: #205cbf;
+}
 .cdright p {
   color: #fff;
   font-size: 18px;
@@ -134,6 +205,8 @@ export default {
   height: 10px;
   transition: all 0.2s linear;
 }
+
+.cdltopitem .inputs,
 .cdltopitem input,
 .cdltopitem p {
   width: 365px;
@@ -145,6 +218,10 @@ export default {
   box-sizing: border-box;
   color: #fff;
   font-size: 18px;
+}
+.cdltopitem .inputs {
+  position: relative;
+  padding: 0;
 }
 .cdltopitem input {
   outline: 0;
@@ -179,5 +256,6 @@ export default {
   border-radius: 20px;
   padding: 0 64px 0 38px;
   box-sizing: border-box;
+  position: relative;
 }
 </style>

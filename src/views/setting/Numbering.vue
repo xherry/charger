@@ -3,74 +3,150 @@
     <p class="ortoptit">Electric Vehicle Charger</p>
     <div>
       <div class="tables flex flex-between">
-        <div style="width: 49.5%">
+        <div style="width: 49.5%" class="tablesLeft">
           <ul class="ultit">
             <li><p>Centre</p></li>
             <li><p>Location (Carpark / Floor|）</p></li>
             <li><p>Charger Tvpe</p></li>
           </ul>
-          <ul class="uldatas w100">
-            <li @click="isShowSlete1 = !isShowSlete1">
-              <p>hung Hom</p>
-              <img
-                class="seleters"
-                :style="{ transform: `rotate(${isShowSlete1 ? '180' : '0'}deg)` }"
-                src="../../assets/index/setting/10.png"
-                alt=""
-              />
-              <div
-                class="sleterMain"
-                :style="{ height: isShowSlete1 ? '200px' : '0px' }"
-              ></div>
-            </li>
-            <li><p>G/F</p></li>
-            <li @click="isShowSlete2 = !isShowSlete2">
-              <p>Polyu AC Medium Charger</p>
-              <img
-                class="seleters"
-                :style="{ transform: `rotate(${isShowSlete2 ? '180' : '0'}deg)` }"
-                src="../../assets/index/setting/10.png"
-                alt=""
-              />
-              <div
-                class="sleterMain"
-                :style="{ height: isShowSlete2 ? '200px' : '0px' }"
-              ></div>
-            </li>
-          </ul>
+          <template v-if="chargerNumberings.length != 0">
+            <ul
+              :class="['uldatas', 'w100', isUpdate1 === index ? 'bshow' : '']"
+              v-for="(item, index) in chargerNumberings"
+              :key="index"
+              @click="(isUpdate1 = index), (isUpdate2 = '')"
+            >
+              <li @click="isShowSlete1 = isShowSlete1 === index ? '' : index">
+                <p>hung Hom</p>
+                <img
+                  class="seleters"
+                  :style="{
+                    transform: `rotate(${isShowSlete1 === index ? '180' : '0'}deg)`,
+                  }"
+                  src="../../assets/index/setting/10.png"
+                  alt=""
+                />
+                <div
+                  class="sleterMain"
+                  :style="{ height: isShowSlete1 === index ? '120px' : '0px' }"
+                >
+                  <div
+                    class="button seleter_item"
+                    v-for="(p, i) in $store.state.centerType"
+                    :key="i + 'ss'"
+                  >
+                    <!-- @click="item.centreId = p.centreId" -->
+                    {{ p.value }}
+                  </div>
+                </div>
+              </li>
+              <li>
+                <p><input type="text" :disabled="isUpdate1 != index" value="G/F" /></p>
+              </li>
+              <li @click="isShowSlete2 = isShowSlete2 === index ? '' : index">
+                <p>Polyu AC Medium Charger</p>
+                <img
+                  class="seleters"
+                  :style="{
+                    transform: `rotate(${isShowSlete2 === index ? '180' : '0'}deg)`,
+                  }"
+                  src="../../assets/index/setting/10.png"
+                  alt=""
+                />
+                <div
+                  class="sleterMain"
+                  :style="{ height: isShowSlete2 === index ? '120px' : '0px' }"
+                ></div>
+              </li>
+            </ul>
+          </template>
+          <template v-else>
+            <ul class="uldatas w100">
+              <li><p>暂无数据！</p></li>
+            </ul>
+          </template>
+          <div class="pagination">
+            <el-pagination
+              @current-change="sizeChange1"
+              background
+              layout=" prev, pager, next, jumper, ->, total, slot"
+              :total="count1"
+              hide-on-single-page
+            >
+            </el-pagination>
+          </div>
         </div>
-        <div style="width: 49.5%">
+        <div style="width: 49.5%" class="tablesLRight">
           <ul class="ultit">
             <li><p>Prefix</p></li>
             <li><p>Number Starting</p></li>
             <li><p>Preview</p></li>
           </ul>
-          <ul class="uldatas w100">
-            <li><p>HH</p></li>
-            <li><p>001</p></li>
-            <li><p>HH-001</p></li>
-          </ul>
+          <template v-if="chargerNumberingList != 0">
+            <ul
+              class="uldatas w100"
+              v-for="(item, index) in chargerNumberingList"
+              :key="index + 'sss'"
+              :class="['uldatas', 'w100', isUpdate2 === index ? 'bshow' : '']"
+              @click="(isUpdate2 = index), (isUpdate1 = '')"
+            >
+              <li>
+                <p><input :disabled="isUpdate2 != index" type="text" value="HH" /></p>
+              </li>
+              <li>
+                <p><input :disabled="isUpdate2 != index" type="text" value="001" /></p>
+              </li>
+              <li>
+                <p><input :disabled="isUpdate2 != index" type="text" value="HH-001" /></p>
+              </li>
+            </ul>
+          </template>
+          <template v-else>
+            <ul class="uldatas w100">
+              <li><p>暂无数据！</p></li>
+            </ul>
+          </template>
+          <div class="pagination">
+            <el-pagination
+              @current-change="sizeChange2"
+              background
+              layout=" prev, pager, next, jumper, ->, total, slot"
+              :total="count2"
+              hide-on-single-page
+            >
+            </el-pagination>
+          </div>
         </div>
       </div>
     </div>
     <div class="flex flex-Updown mt30">
-      <div class="button operation">Update</div>
-      <div class="button operation">Cancel</div>
+      <div class="button operation" @click="updateNumber">Update</div>
+      <div class="button operation" @click="cancelUpdate">Cancel</div>
     </div>
   </div>
 </template>
 
 <script>
-import { ECNFindAll, CNFindAll } from "../../common/api";
+import {
+  ECNFindAll,
+  CNFindAll,
+  CNSaveOrUpdEntity, //分页查询所有充电器编号
+  ECNSaveOrUpdEntity, //电动车充电器编号
+} from "../../common/api";
 export default {
   name: "Numbering",
   data() {
     return {
-      isShowSlete1: false,
-      isShowSlete2: false,
-      page: 1,
-      count: 0,
-      chargerNumberingList: [],
+      isShowSlete1: "",
+      isShowSlete2: "",
+      isUpdate2: "",
+      isUpdate1: "",
+      page1: 1,
+      count1: 0,
+      page2: 1,
+      count2: 0,
+      chargerNumberings: [], //查询所有充电器编号
+      chargerNumberingList: [], //电动车充电器编号
     };
   },
   created() {},
@@ -79,31 +155,103 @@ export default {
     this.getCNList();
   },
   methods: {
+    // 修改
+    updateNumber() {
+      if (this.isUpdate2 === "" && this.isUpdate1 === "") {
+        this.$message.warning("请选择修改项");
+        return;
+      }
+      this.$msgbox({
+        title: "提示",
+        message: "确认修改权限？",
+        showCancelButton: true,
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        beforeClose: (action, instance, done) => {
+          if (action.confirm) {
+            instance.confirmButtonLoading = true;
+            instance.confirmButtonText = "执行中...";
+            if (this.isUpdate1 != "") {
+              let value = this.chargerNumberings[this.isUpdate1];
+              let data = {
+                userId: localStorage.getItem("userId"),
+                chargerNumberingId: value.id,
+                centreId: value.centreId,
+                location: value.location,
+                chargerType: value.chargerType,
+              };
+              CNSaveOrUpdEntity(data).then((res) => {
+                console.log(res);
+                if (res.code == 100) {
+                  done();
+                  instance.confirmButtonLoading = false;
+                  this.isUpdate1 = "";
+                  this.isUpdate2 = "";
+                  this.getCNList();
+                }
+              });
+            }
+            if (this.isUpdate2 != "") {
+              let value = this.chargerNumberingList[this.isUpdate2];
+              let data = {
+                userId: localStorage.getItem("userId"),
+                evChargerNumberingId: value.id,
+                preflx: value.preflx,
+                numberStarting: value.numberStarting,
+                preview: value.preview,
+              };
+              ECNSaveOrUpdEntity(data).then((res) => {
+                console.log(res);
+                if (res.code == 100) {
+                  done();
+                  instance.confirmButtonLoading = false;
+                  this.isUpdate1 = "";
+                  this.isUpdate2 = "";
+                  this.getCNFList();
+                }
+              });
+            }
+          }
+        },
+      });
+    },
+    // 取消修改
+    cancelUpdate() {},
+    sizeChange1(value) {
+      this.page1 = value;
+      this.getCNList();
+    },
+    sizeChange2(value) {
+      this.page2 = value;
+      this.getCNFList();
+    },
+    // 查询所有充电器编号
     getCNList() {
       let data = {
         userId: localStorage.getItem("userId"),
-        page: this.page,
-        limit: 10,
+        page: this.page1,
+        limit: 9,
       };
       CNFindAll(data).then((res) => {
         console.log("查询所有充电器编号", res);
         if (res.code == 100) {
-          this.chargerNumberingList = res.extend.chargerNumberingList;
-          this.count = res.extend.count;
+          this.chargerNumberings = res.extend.chargerNumberingList;
+          this.count1 = res.extend.count;
         }
       });
     },
+    // 电动车充电器编号
     getCNFList() {
       let data = {
         userId: localStorage.getItem("userId"),
-        page: this.page,
-        limit: 10,
+        page: this.page2,
+        limit: 9,
       };
       ECNFindAll(data).then((res) => {
         console.log("电动车充电器编号", res);
         if (res.code == 100) {
-          this.chargerNumberingList = res.extend.chargerNumberingList;
-          this.count = res.extend.count;
+          this.chargerNumberingList = res.extend.evChargerNumberingList;
+          this.count2 = res.extend.count;
         }
       });
     },
@@ -112,6 +260,14 @@ export default {
 </script>
 
 <style scoped>
+.tablesLeft,
+.tablesLRight {
+  position: relative;
+}
+.pagination {
+  right: -20px;
+  bottom: -15px;
+}
 .tables {
   border: 0px;
   border-radius: 0px;

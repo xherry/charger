@@ -109,6 +109,7 @@
           background
           layout=" prev, pager, next, jumper, ->, total, slot"
           :total="count"
+          hide-on-single-page
         >
         </el-pagination>
       </div>
@@ -145,8 +146,8 @@ export default {
   },
   filters: {},
   methods: {
-    sizeChange() {
-      this.page + 1;
+    sizeChange(value) {
+      this.page = value;
       this.getUserList();
     },
     // 修改用户

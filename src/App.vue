@@ -129,7 +129,7 @@ ul li {
   outline: 0;
   text-align: center;
   border: 0;
-  color: #fff;
+  color: #63d1ff;
 }
 ul {
   height: 57px;
@@ -163,8 +163,8 @@ ul > li {
   margin-top: 25px;
   /*  padding: 0 49px 0 29px; */
   box-sizing: border-box;
-  overflow-x: hidden;
-  overflow-y: auto;
+  /* overflow-x: hidden;
+  overflow-y: auto; */
 }
 .seleters {
   width: 18px;
@@ -272,11 +272,15 @@ li .imgSelete{
   text-align: right;
   padding-right: 35px;
   box-sizing: border-box;
+  z-index: 33;
 }
 .el-pagination__jump,.el-pagination__total{
   color: #fff !important;
 }
 .el-pagination.is-background .el-pager li:not(.disabled).active{
   background: #143c7c !important;
+}
+.bshow {
+  box-shadow: inset  0 0 10px 0 #ffffff;
 }
 </style>

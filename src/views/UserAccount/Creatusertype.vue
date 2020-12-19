@@ -169,6 +169,7 @@
             background
             layout=" prev, pager, next, jumper, ->, total, slot"
             :total="count"
+            hide-on-single-page
           >
           </el-pagination>
         </div>
@@ -203,8 +204,8 @@ export default {
   },
   methods: {
     // 页码切换
-    sizeChange() {
-      this.page += 1;
+    sizeChange(value) {
+      this.page = value;
       this.getRoleList();
     },
     // 取消修改
@@ -298,9 +299,6 @@ export default {
 </script>
 
 <style scoped>
-.bshow {
-  box-shadow: 0 0 10px 0 #ffffff;
-}
 .overRights {
   height: 792px;
 }
