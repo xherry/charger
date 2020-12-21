@@ -7,3 +7,4 @@ import { Pagination } from 'element-ui';
 Vue.use(Pagination);
 Vue.prototype.$message = Message;
 Vue.prototype.$msgbox = MessageBox;
+Vue.prototype.$confirm = MessageBox.confirm;

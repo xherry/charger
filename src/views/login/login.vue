@@ -127,7 +127,7 @@ export default {
           if (res.extend.roleKey.smsPasscode == 0) {
             this.iscode = true;
           } else {
-            this.$router.push("index");
+            this.$router.replace("index");
           }
         }
       });
@@ -140,7 +140,7 @@ export default {
       }
       loginTwo({ ...this.userInfo, phoneCode: this.phoneCode }).then((res) => {
         console.log(res);
-        this.$router.push("index");
+        this.$router.replace("index");
         localStorage.setItem("loginType", "0");
       });
     },

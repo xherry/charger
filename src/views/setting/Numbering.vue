@@ -17,7 +17,7 @@
               @click="(isUpdate1 = index), (isUpdate2 = '')"
             >
               <li @click="isShowSlete1 = isShowSlete1 === index ? '' : index">
-                <p>hung Hom</p>
+                <p v-if="item.centreId != null">{{ item.centreId | ctype }}</p>
                 <img
                   class="seleters"
                   :style="{
@@ -34,17 +34,24 @@
                     class="button seleter_item"
                     v-for="(p, i) in $store.state.centerType"
                     :key="i + 'ss'"
+                    @click="item.centreId = p.centreId"
                   >
-                    <!-- @click="item.centreId = p.centreId" -->
                     {{ p.value }}
                   </div>
                 </div>
               </li>
               <li>
-                <p><input type="text" :disabled="isUpdate1 != index" value="G/F" /></p>
+                <p>
+                  <input
+                    type="text"
+                    :disabled="isUpdate1 != index"
+                    v-model="item.location"
+                    v-if="item.location != null"
+                  />
+                </p>
               </li>
               <li @click="isShowSlete2 = isShowSlete2 === index ? '' : index">
-                <p>Polyu AC Medium Charger</p>
+                <p v-if="item.chargerType != null">{{ item.chargerType }}</p>
                 <img
                   class="seleters"
                   :style="{
@@ -72,6 +79,7 @@
               layout=" prev, pager, next, jumper, ->, total, slot"
               :total="count1"
               hide-on-single-page
+              :page-size='9'
             >
             </el-pagination>
           </div>
@@ -91,13 +99,31 @@
               @click="(isUpdate2 = index), (isUpdate1 = '')"
             >
               <li>
-                <p><input :disabled="isUpdate2 != index" type="text" value="HH" /></p>
+                <p>
+                  <input
+                    :disabled="isUpdate2 != index"
+                    type="text"
+                    v-model="item.preflx"
+                  />
+                </p>
               </li>
               <li>
-                <p><input :disabled="isUpdate2 != index" type="text" value="001" /></p>
+                <p>
+                  <input
+                    :disabled="isUpdate2 != index"
+                    type="text"
+                    v-model="item.numberStarting"
+                  />
+                </p>
               </li>
               <li>
-                <p><input :disabled="isUpdate2 != index" type="text" value="HH-001" /></p>
+                <p>
+                  <input
+                    :disabled="isUpdate2 != index"
+                    type="text"
+                    v-model="item.preview"
+                  />
+                </p>
               </li>
             </ul>
           </template>
@@ -113,6 +139,7 @@
               layout=" prev, pager, next, jumper, ->, total, slot"
               :total="count2"
               hide-on-single-page
+              :page-size='9'
             >
             </el-pagination>
           </div>
@@ -157,21 +184,23 @@ export default {
   methods: {
     // 修改
     updateNumber() {
+      let _this = this;
       if (this.isUpdate2 === "" && this.isUpdate1 === "") {
         this.$message.warning("请选择修改项");
         return;
       }
       this.$msgbox({
         title: "提示",
-        message: "确认修改权限？",
+        message: "确认修改？",
         showCancelButton: true,
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         beforeClose: (action, instance, done) => {
-          if (action.confirm) {
+          if (action === "confirm") {
             instance.confirmButtonLoading = true;
             instance.confirmButtonText = "执行中...";
-            if (this.isUpdate1 != "") {
+            console.log(this.isUpdate1,this.isUpdate2)
+            if (this.isUpdate1 !== "") {
               let value = this.chargerNumberings[this.isUpdate1];
               let data = {
                 userId: localStorage.getItem("userId"),
@@ -182,17 +211,20 @@ export default {
               };
               CNSaveOrUpdEntity(data).then((res) => {
                 console.log(res);
+                instance.confirmButtonLoading = false;
+                done();
                 if (res.code == 100) {
-                  done();
-                  instance.confirmButtonLoading = false;
+                  this.$message.success("修改成功");
                   this.isUpdate1 = "";
                   this.isUpdate2 = "";
                   this.getCNList();
                 }
               });
             }
-            if (this.isUpdate2 != "") {
+            if (this.isUpdate2 !== "") {
+              console.log(this.chargerNumberingList)
               let value = this.chargerNumberingList[this.isUpdate2];
+              console.log(value)
               let data = {
                 userId: localStorage.getItem("userId"),
                 evChargerNumberingId: value.id,
@@ -202,15 +234,22 @@ export default {
               };
               ECNSaveOrUpdEntity(data).then((res) => {
                 console.log(res);
+                instance.confirmButtonLoading = false;
+                done();
                 if (res.code == 100) {
-                  done();
-                  instance.confirmButtonLoading = false;
+                  this.$message.success("修改成功");
                   this.isUpdate1 = "";
                   this.isUpdate2 = "";
                   this.getCNFList();
                 }
-              });
+              }).catch(()=>{
+                instance.confirmButtonLoading = false;
+                done();
+              })
             }
+          } else {
+            instance.confirmButtonLoading = false;
+            done();
           }
         },
       });

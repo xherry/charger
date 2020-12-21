@@ -24,13 +24,13 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   width: 100%;
-  height: 1080px;
+  height: 100%;
   color: #ffffff;
 }
 .bgs {
   background: url("./assets/index/bg01.png") no-repeat;
   background-size: 100% 100%;
-  border-top: 0.5px solid transparent;
+  /* border-top: 0.5px solid transparent; */
 }
 .topBg {
   width: 100%;
@@ -247,7 +247,7 @@ input::-webkit-input-placeholder {
   width: 100%;
   height: 50px;
   line-height: 50px;
-  font-size: 16px;
+  font-size: 14px;
   border-bottom: 1px solid #ffffff80;
   border-radius: 0px !important;
   cursor: pointer;

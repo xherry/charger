@@ -110,6 +110,7 @@
           layout=" prev, pager, next, jumper, ->, total, slot"
           :total="count"
           hide-on-single-page
+          :page-size="9"
         >
         </el-pagination>
       </div>
@@ -168,15 +169,23 @@ export default {
     // 删除用户
     deleUser() {
       if (!this.uid) return this.$message.warning("请选择用户");
-      delEntity({
-        userIds: localStorage.getItem("userId"),
-        userId: this.uid,
-      }).then((res) => {
-        console.log("删除用户", res);
-        if (res.code == 100) {
-          this.getUserList();
-          this.$message.success("删除成功");
-        }
+      this.$confirm("确定删除此用户？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        delEntity({
+          userIds: localStorage.getItem("userId"),
+          userId: this.uid,
+        }).then((res) => {
+          console.log("删除用户", res);
+          if (res.code == 100) {
+            this.getUserList();
+            this.$message.success("删除成功");
+          }
+        }).catch(()=>{
+           this.$message.warning("已取消");
+        })
       });
     },
     //

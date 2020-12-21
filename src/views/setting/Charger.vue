@@ -20,31 +20,67 @@
             @click="isUpdate = index"
           >
             <li>
-              <p><input type="text" disabled value="1" /></p>
+              <p><input type="text" disabled :value="item.id" /></p>
             </li>
             <li>
               <p>
                 <input
                   type="text"
                   :disabled="isUpdate != index"
-                  value="Polyu AC Medium Charger"
+                  v-model="item.chargerType"
+                  v-if="item.chargerType != null"
                 />
               </p>
             </li>
             <li>
-              <p><input type="text" :disabled="isUpdate != index" value="AC" /></p>
+              <p>
+                <input
+                  type="text"
+                  :disabled="isUpdate != index"
+                  v-model="item.outputVoltage"
+                  v-if="item.outputVoltage != null"
+                />
+              </p>
             </li>
             <li>
-              <p><input type="text" :disabled="isUpdate != index" value="3" /></p>
+              <p>
+                <input
+                  type="text"
+                  :disabled="isUpdate != index"
+                  v-model="item.noPhase"
+                  v-if="item.noPhase != null"
+                />
+              </p>
             </li>
             <li>
-              <p><input type="text" :disabled="isUpdate != index" value="21" /></p>
+              <p>
+                <input
+                  type="text"
+                  :disabled="isUpdate != index"
+                  v-model="item.outputPower"
+                  v-if="item.outputPower != null"
+                />
+              </p>
             </li>
             <li>
-              <p><input type="text" :disabled="isUpdate != index" value="Yes" /></p>
+              <p>
+                <input
+                  type="text"
+                  :disabled="isUpdate != index"
+                  v-model="item.lmsSupported"
+                  v-if="item.lmsSupported != null"
+                />
+              </p>
             </li>
             <li>
-              <p><input type="text" value="polyu" /></p>
+              <p>
+                <input
+                  type="text"
+                  :disabled="isUpdate != index"
+                  v-model="item.manufacturer"
+                  v-if="item.manufacturer != null"
+                />
+              </p>
             </li>
           </ul>
         </template>
@@ -62,6 +98,7 @@
         layout=" prev, pager, next, jumper, ->, total, slot"
         :total="count"
         hide-on-single-page
+        :page-size='10'
       >
       </el-pagination>
     </div>
@@ -102,7 +139,7 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         beforeClose: (action, instance, done) => {
-          if (action.confirm) {
+          if (action === "confirm") {
             instance.confirmButtonLoading = true;
             instance.confirmButtonText = "执行中...";
             let value = this.chargerList[this.isUpdate];
@@ -126,6 +163,9 @@ export default {
                 this.$message.success("修改成功");
               }
             });
+          } else {
+            instance.confirmButtonLoading = false;
+            done();
           }
         },
       });

@@ -8,7 +8,7 @@
           <li><p>Vehicle Identification No</p></li>
           <li><p>EV Model</p></li>
           <li><p>Vehicle No</p></li>
-          <li><p>Number Starting</p></li>
+          <!-- <li><p>Number Starting</p></li> -->
           <li><p>Department</p></li>
         </ul>
         <!-- v-if="vehicleNumberList.length != 0" -->
@@ -19,11 +19,11 @@
             :key="index"
             @click="isUpdate = index"
           >
-            <li><p>001</p></li>
-            <li><p>ADCBG13654</p></li>
-            <li><p>LEAF</p></li>
-            <li><p>XY123</p></li>
-            <li @click="isShowSlete1 = isShowSlete1 === index ? '' : index">
+            <li><p><input type="text" disabled v-model="item.id" v-if="item.vehicleNo!==null"></p></li>
+            <li><p><input type="text" :disabled='isUpdate !== index' v-model="item.vehicleIdentificationNo" v-if="item.vehicleIdentificationNo!==null"></p></li>
+            <li><p><input type="text" :disabled='isUpdate !== index' v-model="item.evModel" v-if="item.evModel!==null"></p></li>
+            <li><p><input type="text" :disabled='isUpdate !== index' v-model="item.vehicleNo" v-if="item.vehicleNo!==null"></p></li>
+            <!-- <li @click="isShowSlete1 = isShowSlete1 === index ? '' : index">
               <p>001</p>
               <img
                 class="seleters"
@@ -42,13 +42,13 @@
                   v-for="(p, i) in $store.state.centerType"
                   :key="i + 'ss'"
                 >
-                  <!-- @click="item.centreId = p.centreId" -->
+
                   {{ p.value }}
                 </div>
               </div>
-            </li>
+            </li> -->
             <li @click="isShowSlete2 = isShowSlete2 === index ? '' : index">
-              <p>Polyu AC Medium Charger</p>
+              <p>{{item.department}}</p>
               <img
                 class="seleters"
                 :style="{
@@ -77,8 +77,9 @@
         background
         layout=" prev, pager, next, jumper, ->, total, slot"
         :total="count"
+        hide-on-single-page
+        :page-size='10'
       >
-        <!-- hide-on-single-page -->
       </el-pagination>
     </div>
     <div class="flex flex-Updown mt30">
@@ -115,7 +116,7 @@ export default {
       let value = this.vehicleNumberList[this.isUpdate];
       let data = {
         userId: localStorage.getItem("userId"),
-        vehicleNumberId: value.vehicleNumberId,
+        vehicleNumberId: value.id,
         vehicleIdentificationNo: value.vehicleIdentificationNo,
         evModel: value.evModel,
         vehicleNo: value.vehicleNo,
@@ -128,20 +129,25 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         beforeClose: (action, instance, done) => {
-          instance.confirmButtonLoading = true;
-          instance.confirmButtonText = "执行中...";
-          VNSaveOrUpdEntity(data).then((res) => {
-            console.log(res);
-            if (res.code == 100) {
-              done();
-              instance.confirmButtonLoading = false;
-              this.$$message.success("修改成功");
-              this.isShowSlete1 = "";
-              this.isShowSlete2 = "";
-              this.isUpdate = "";
-              this.getVNFList();
-            }
-          });
+          if(action === "confirm"){
+            instance.confirmButtonLoading = true;
+            instance.confirmButtonText = "执行中...";
+            VNSaveOrUpdEntity(data).then((res) => {
+              console.log(res);
+              if (res.code == 100) {
+                instance.confirmButtonLoading = false;
+                done();
+                this.$message.success("修改成功");
+                this.isShowSlete1 = "";
+                this.isShowSlete2 = "";
+                this.isUpdate = "";
+                this.getVNFList();
+              }
+            });
+          } else {
+            instance.confirmButtonLoading = false;
+            done();
+          }
         },
       });
     },

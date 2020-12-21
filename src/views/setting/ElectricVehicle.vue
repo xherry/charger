@@ -41,6 +41,7 @@
           layout=" prev, pager, next, jumper, ->, total, slot"
           :total="count"
           hide-on-single-page
+          :page-size='5'
         >
         </el-pagination>
       </div>
@@ -64,7 +65,7 @@ export default {
     };
   },
   created() {
-    // this.getCarAll();
+    this.getCarAll();
   },
   methods: {
     // 

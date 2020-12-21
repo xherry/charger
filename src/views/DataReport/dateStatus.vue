@@ -8,13 +8,17 @@
             v-for="(item, index) in searchs"
             :key="index"
             class="dsmleftitem cdltopitem flex flex-Updown-between"
-            @click="optionsId = item.id == 1 ? (optionsId == 1 ? '' : 1) : ''"
+            @click="
+              optionsId = item.id == 1 ? (optionsId === item.id ? '' : item.id) : ''
+            "
           >
             <span>{{ item.name }}</span>
             <p class="flex flex-Updown-between" v-if="item.children != 0">
               <span>{{ item.value }}</span>
               <img
-                :style="{ transform: `rotate(${optionsId == 1 ? '180' : '0'}deg)` }"
+                :style="{
+                  transform: `rotate(${optionsId === item.id ? '180' : '0'}deg)`,
+                }"
                 src="../../assets/index/setting/10.png"
                 alt=""
               />
@@ -22,7 +26,7 @@
             <input type="text" v-model="item.value" v-else />
             <div
               class="seleterBody"
-              :style="{ height: optionsId == item.id ? '200px' : '0px' }"
+              :style="{ height: optionsId === item.id ? '200px' : '0px' }"
             >
               <div
                 class="button seleter_item"
@@ -56,8 +60,9 @@
               <li><p>SOC[%]</p></li>
               <li><p>Mileage Travelled[km]</p></li>
             </ul>
-            <template v-if="tableDatas.length != 0">
-              <ul class="uldatas w100" v-for="item in tableDatas" :key="item + 's'">
+            <!-- v-if="tableDatas.length != 0" -->
+            <template>
+              <ul class="uldatas w100" v-for="item in 8" :key="item + 's'">
                 <li><p></p></li>
                 <li><p></p></li>
                 <li><p></p></li>
@@ -66,11 +71,22 @@
                 <li><p></p></li>
               </ul>
             </template>
-            <template v-else>
+            <!-- <template v-else>
               <ul class="uldatas w100">
                 <li><p>暂无数据！</p></li>
               </ul>
-            </template>
+            </template> -->
+          </div>
+          <div class="pagination">
+            <el-pagination
+              @current-change="sizeChange"
+              background
+              layout=" prev, pager, next, jumper, ->, total, slot"
+              :total="count"
+              :page-size="8"
+              hide-on-single-page
+            >
+            </el-pagination>
           </div>
         </div>
         <p class="Update">
@@ -90,6 +106,7 @@ export default {
       tableDatas: [],
       isShowSlete: false,
       optionsId: "",
+      count:0,
       searchs: [
         {
           name: "Centre",
@@ -105,14 +122,14 @@ export default {
           ],
           id: 1,
         },
-        { name: "Location", value: "", children: [], id: 2 },
-        { name: "Charger Type", value: "", children: [], id: 3 },
-        { name: "Charger No.", value: "", children: [], id: 4 },
-        { name: "Manufacturer", value: "", children: [], id: 5 },
-        { name: "Vehicle", value: "", children: [], id: 6 },
-        { name: "Vehicle No.", value: "", children: [], id: 7 },
-        { name: "Start From", value: "", children: [], id: 8 },
-        { name: "End To", value: "", children: [], id: 9 },
+        { name: "Location", value: "aaa", children: [], id: 2 },
+        { name: "Charger Type", value: "aa", children: [], id: 3 },
+        { name: "Charger No.", value: "aa", children: [], id: 4 },
+        { name: "Manufacturer", value: "aa", children: [], id: 5 },
+        { name: "Vehicle", value: "aa", children: [], id: 6 },
+        { name: "Vehicle No.", value: "aa", children: [], id: 7 },
+        { name: "Start From", value: "aa", children: [], id: 8 },
+        { name: "End To", value: "aa", children: [], id: 9 },
       ],
       DataTypes: [
         { name: "Charging Voltage【v】", choose: false, id: "1" },
@@ -130,17 +147,23 @@ export default {
     this.getParams();
   },
   methods: {
+    // 
+    sizeChange(value){
+      this.page = value;
+      this.getParams();
+    },
+    // 
     seleteCenter(value) {
       this.searchs[0].value = value.name;
       this.searchs[0].cid = value.centreId;
-      this.optionsId = "";
+      this.optionsId = ""; 
     },
     //条件筛选查询
     getParams() {
       let data = {
         userIds: localStorage.getItem("userId"),
         page: this.page,
-        limit: 10,
+        limit: 8,
         centre: this.searchs[0].cid,
         location: this.searchs[1].value,
         chargerType: this.searchs[2].value,
@@ -153,6 +176,10 @@ export default {
       };
       findByParamsAll(data).then((res) => {
         console.log(res);
+        if(res.code==100){
+          this.chargerInfoList = res.extend.chargerInfoList;
+          this.count = res.extend.count;
+        }
       });
     },
   },
@@ -206,11 +233,14 @@ export default {
 .dsmain-right {
   width: 1503px;
   margin-left: 31px;
-  max-height: 572px;
+  max-height: 590px;
   overflow-x: hidden;
   overflow-y: auto;
   margin-top: 28px;
   position: relative;
+}
+.drtable{
+  height: 562px;
 }
 .dtatas > img {
   width: 12px;
@@ -227,24 +257,27 @@ export default {
   margin-top: 20px;
 }
 .seleterBody {
-  width: 160px;
+  width: 180px;
 }
 .dsmleftitem {
-  width: 280px;
+  width: 300px;
 }
 .cdltopitem img {
   width: 14px;
   height: 8px;
   transition: all 0.2s linear;
 }
+.cdltopitem p {
+  cursor: pointer;
+}
 .cdltopitem input,
 .cdltopitem p {
-  width: 160px;
+  width: 180px;
   height: 31px;
   border: 1px solid #63d1ff;
   border-radius: 4px;
   background: transparent;
-  padding: 0 17px 0 23px;
+  padding: 0 15px;
   box-sizing: border-box;
   color: #63d1ff;
   font-size: 14px;

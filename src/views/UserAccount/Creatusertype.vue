@@ -31,7 +31,7 @@
         <div v-for="(item, index) in roleKeyList" :key="'r' + index">
           <div
             :class="['flex', 'userTable', 'bp', roleKeyIndex === index ? 'bshow' : '']"
-            v-if="item.userType"
+            v-if="item.userType != null"
             @click="seleteUl(index, item.id)"
           >
             <ul class="userTable-left bp">
@@ -170,6 +170,7 @@
             layout=" prev, pager, next, jumper, ->, total, slot"
             :total="count"
             hide-on-single-page
+            :page-size='7'
           >
           </el-pagination>
         </div>
@@ -241,6 +242,8 @@ export default {
         userIdPassword,
         smsPasscode,
       };
+      let roleKey = JSON.parse(localStorage.getItem("roleKey"));
+      console.log(roleKey);
       this.$msgbox({
         title: "提示",
         message: "确认修改权限？",
@@ -255,11 +258,28 @@ export default {
               console.log(res, "修改权限");
               if (res.code == 100) {
                 instance.confirmButtonLoading = false;
-                this.roleKeyId = "";
-                this.roleKeyIndex = "";
-                this.getRoleList();
                 done();
                 this.$message.success("修改成功");
+                if (roleKey.userType === this.roleKeyList[this.roleKeyIndex].userType) {
+                  setTimeout(() => {
+                    this.$confirm("当前账号权限已修改，是否重新登陆？", "提示", {
+                      confirmButtonText: "确定",
+                      cancelButtonText: "取消",
+                      type: "warning",
+                    })
+                      .then(() => {
+                        this.$router.replace("/login");
+                      })
+                      .catch(() => {
+                        this.roleKeyId = "";
+                        this.roleKeyIndex = "";
+                      });
+                  }, 800);
+                } else {
+                  this.roleKeyId = "";
+                  this.roleKeyIndex = "";
+                }
+                this.getRoleList();
               }
             });
           } else {

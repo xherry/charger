@@ -1,6 +1,8 @@
 <template>
   <div class="UptodateStatus">
-    <button v-if="isToDetail" class="button goback" @click="isToDetail = false">返回</button>
+    <button v-if="isToDetail" class="button goback" @click="isToDetail = false">
+      返回
+    </button>
     <div class="overRights">
       <p class="ortoptit">Summary of All Centre Charging Information</p>
       <!-- 数据 -->
@@ -44,7 +46,7 @@
       </template>
       <!-- 详情 -->
       <template v-else>
-        <div class="ustable ">
+        <div class="ustable">
           <ul class="ustabletit">
             <li>
               <p>Charger No.</p>
@@ -59,24 +61,48 @@
               <p>Total Charging Energy(kW/h)</p>
             </li>
           </ul>
-          <div class="udetails">
-            <ul class="ustablemain" v-for="(item, index) in cdetails" :key="index + 'k'">
+          <template v-if="cdetails.length != 0">
+            <div class="udetails">
+              <ul
+                class="ustablemain"
+                v-for="(item, index) in cdetails"
+                :key="index + 'k'"
+              >
+                <li>
+                  <p>{{ item.cno }}</p>
+                </li>
+                <li>
+                  <p>{{ item.h }}</p>
+                </li>
+                <li>
+                  <p>{{ item.ts }}</p>
+                </li>
+                <li>
+                  <p>{{ item.kwh }}</p>
+                </li>
+              </ul>
+            </div>
+          </template>
+          <template v-else>
+            <ul class="ustablemain">
               <li>
-                <p>{{ item.cno }}</p>
-              </li>
-              <li>
-                <p>{{ item.h }}</p>
-              </li>
-              <li>
-                <p>{{ item.ts }}</p>
-              </li>
-              <li>
-                <p>{{ item.kwh }}</p>
+                <p>暂无数据！</p>
               </li>
             </ul>
-          </div>
+          </template>
         </div>
       </template>
+    </div>
+    <div class="pagination">
+      <el-pagination
+        @current-change="sizeChange"
+        background
+        layout=" prev, pager, next, jumper, ->, total, slot"
+        :total="count"
+        :page-size="10"
+        hide-on-single-page
+      >
+      </el-pagination>
     </div>
   </div>
 </template>
@@ -87,30 +113,23 @@ export default {
   data() {
     return {
       isToDetail: false,
+      count: 0,
+      page: 1,
       centerType: [
         { centreId: 0, value: "Hung Hom" },
         { centreId: 1, value: "Satin" },
         { centreId: 2, value: "Sham Shui Po" },
-        { centreId: 3, value: "Tsing Yi" },
-        { centreId: 4, value: "Yuen Long" },
+        { centreId: 3, value: "Shek Wu Hui" },
+        { centreId: 4, value: "Tsing Yi" },
+        { centreId: 5, value: "Yuen Long" },
       ],
-      cdetails: [
-        { h: "", ts: "", kwh: "", cno: "SSP001" },
-        { h: "", ts: "", kwh: "", cno: "SSP002" },
-        { h: "", ts: "", kwh: "", cno: "SSP003" },
-        { h: "", ts: "", kwh: "", cno: "SSP004" },
-        { h: "", ts: "", kwh: "", cno: "SSP005" },
-        { h: "", ts: "", kwh: "", cno: "SSP006" },
-        { h: "", ts: "", kwh: "", cno: "SSP007" },
-        { h: "", ts: "", kwh: "", cno: "SSP008" },
-        { h: "", ts: "", kwh: "", cno: "SSP009" },
-        { h: "", ts: "", kwh: "", cno: "SSP010" },
-        { h: "", ts: "", kwh: "", cno: "SSP011" },
-        { h: "", ts: "", kwh: "", cno: "SSP012" },
-      ],
+      cdetails: [{ h: "", ts: "", kwh: "", cno: "SSP001" }],
     };
   },
   methods: {
+    sizeChange(value) {
+      this.page = value;
+    },
     seeDetails(value) {
       console.log(value);
       this.isToDetail = true;
@@ -120,10 +139,6 @@ export default {
 </script>
 
 <style scoped>
-.udetails{
-  height: 620px;
-  overflow-y: auto;
-}
 .goback {
   width: 80px;
   height: 30px;
@@ -131,11 +146,12 @@ export default {
   font-size: 16px;
   outline: 0;
   border: 0;
-  background:  rgb(32 93 193);
+  background: rgb(32 93 193);
   position: absolute;
   top: 40px;
   left: 55px;
   border-radius: 5px;
+  z-index: 9999;
 }
 .UptodateStatus {
   position: relative;
@@ -185,5 +201,6 @@ export default {
   margin-left: 50%;
   transform: translateX(-50%);
   overflow-x: hidden;
+  position: relative;
 }
 </style>

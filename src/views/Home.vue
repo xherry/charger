@@ -2,7 +2,7 @@
   <div class="parent bgs">
     <header-top></header-top>
     <div class="topBg"></div>
-    <div>
+    <div class="parentBottoms">
       <router-view />
     </div>
      <div v-if="$store.state.IsShowBottom"  @click="$router.push('/index')" class="ol-item2 flex flex-Updown-between ol-bottom">
@@ -25,8 +25,13 @@ export default {
 </script>
 
 <style scoped>
+.parentBottoms{
+  height: 962px;
+  border-top: 0.5px solid transparent;
+}
 .parent{
   position: relative;
+  overflow-y: auto;
 }
 .ol-bottom {
   position: absolute;

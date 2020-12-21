@@ -15,13 +15,6 @@ router.beforeEach((to, from, next) => {
     }
     // 登录获取权限
     if (roleKey) {
-        // if (roleKey.checkStatus == 1) {
-        //     if (to.name === 'overview') {
-        //         Message.warning('暂无权限！')
-        //         store.commit('changeShowBottom', false)
-        //         return
-        //     }
-        // }
         // if (roleKey.configureSystem == 1) {
         //     if (to.path.includes("setting")) {
         //         Message.warning('暂无权限！')
@@ -31,7 +24,7 @@ router.beforeEach((to, from, next) => {
         // }
         // if (roleKey.controlOtherChargers == 1 && roleKey.controlOwnCharger == 1) {
         //     if (to.path.includes("ChargerControl")) {
-        //         Message.warning('暂无权限！')
+        //         Message.warning('暂无权限！')    
         //         store.commit('changeShowBottom', false)
         //         return
         //     }
@@ -43,20 +36,20 @@ router.beforeEach((to, from, next) => {
         //         return
         //     }
         // }
-        if (roleKey.dataReport == 1) {
-            if (to.path.includes("DataReport")) {
-                Message.warning('暂无权限！')
-                store.commit('changeShowBottom', false)
-                return
-            }
-        }
-        if (roleKey.viewGeneralData == 1) {
-            if (to.path.includes("CentreInformation")) {
-                Message.warning('暂无权限！')
-                store.commit('changeShowBottom', false)
-                return
-            }
-        }
+        // if (roleKey.dataReport == 1) {
+        //     if (to.path.includes("DataReport")) {
+        //         Message.warning('暂无权限！')
+        //         store.commit('changeShowBottom', false)
+        //         return
+        //     }
+        // }
+        // if (roleKey.viewGeneralData == 1) {
+        //     if (to.path.includes("CentreInformation")) {
+        //         Message.warning('暂无权限！')
+        //         store.commit('changeShowBottom', false)
+        //         return
+        //     }
+        // }
 
     }
     return next()

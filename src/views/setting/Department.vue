@@ -15,9 +15,17 @@
             :key="'s' + index"
             @click="(isUpdate1 = index), (isUpdate2 = '')"
           >
-            <li @click="isShowSlete = isShowSlete === 's' + index ? '' : 's' + index">
-              <p>Hung Hom</p>
-              <img
+            <!-- @click="isShowSlete = isShowSlete === 's' + index ? '' : 's' + index" -->
+            <li>
+              <p>
+                <input
+                  :disabled="isUpdate1 != index"
+                  type="text"
+                  v-model="item.centre"
+                  v-if="item.centre != null"
+                />
+              </p>
+              <!-- <img
                 class="seleters imgSelete"
                 :style="{
                   transform: `rotate(${isShowSlete === 's' + index ? '180' : '0'}deg)`,
@@ -34,18 +42,29 @@
                   v-for="(item, index) in centerType"
                   :key="index"
                 >
-                  <!-- @click="seleteCenter(item)" -->
                   {{ item.value }}
                 </div>
-              </div>
+              </div> -->
             </li>
             <li>
               <p>
-                <input :disabled="isUpdate1!=index" type="text" value="Laguna Verde" />
+                <input
+                  :disabled="isUpdate1 != index"
+                  type="text"
+                  v-model="item.address"
+                  v-if="item.address != null"
+                />
               </p>
             </li>
             <li>
-              <p><input type="text" :disabled="isUpdate1!=index" value="Laguna verde B2" /></p>
+              <p>
+                <input
+                  type="text"
+                  :disabled="isUpdate1 != index"
+                  v-model="item.location"
+                  v-if="item.location != null"
+                />
+              </p>
             </li>
           </ul>
         </template>
@@ -66,11 +85,11 @@
           <ul
             :class="['uldatas', 'w100', isUpdate2 === index ? 'bshow' : '']"
             v-for="(item, index) in centreDepartmentList"
-            :key="item"
+            :key="item.id"
             @click="(isUpdate2 = index), (isUpdate1 = '')"
           >
             <li @click="isShowSlete = isShowSlete === index ? '' : index">
-              <p>{{ ctypes.value }}</p>
+              <p v-if="item.centreId != null">{{ item.centreId | ctype }}</p>
               <img
                 class="seleters imgSelete"
                 :style="{
@@ -85,16 +104,23 @@
               >
                 <div
                   class="button seleter_item"
-                  v-for="(item, index) in centerType"
-                  :key="index"
-                  @click="seleteCenter(item)"
+                  v-for="(p, i) in centerType"
+                  :key="i + 'p'"
+                  @click="item.centreId = p.centreId"
                 >
-                  {{ item.value }}
+                  {{ p.value }}
                 </div>
               </div>
             </li>
             <li>
-              <p><input type="text" :disabled="isUpdate2!=index" value="Assess Controol" /></p>
+              <p>
+                <input
+                  type="text"
+                  :disabled="isUpdate2 != index"
+                  v-model="item.department"
+                  v-if="item.department != null"
+                />
+              </p>
             </li>
           </ul>
         </template>
@@ -114,6 +140,7 @@
         layout=" prev, pager, next, jumper, ->, total, slot"
         :total="count"
         hide-on-single-page
+        :page-size='10'
       >
       </el-pagination>
     </div>
@@ -154,10 +181,10 @@ export default {
       page: 1,
     };
   },
-  created() {},
-  mounted() {
+  created() {
     this.getList();
   },
+  mounted() {},
   methods: {
     // 修改
     updateCenter() {
@@ -206,6 +233,9 @@ export default {
                     this.$message.success("修改成功");
                   }
                 });
+              } else {
+                instance.confirmButtonLoading = false;
+                done();
               }
             });
           } else {

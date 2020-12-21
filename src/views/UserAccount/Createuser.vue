@@ -136,7 +136,8 @@
             :key="index"
           >
             <span>{{ item.name }}</span>
-            <div class="mr56" @click="item.value = item.value == 0 ? 1 : 0">
+            <!--  @click="item.value = item.value == 0 ? 1 : 0" -->
+            <div class="mr56">
               <img
                 v-if="item.value == 0"
                 src="../../assets/index/useraccount/04.png"
@@ -144,7 +145,8 @@
               />
               <img v-else src="../../assets/index/useraccount/03.png" alt="" />
             </div>
-            <div class="mr86" @click="item.value = item.value == 0 ? 1 : 0">
+            <!-- @click="item.value = item.value == 0 ? 1 : 0" -->
+            <div class="mr86" >
               <img
                 v-if="item.value == 0"
                 src="../../assets/index/useraccount/03.png"
