@@ -6,7 +6,11 @@
         <div class="cdltop">
           <div class="cdltopitem flex flex-Updown-between">
             <span>EV Manufacturer</span>
-            <input type="text" v-model="evManufacturer" placeholder="Nissan" />
+            <input
+              type="text"
+              v-model="electricVehicle.evManufacturer"
+              placeholder="Nissan"
+            />
           </div>
           <div
             class="cdltopitem flex flex-Updown-between"
@@ -14,22 +18,34 @@
           >
             <span>EV Model</span>
             <p class="flex flex-Updown-between">
-              <span>LEAF</span>
+              <span>{{ electricVehicle.evModel }}</span>
               <img
                 :style="{ transform: `rotate(${isShowSlete ? '180' : '0'}deg)` }"
                 src="../../assets/index/setting/10.png"
                 alt=""
               />
             </p>
-            <div
-              class="seleterBody"
-              :style="{ height: isShowSlete ? '200px' : '0px' }"
-            ></div>
+            <div class="seleterBody" :style="{ height: isShowSlete ? '200px' : '0px' }">
+              <div
+                class="button seleter_item"
+                v-for="(p, i) in electricVehicleList"
+                :key="i + 'e'"
+                @click="electricVehicle.evModel = p.evModel"
+              >
+                {{ p.evModel }}
+              </div>
+            </div>
           </div>
           <div class="cdltopitem flex flex-Updown-between">
             <span>Image </span>
             <div class="inputs">
-              <input type="text" v-model="imgName" placeholder="选择图片" />
+              <!-- <input type="text" v-model="imgName" placeholder="选择图片" /> -->
+              <p class="flex flex-Updown-between">
+                <span>{{
+                  electricVehicle.image ? electricVehicle.image : "请选择图片"
+                }}</span>
+                <i v-if="electricVehicle.image" @click="upIcon==='el-icon-close'?electricVehicle.image='':''" :class="!isUpload?upIcon:'el-icon-loading'"></i>
+              </p>
               <input
                 class="inputImg"
                 @change="seleteImg"
@@ -41,16 +57,26 @@
           </div>
           <p class="head" @click="uploadImg" id="uploadImg">Upload image</p>
         </div>
-        <div class="cdlbottom">
-          <ul class="ultit">
+        <!--  -->
+        <div class="cdlbottom" v-infinite-scroll="load" :infinite-scroll-delay="200">
+          <ul class="ultit pk">
             <li><p>Manufacturer</p></li>
             <li><p>Model</p></li>
             <li><p>Image Uploaded</p></li>
           </ul>
-          <ul class="uldatas w100" v-for="(item, index) in 10" :key="index">
-            <li><p>Nissan</p></li>
-            <li><p>LEAF</p></li>
-            <li><p>Yes</p></li>
+          <ul class="uldatas w100" v-for="(item, index) in elist" :key="index">
+            <!-- <li><p>{{index}}</p></li>
+            <li><p>11</p></li>
+            <li><p>11</p></li> -->
+            <li>
+              <p v-if="item.evManufacturer">{{ item.evManufacturer }}</p>
+            </li>
+            <li>
+              <p v-if="item.evModel">{{ item.evModel ? item.evModel : "" }}</p>
+            </li>
+            <li>
+              <p>{{ item.image ? "Yes" : "No" }}</p>
+            </li>
           </ul>
         </div>
       </div>
@@ -62,8 +88,8 @@
       </div>
     </div>
     <div class="flex flex-Updown mt30">
-      <div class="button operation">Update</div>
-      <div class="button operation">Cancel</div>
+      <div class="button operation" @click="updateCars">Update</div>
+      <div class="button operation" @click="cancelUpdate">Cancel</div>
     </div>
   </div>
 </template>
@@ -75,6 +101,7 @@ import {
   EVDelEntity,
   imageUpload,
   EVSaveOrUpdEntity,
+  EVFindAll,
 } from "../../common/api";
 export default {
   name: "chargerDetails",
@@ -83,66 +110,143 @@ export default {
       isShowSlete: false,
       imgName: "",
       id: "",
-      evManufacturer: "",
-      evModel: "",
-      image: "",
+      electricVehicleList: [],
+      electricVehicle: {
+        evManufacturer: "",
+        evModel: "",
+        image: "",
+        id: "",
+      },
+      page: 0,
+      count: 0,
+      elist: [],
+      oldObj: {},
+      isUpload:false,
+      upIcon:'',
     };
   },
   created() {
-    // this.getCarDeatils();
-    // this.getOptions();
+    this.getCarDeatils(this.$route.query.id);
+    this.getOptions();
   },
   methods: {
+    // 取消修改
+    cancelUpdate() {
+      this.electricVehicle = this.oldObj;
+    },
+    // 上滑加载
+    load() {
+      this.page += 1;
+      this.getCarAll();
+    },
+    //查询所有的车辆信息
+    getCarAll() {
+      let data = {
+        userId: localStorage.getItem("userId"),
+        page: this.page,
+        limit: 6,
+      };
+      EVFindAll(data).then((res) => {
+        console.log("查询所有的车辆信息", res);
+        if (res.code == 100) {
+          if (res.extend.count > 6 && Math.ceil(res.extend.count / 6) < this.page) {
+            this.$message.warning("无更多数据！");
+            return;
+          }
+          console.log(Math.ceil(res.extend.count / 6));
+          this.elist = [...this.elist, ...res.extend.electricVehicleList];
+          this.count = res.extend.count;
+        }
+      });
+    },
     // 修改车辆信息
     updateCars() {
       let data = {
         userId: localStorage.getItem("userId"),
-        electricVehicleId: this.id,
-        evManufacturer: this.evManufacturer,
-        evModel: this.evModel,
-        image: this.image,
+        electricVehicleId: this.electricVehicle.id,
+        evManufacturer: this.electricVehicle.evManufacturer,
+        evModel: this.electricVehicle.evModel,
+        image: this.electricVehicle.image,
       };
-      EVSaveOrUpdEntity(data).then((res) => {
-        if (res.code == 100) {
-          this.$message.success("修改成功");
-        }
+      this.$msgbox({
+        title: "提示",
+        message: "确认修改权限？",
+        showCancelButton: true,
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        beforeClose: (action, instance, done) => {
+          if (action === "confirm") {
+            instance.confirmButtonLoading = true;
+            instance.confirmButtonText = "执行中...";
+            EVSaveOrUpdEntity(data).then((res) => {
+              if (res.code == 100) {
+                instance.confirmButtonLoading = false;
+                done();
+                this.$message.success("修改成功");
+                this.getCarDeatils(this.$route.query.id);
+              }
+            });
+          } else {
+            instance.confirmButtonLoading = false;
+            done();
+          }
+        },
       });
     },
     // 选择图片
     seleteImg(e) {
       console.log(e);
       let files = e.target.files[0];
-      this.imgName = files.name;
+      this.electricVehicle.image = files.name;
     },
     // 上传图片
     uploadImg() {
+      this.isUpload = true;
       let oFile = document.querySelector("#file"); //获取input file节点
       console.log(oFile.files);
       if (oFile.files.length == 0) {
         this.$message.warning("请选择图片！");
         return;
       }
+      this.isUpload = true;
       let data = new FormData();
       data.append("file", oFile.files[0]);
-      imageUpload(data).then((res) => {
-        console.log(res, "上传图片");
-      });
+      imageUpload(data)
+        .then((res) => {
+          this.isUpload = false;
+          console.log(res, "上传图片");
+          this.upIcon = "el-icon-check"
+        })
+        .catch(() => {
+          this.upIcon = "el-icon-close";
+          this.isUpload = false;
+          this.$message.warning('上传失败！')
+        });
       // this.imgName = oFile.files[0].name;
     },
     // 获取下拉框信息
     getOptions() {
-      let data = {};
+      let data = {
+        userId: localStorage.getItem("userId"),
+      };
       EVFindBySelect(data).then((res) => {
         console.log("获取下拉框信息", res);
+        if (res.code == 100) {
+          this.electricVehicleList = res.extend.electricVehicleList;
+        }
       });
     },
-    getCarDeatils() {
+    getCarDeatils(id) {
       let data = {
-        userId: 2,
-        electricVehicleId: 1,
+        userId: localStorage.getItem("userId"),
+        electricVehicleId: id,
       };
       EVFindById(data).then((res) => {
         console.log("查询单个车辆信息", res);
+        if (res.code == 100) {
+          this.oldObj = res.extend.electricVehicle;
+          this.electricVehicle = JSON.parse(JSON.stringify(res.extend.electricVehicle));
+        }
       });
     },
   },
@@ -154,7 +258,7 @@ export default {
   position: absolute;
   left: 0;
   background: #f00;
-  width: 100%;
+  width: 85% !important;
   bottom: 0px;
   opacity: 0;
   /* visibility: hidden; */
@@ -190,6 +294,13 @@ export default {
   margin-top: 16px;
   overflow-x: hidden;
   overflow-y: auto;
+  position: relative;
+}
+.pk {
+  position: sticky;
+  top: 0;
+  z-index: 33;
+  background: #083265;
 }
 .cd {
   margin-top: 21px;
@@ -218,6 +329,12 @@ export default {
   box-sizing: border-box;
   color: #fff;
   font-size: 18px;
+}
+
+.cdltopitem .inputs p {
+  width: 100%;
+  height: 100%;
+  line-height: 46px;
 }
 .cdltopitem .inputs {
   position: relative;

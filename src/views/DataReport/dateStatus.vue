@@ -41,9 +41,9 @@
           <p class="dttit">Data Type：</p>
           <div
             class="dtatas flex flex-Updown"
-            v-for="item in DataTypes"
+            v-for="(item, index) in DataTypes"
             :key="'d' + item.id"
-            @click="item.choose = !item.choose"
+            @click="showTable(index)"
           >
             <img v-if="item.choose" src="../../assets/index/useraccount/04.png" alt="" />
             <img v-else src="../../assets/index/useraccount/03.png" alt="" />
@@ -55,20 +55,51 @@
             <ul class="ultit">
               <li><p>From</p></li>
               <li><p>To</p></li>
-              <li><p>Charging Energy[kwh}</p></li>
-              <li><p>Charging Time[Hour]</p></li>
-              <li><p>SOC[%]</p></li>
-              <li><p>Mileage Travelled[km]</p></li>
+              <li v-if="DataTypes[0].choose"><p>Charging Voltage【v】</p></li>
+              <li v-if="DataTypes[1].choose"><p>Average Charging Current【A】</p></li>
+              <li v-if="DataTypes[2].choose"><p>Average Charging Power【kw】</p></li>
+              <li v-if="DataTypes[3].choose"><p>Total Charging Energy【kwh】</p></li>
+              <li v-if="DataTypes[4].choose"><p>Charging Time【Hour】</p></li>
+              <li v-if="DataTypes[5].choose"><p>SoC Before Charging【%】</p></li>
+              <li v-if="DataTypes[6].choose">
+                <p>Mileage Travelled Before Charging【km】</p>
+              </li>
             </ul>
             <!-- v-if="tableDatas.length != 0" -->
             <template>
-              <ul class="uldatas w100" v-for="item in 8" :key="item + 's'">
-                <li><p></p></li>
-                <li><p></p></li>
-                <li><p></p></li>
-                <li><p></p></li>
-                <li><p></p></li>
-                <li><p></p></li>
+              <ul
+                :class="['uldatas', 'w100', updateId === index ? 'bshow' : '']"
+                v-for="(item, index) in 8"
+                :key="item + 's'"
+                @click="updateId = index"
+              >
+                <li>
+                  <p></p>
+                </li>
+                <li>
+                  <p></p>
+                </li>
+                <li v-if="DataTypes[0].choose">
+                  <p></p>
+                </li>
+                <li v-if="DataTypes[1].choose">
+                  <p></p>
+                </li>
+                <li v-if="DataTypes[2].choose">
+                  <p></p>
+                </li>
+                <li v-if="DataTypes[3].choose">
+                  <p></p>
+                </li>
+                <li v-if="DataTypes[4].choose">
+                  <p></p>
+                </li>
+                <li v-if="DataTypes[5].choose">
+                  <p></p>
+                </li>
+                <li v-if="DataTypes[6].choose">
+                  <p></p>
+                </li>
               </ul>
             </template>
             <!-- <template v-else>
@@ -90,7 +121,7 @@
           </div>
         </div>
         <p class="Update">
-          <span class="button">Update</span>
+          <span class="button" @click="getParams">Update</span>
         </p>
       </div>
     </div>
@@ -103,14 +134,15 @@ export default {
   name: "dateStatus",
   data() {
     return {
+      updateId: "",
       tableDatas: [],
       isShowSlete: false,
       optionsId: "",
-      count:0,
+      count: 0,
       searchs: [
         {
           name: "Centre",
-          value: "",
+          value: "Shatin Centre",
           cid: "0",
           children: [
             { centreId: 0, name: "Shatin Centre" },
@@ -122,41 +154,39 @@ export default {
           ],
           id: 1,
         },
-        { name: "Location", value: "aaa", children: [], id: 2 },
-        { name: "Charger Type", value: "aa", children: [], id: 3 },
-        { name: "Charger No.", value: "aa", children: [], id: 4 },
-        { name: "Manufacturer", value: "aa", children: [], id: 5 },
-        { name: "Vehicle", value: "aa", children: [], id: 6 },
-        { name: "Vehicle No.", value: "aa", children: [], id: 7 },
-        { name: "Start From", value: "aa", children: [], id: 8 },
-        { name: "End To", value: "aa", children: [], id: 9 },
+        { name: "Location", value: "", children: [], id: 2 },
+        { name: "Charger Type", value: "", children: [], id: 3 },
+        { name: "Charger No.", value: "", children: [], id: 4 },
+        { name: "Manufacturer", value: "", children: [], id: 5 },
+        { name: "Vehicle", value: "", children: [], id: 6 },
+        { name: "Vehicle No.", value: "", children: [], id: 7 },
+        { name: "Start From", value: "", children: [], id: 8 },
+        { name: "End To", value: "", children: [], id: 9 },
       ],
-      DataTypes: [
-        { name: "Charging Voltage【v】", choose: false, id: "1" },
-        { name: "Average Charging Current【A】", choose: false, id: "2" },
-        { name: "Average Charging Power【kw】", choose: false, id: "3" },
-        { name: "Total Charging Energy【kwh】", choose: false, id: "4" },
-        { name: "Charging Time【Hour】", choose: false, id: "5" },
-        { name: "SoC Before Charging【%】", choose: false, id: "6" },
-        { name: "Mileage Travelled Before Charging【km】", choose: false, id: "7" },
-      ],
+      DataTypes: [],
       page: 1,
     };
   },
-  mounted() {
-    this.getParams();
+  created() {
+    this.DataTypes = this.$store.state.DataTypes;
   },
+  mounted() {},
   methods: {
-    // 
-    sizeChange(value){
+    //展示表格
+    showTable(index) {
+      this.DataTypes[index].choose = !this.DataTypes[index].choose;
+      this.$store.commit("showTableUl", this.DataTypes);
+    },
+    //
+    sizeChange(value) {
       this.page = value;
       this.getParams();
     },
-    // 
+    //
     seleteCenter(value) {
       this.searchs[0].value = value.name;
       this.searchs[0].cid = value.centreId;
-      this.optionsId = ""; 
+      this.getParams();
     },
     //条件筛选查询
     getParams() {
@@ -176,7 +206,7 @@ export default {
       };
       findByParamsAll(data).then((res) => {
         console.log(res);
-        if(res.code==100){
+        if (res.code == 100) {
           this.chargerInfoList = res.extend.chargerInfoList;
           this.count = res.extend.count;
         }
@@ -215,6 +245,9 @@ export default {
   position: sticky;
   top: 0;
 }
+ul > li {
+  font-size: 14px;
+}
 .drtable li:last-child {
   border-right: 2px solid #205cbf;
 }
@@ -239,7 +272,7 @@ export default {
   margin-top: 28px;
   position: relative;
 }
-.drtable{
+.drtable {
   height: 562px;
 }
 .dtatas > img {

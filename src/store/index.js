@@ -26,7 +26,16 @@ export default new Vuex.Store({
             { centreId: 5, value: "Shek Wu Hui Centre" },
         ],
         userInfo: {},
-        roleInfo: {}
+        roleInfo: {},
+        DataTypes: [
+            { name: "Charging Voltage【v】", choose: true, id: "1" },
+            { name: "Average Charging Current【A】", choose: true, id: "2" },
+            { name: "Average Charging Power【kw】", choose: true, id: "3" },
+            { name: "Total Charging Energy【kwh】", choose: true, id: "4" },
+            { name: "Charging Time【Hour】", choose: true, id: "5" },
+            { name: "SoC Before Charging【%】", choose: true, id: "6" },
+            { name: "Mileage Travelled Before Charging【km】", choose: true, id: "7" },
+        ],
     },
     mutations: {
         changeShowBottom(state, value) {
@@ -43,6 +52,9 @@ export default new Vuex.Store({
                     state.userInfo = res.extend.pcUser;
                 }
             })
+        },
+        showTableUl(state, value) {
+            state.DataTypes = value;
         }
     },
     actions: {},

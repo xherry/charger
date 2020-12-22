@@ -13,36 +13,82 @@
             </div>
             <p></p>
           </div>
-          <div class="dtatas flex flex-Updown" v-for="item in DataTypes" :key="'d' + item.id">
+          <div
+            class="dtatas flex flex-Updown"
+            v-for="item in DataTypes"
+            :key="'d' + item.id"
+          >
             <div class="seleteImg" @click="item.Table = !item.Table">
               <img v-if="item.Table" src="../../assets/index/useraccount/04.png" alt="" />
               <img v-else src="../../assets/index/useraccount/03.png" alt="" />
             </div>
             <div class="seleteImg" @click="item.Figure = !item.Figure">
-              <img v-if="item.Figure" src="../../assets/index/useraccount/04.png" alt="" />
+              <img
+                v-if="item.Figure"
+                src="../../assets/index/useraccount/04.png"
+                alt=""
+              />
               <img v-else src="../../assets/index/useraccount/03.png" alt="" />
             </div>
             <p>{{ item.name }}</p>
           </div>
         </div>
         <div class="dsrmr">
-          <div class="echart">
-            <div class="" :style="{ width: '110%', height: '100%' }" id="TravellingMileage"></div>
+          <div class="echart" v-if="$store.state.DataTypes[0].choose">
+            <p >Charging Voltage【v】</p>
+            <div
+              class=""
+              :style="{ width: '110%', height: '100%' }"
+              id="ChargingVoltage【v】"
+            ></div>
           </div>
-          <div class="echart">
-            <div class="" :style="{ width: '110%', height: '100%' }" id="SoC"></div>
+          <div class="echart" v-if="$store.state.DataTypes[1].choose">
+            <p >Average Charging Current【A】</p>
+            <div
+              class=""
+              :style="{ width: '110%', height: '100%' }"
+              id="AverageChargingCurrent【A】"
+            ></div>
           </div>
-          <div class="echart">
-            <div class="" :style="{ width: '110%', height: '100%' }" id="DataType1"></div>
+          <div class="echart" v-if="$store.state.DataTypes[2].choose">
+            <p >Average Charging Power【kw】</p>
+            <div
+              class=""
+              :style="{ width: '110%', height: '100%' }"
+              id="AverageChargingPower【kw】"
+            ></div>
           </div>
-          <div class="echart">
-            <div class="" :style="{ width: '110%', height: '100%' }" id="DataType2"></div>
+          <div class="echart" v-if="$store.state.DataTypes[3].choose">
+            <p >Total Charging Energy【kwh】</p>
+            <div
+              class=""
+              :style="{ width: '110%', height: '100%' }"
+              id="TotalChargingEnergy【kwh】"
+            ></div>
           </div>
-          <div class="echart">
-            <div class="" :style="{ width: '110%', height: '100%' }" id="DataType3"></div>
+          <div class="echart" v-if="$store.state.DataTypes[4].choose">
+            <p >Charging Time【Hour】</p>
+            <div
+              class=""
+              :style="{ width: '110%', height: '100%' }"
+              id="ChargingTime【Hour】"
+            ></div>
           </div>
-          <div class="echart">
-            <div class="" :style="{ width: '110%', height: '100%' }" id="DataType4"></div>
+          <div class="echart"  v-if="$store.state.DataTypes[5].choose">
+            <p>SoC Before Charging【%】</p>
+            <div
+              class=""
+              :style="{ width: '110%', height: '100%' }"
+              id="SoCBeforeCharging【%】"
+            ></div>
+          </div>
+          <div class="echart" v-if="$store.state.DataTypes[6].choose">
+            <p >Mileage Travelled Before Charging【km】</p>
+            <div
+              class=""
+              :style="{ width: '110%', height: '100%' }"
+              id="MileageTravelledBeforeCharging【km】"
+            ></div>
           </div>
         </div>
         <p class="Update flex flex-Updown">
@@ -55,6 +101,7 @@
 </template>
 
 <script>
+import { findBIC, findByParamsAll } from "../../common/api";
 import echarts from "echarts";
 export default {
   name: "dSReport",
@@ -72,47 +119,51 @@ export default {
     };
   },
   created() {
-
+    console.log(this.$store.state.DataTypes);
   },
   mounted() {
     let _this = this;
-    _this.drawLine("TravellingMileage", "Travelling Mileage (km)", false);
-    // _this.drawLine("SoC", "SoC(%)", false);
-    // _this.drawLine("DataType1", "Data Type", false);
-    // _this.drawLine("DataType2", "Data Type", false);
-    // _this.drawLine("DataType3", "Data Type", false);
-    // _this.drawLine("DataType4", "Data Type", false);
+    this.$store.state.DataTypes.forEach((item, index) => {
+      if (item.choose) {
+        item.name = item.name.replace(/[ ]/gi, "");
+        _this.drawLine(item.name, false);
+      }
+    });
+    // _this.drawLine("SoC", false);
+    // _this.drawLine("DataType1", false);
+    // _this.drawLine("DataType2", false);
+    // _this.drawLine("DataType3", false);
+    // _this.drawLine("DataType4", false);
   },
   methods: {
-    drawLine(id, name, ishowX,gridHeight) {
+    // 获取数据
+    getDatas() {
+      let data = {
+        userId: localStorage.getItem("userId"),
+        centre: "",
+        location: "",
+        chargerNo: "",
+        vehicleNo: "",
+      };
+    },
+    //
+    drawLine(id, ishowX) {
       // 基于准备好的dom，初始化echarts实例
       let myChart = echarts.init(document.getElementById(id));
-      var count = 70;
-      var intervalCount = 50;
-      var baseTop = 38;
-      var gridHeight = 70;
+      var count = 100;
+      var intervalCount = 0;
+      var baseTop = 10;
+      var gridHeight = 65;
 
       var data = {
         cpu: [],
-        memory: [],
-        frame: [],
-        main: [],
-        fake: [],
-        else: [],
-        gdsfg: [],
         xMin: 0,
-        xMax: count * 1000,
+        xMax: count * 100,
       };
 
       for (var i = 0; i < count; i++) {
-        var now = i * 1000;
-        data.cpu.push([now, Math.floor(Math.random() * 1000)]);
-        // data.memory.push([now, Math.floor(Math.random() * 1000)]);
-        // data.frame.push([now, Math.floor(Math.random() * 1000)]);
-        // data.fake.push([now, Math.floor(Math.random() * 1000)]);
-        // data.main.push([now, Math.floor(Math.random() * 1000)]);
-        // data.else.push([now, Math.floor(Math.random() * 1000)]);
-        // data.gdsfg.push([now, Math.floor(Math.random() * 1000)]);
+        var now = i * 100;
+        data.cpu.push([now, Math.floor(Math.random() * 100)]);
       }
 
       function makeXAxis(gridIndex, opt) {
@@ -213,7 +264,17 @@ export default {
                     var param = params[i];
                     var style = "color: " + param.color;
                     if (param.seriesName === seriesName) {
-                      return '<span style="' + style + '">' + param.seriesName + '：</span><span style="' + style + '">' + param.value[1] + "</span>";
+                      return (
+                        '<span style="' +
+                        style +
+                        '">' +
+                        param.seriesName +
+                        '：</span><span style="' +
+                        style +
+                        '">' +
+                        param.value[1] +
+                        "</span>"
+                      );
                     }
                   }
                 })
@@ -232,11 +293,6 @@ export default {
         grid: [
           makeGrid(baseTop),
           makeGrid(baseTop + gridHeight),
-          // makeGrid(baseTop + gridHeight * 2),
-          // makeGrid(baseTop + gridHeight * 3 + 5),
-          // makeGrid(baseTop + gridHeight * 4 + 5),
-          // makeGrid(baseTop + gridHeight * 5 + 5),
-          // makeGrid(baseTop + gridHeight * 6 + 5),
           makeGrid(baseTop, {
             show: true,
             height: gridHeight * 1,
@@ -247,11 +303,6 @@ export default {
         ],
         xAxis: [
           makeXAxis(0),
-          // makeXAxis(1),
-          // makeXAxis(2),
-          // makeXAxis(3),
-          // makeXAxis(4),
-          // makeXAxis(5),
           makeXAxis(0, {
             position: "bottom",
             axisLine: {
@@ -278,18 +329,19 @@ export default {
         ],
         yAxis: [
           makeYAxis(0, {
-            // name: name,
             nameTextStyle: {
               color: "#fff",
-              padding: 20,
-              rich: {
-                height: "30",
-                width: "30",
-              },
+              // padding: 20,
+              // rich: {
+              //   height: "30",
+              //   width: "30",
+              // },
             },
             axisLabel: {
               show: true,
               margin: 2,
+              min: 0,
+              interval: "auto",
               showMinLabel: true,
               showMaxLabel: true,
               textStyle: {
@@ -298,24 +350,6 @@ export default {
               },
             },
           }),
-          // makeYAxis(1, {
-          //   name: "Travelling Mileage (km)",
-          // }),
-          // makeYAxis(2, {
-          //   name: "frame",
-          // }),
-          // makeYAxis(3, {
-          //   name: "fake",
-          // }),
-          // makeYAxis(4, {
-          //   name: "main",
-          // }),
-          // makeYAxis(5, {
-          //   name: "else",
-          // }),
-          // makeYAxis(6, {
-          //   name: "gsdgsd",
-          // }),
         ],
         series: [
           {
@@ -330,90 +364,6 @@ export default {
             },
             data: data.cpu,
           },
-          // {
-          //   name: "memory",
-          //   type: "line",
-          //   symbol: "circle",
-          //   symbolSize: 2,
-          //   xAxisIndex: 1,
-          //   yAxisIndex: 1,
-          //   itemStyle: {
-          //     normal: {
-          //       color: "#27F3FD",
-          //     },
-          //   },
-          //   data: data.memory,
-          // },
-          // {
-          //   name: "frame",
-          //   type: "line",
-          //   symbol: "circle",
-          //   symbolSize: 2,
-          //   xAxisIndex: 2,
-          //   yAxisIndex: 2,
-          //   itemStyle: {
-          //     normal: {
-          //       color: "#27F3FD",
-          //     },
-          //   },
-          //   data: data.frame,
-          // },
-          // {
-          //   name: "main",
-          //   type: "line",
-          //   symbol: "circle",
-          //   symbolSize: 2,
-          //   xAxisIndex: 3,
-          //   yAxisIndex: 3,
-          //   itemStyle: {
-          //     normal: {
-          //       color: "#27F3FD",
-          //     },
-          //   },
-          //   data: data.fake,
-          // },
-          // {
-          //   name: "main",
-          //   type: "line",
-          //   symbol: "circle",
-          //   symbolSize: 2,
-          //   xAxisIndex: 4,
-          //   yAxisIndex: 4,
-          //   itemStyle: {
-          //     normal: {
-          //       color: "#27F3FD",
-          //     },
-          //   },
-          //   data: data.fake,
-          // },
-          // {
-          //   name: "else",
-          //   type: "line",
-          //   symbol: "circle",
-          //   symbolSize: 2,
-          //   xAxisIndex: 5,
-          //   yAxisIndex: 5,
-          //   itemStyle: {
-          //     normal: {
-          //       color: "#27F3FD",
-          //     },
-          //   },
-          //   data: data.else,
-          // },
-          // {
-          //   name: "else",
-          //   type: "line",
-          //   symbol: "circle",
-          //   symbolSize: 2,
-          //   xAxisIndex: 6,
-          //   yAxisIndex: 6,
-          //   itemStyle: {
-          //     normal: {
-          //       color: "#27F3FD",
-          //     },
-          //   },
-          //   data: data.else,
-          // },
         ],
       });
     },
@@ -424,10 +374,23 @@ export default {
 <style scoped>
 .echart {
   width: 900px;
-  height: 110px;
+  height: 85px;
   background: transparent;
-  margin-left: 150px;
-  margin-top: 0px;
+  /* margin-left: 150px; */
+  margin-top: 10px;
+  position: relative;
+}
+.echart > p {
+  position: absolute;
+  color: #ffffff;
+  font-size: 14px;
+  /* transform: ; */
+  top: 50%;
+  left: -15px;
+  z-index: 99999999;
+  width: 70px;
+  text-align: center;
+  transform: translateY(-50%) rotateZ(-90deg);
 }
 .dsrml {
   padding-left: 36px;
@@ -483,6 +446,8 @@ export default {
   border: 2px solid #205cbf;
   border-radius: 20px;
   position: relative;
+  justify-content: space-between;
+  padding-right: 20px;
 }
 .overRights {
   height: 810px;

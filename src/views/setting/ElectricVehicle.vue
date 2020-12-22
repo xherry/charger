@@ -5,24 +5,27 @@
       <div>
         <div class="tables">
           <ul class="ultit">
-            <li><p>Ttpe No.</p></li>
-            <li><p>Charger Type</p></li>
-            <li><p>Output Voltase</p></li>
-            <li><p>No. of Phase</p></li>
-            <li><p>Output Power [ kw ]</p></li>
-            <li><p>LMS Supported</p></li>
-            <li><p>Manufacturer / Brand</p></li>
+            <li><p>Manufacturer</p></li>
+            <li><p>Model</p></li>
+            <li><p>Image Uploaded</p></li>
           </ul>
           <!-- v-if="eveList.length!=0" -->
-          <template v-if="eveList.length!=0" >
-            <ul class="uldatas w100" @click="$router.push('chargerDetails')" v-for="(item,index) in eveList" :key='index'>
-              <li><p>1</p></li>
-              <li><p>Polyu AC Medium Charger</p></li>
-              <li><p>AC</p></li>
-              <li><p>3</p></li>
-              <li><p>21</p></li>
-              <li><p>Yes</p></li>
-              <li><p>polyu</p></li>
+          <template v-if="eveList.length!=0">
+            <ul
+              class="uldatas w100"
+              @click="toChargerDetails(item.id)"
+              v-for="(item, index) in eveList"
+              :key="index"
+            >
+              <li>
+                <p v-if="item.evManufacturer">{{ item.evManufacturer }}</p>
+              </li>
+              <li>
+                <p v-if="item.evModel">{{ item.evModel ? item.evModel : "" }}</p>
+              </li>
+              <li>
+                <p>{{ item.image ? "Yes" : "No" }}</p>
+              </li>
             </ul>
           </template>
           <template v-else>
@@ -41,7 +44,7 @@
           layout=" prev, pager, next, jumper, ->, total, slot"
           :total="count"
           hide-on-single-page
-          :page-size='5'
+          :page-size="10"
         >
         </el-pagination>
       </div>
@@ -59,31 +62,40 @@ export default {
   name: "ElectricVehicle",
   data() {
     return {
-      eveList:[],
-      page:1,
-      count:0
+      eveList: [],
+      page: 1,
+      count: 0,
     };
   },
   created() {
     this.getCarAll();
   },
   methods: {
-    // 
-    sizeChange(value){
+    toChargerDetails(id) {
+      this.$router.push({
+        name: "chargerDetails",
+        query: {
+          id:id
+        },
+      });
+    },
+    //
+    sizeChange(value) {
       this.page = value;
       this.getCarAll();
     },
     //
     getCarAll() {
       let data = {
-        userId: localStorage.getItem('userId'),
+        userId: localStorage.getItem("userId"),
         page: this.page,
-        limit: 5,
+        limit: 10,
       };
       EVFindAll(data).then((res) => {
         console.log("查询所有的车辆信息", res);
-        if(res.code==0){
+        if (res.code == 100) {
           this.count = res.extend.count;
+          this.eveList = res.extend.electricVehicleList;
         }
       });
     },
@@ -92,9 +104,13 @@ export default {
 </script>
 
 <style scoped>
-  .ElectricVehicle{
-    position: relative;
-    width: 100%;
-    height: 100px;
-  }
+.ElectricVehicle {
+  position: relative;
+  width: 100%;
+  height: 100px;
+}
+.ultit,
+.uldatas {
+  padding: 0 300px;
+}
 </style>

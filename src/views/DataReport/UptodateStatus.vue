@@ -27,16 +27,16 @@
           </ul>
           <ul class="ustablemain" v-for="(item, index) in centerType" :key="index">
             <li>
-              <p>{{ item.value }}</p>
+              <p>{{ item.name }}</p>
             </li>
             <li>
-              <p></p>
+              <p v-if="item.value">{{ item.value.totalofcharging }}</p>
             </li>
             <li>
-              <p></p>
+              <p  v-if="item.value">{{ item.value.totalchargingtime }}</p>
             </li>
             <li>
-              <p></p>
+              <p  v-if="item.value">{{ item.value.totalchargingenergy }}</p>
             </li>
             <li>
               <p><button class="button sees" @click="seeDetails(item)">查看</button></p>
@@ -108,6 +108,7 @@
 </template>
 
 <script>
+import { findBYN } from "../../common/api";
 export default {
   name: "UptodateStatus",
   data() {
@@ -116,15 +117,18 @@ export default {
       count: 0,
       page: 1,
       centerType: [
-        { centreId: 0, value: "Hung Hom" },
-        { centreId: 1, value: "Satin" },
-        { centreId: 2, value: "Sham Shui Po" },
-        { centreId: 3, value: "Shek Wu Hui" },
-        { centreId: 4, value: "Tsing Yi" },
-        { centreId: 5, value: "Yuen Long" },
+        { centreId: 0, name: "Hung Hom", value: null },
+        { centreId: 1, name: "Satin", value: null },
+        { centreId: 2, name: "Sham Shui Po", value: null },
+        { centreId: 3, name: "Shek Wu Hui", value: null },
+        { centreId: 4, name: "Tsing Yi", value: null },
+        { centreId: 5, name: "Yuen Long", value: null },
       ],
       cdetails: [{ h: "", ts: "", kwh: "", cno: "SSP001" }],
     };
+  },
+  created() {
+    this.getSixData();
   },
   methods: {
     sizeChange(value) {
@@ -133,6 +137,26 @@ export default {
     seeDetails(value) {
       console.log(value);
       this.isToDetail = true;
+    },
+    // 查询六个地区下充电桩等信息
+    getSixData() {
+      let data = {
+        userId: localStorage.getItem("userId"),
+      };
+      findBYN(data).then((res) => {
+        console.log(res, "查询六个地区下充电桩等信息");
+        if (res.code == 100) {
+          let values = res.extend;
+          this.centerType = [
+            { centreId: 0, name: "Hung Hom", value: values.hh },
+            { centreId: 1, name: "Satin", value: values.s },
+            { centreId: 2, name: "Sham Shui Po", value: values.ssp },
+            { centreId: 3, name: "Shek Wu Hui", value: values.swh },
+            { centreId: 4, name: "Tsing Yi", value: values.ty },
+            { centreId: 5, name: "Yuen Long", value: values.yl },
+          ];
+        }
+      });
     },
   },
 };

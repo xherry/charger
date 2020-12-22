@@ -134,7 +134,7 @@ export default {
       }
       this.$msgbox({
         title: "提示",
-        message: "确认修改权限？",
+        message: "确认修改？",
         showCancelButton: true,
         confirmButtonText: "确定",
         cancelButtonText: "取消",
