@@ -5,58 +5,53 @@
       <div class="flex SummaryTable Yauto">
         <div class="SummaryTable-left">
           <div class="firstitem"></div>
-          <p class="slItem" v-for="(item, index) in leftTable1" :key="index+'1'">{{ item }}</p>
+          <p class="slItem" v-for="(item, index) in leftTable1" :key="index + '1'">
+            {{ item.name }}
+          </p>
           <div style="height: 10px"></div>
-          <p class="slItem" v-for="(item, index) in leftTable2" :key="index+'2'">{{ item }}</p>
+          <p class="slItem" v-for="(item, index) in leftTable2" :key="index + '2'">
+            {{ item.name }}
+          </p>
           <div style="height: 10px"></div>
-          <p class="slItem" v-for="(item, index) in leftTable3" :key="index+'3'">{{ item }}</p>
+          <p class="slItem" v-for="(item, index) in leftTable3" :key="index + '3'">
+            {{ item.name }}
+          </p>
         </div>
         <div class="SummaryTable-right">
           <p class="srtit">centre</p>
           <ul class="srul-top srul">
-            <li><p>Hung Hom</p></li>
-            <li><p>Satin</p></li>
-            <li>
-              <p>Sham</p>
-              <p>Shui Po</p>
-            </li>
-            <li>
-              <p>Shek</p>
-              <p>Wu Hui</p>
-            </li>
-            <li>
-              <p>Tsing Yi</p>
-            </li>
-            <li>
-              <p>Yuen</p>
-              <p>Long</p>
+            <li v-for="item in utits" :key="item">
+              <p>{{ item }}</p>
             </li>
           </ul>
-          <ul class="srul-main srul" v-for="item in 4" :key="item+'4'">
-            <li><p></p></li>
-            <li><p></p></li>
-            <li><p></p></li>
-            <li><p></p></li>
-            <li><p></p></li>
-            <li><p></p></li>
+          <ul
+            class="srul-main srul"
+            v-for="(item, index) in leftTable1"
+            :key="index + '4s'"
+          >
+            <li v-for="(p, i) in item.value" :key="'pp' + i">
+              <p>{{ p }}</p>
+            </li>
           </ul>
           <div style="height: 10px"></div>
-          <ul class="srul-main srul" v-for="item in 4" :key="item+'5'">
-            <li><p></p></li>
-            <li><p></p></li>
-            <li><p></p></li>
-            <li><p></p></li>
-            <li><p></p></li>
-            <li><p></p></li>
+          <ul
+            class="srul-main srul"
+            v-for="(item, index) in leftTable2"
+            :key="index + '5'"
+          >
+            <li v-for="(p, i) in item.value" :key="'pp' + i">
+              <p>{{ p }}</p>
+            </li>
           </ul>
           <div style="height: 10px"></div>
-          <ul class="srul-main srul" v-for="item in 2" :key="item+'6'">
-            <li><p></p></li>
-            <li><p></p></li>
-            <li><p></p></li>
-            <li><p></p></li>
-            <li><p></p></li>
-            <li><p></p></li>
+          <ul
+            class="srul-main srul"
+            v-for="(item, index) in leftTable3"
+            :key="index + '6'"
+          >
+            <li v-for="(p, i) in item.value" :key="'pp' + i">
+              <p>{{ p }}</p>
+            </li>
           </ul>
         </div>
       </div>
@@ -65,22 +60,74 @@
 </template>
 
 <script>
-import { CDFindById, CDFindAll } from "../../common/api";
+import { CDFindById, CDFindAll, findBYN } from "../../common/api";
 export default {
   name: "Summary",
   data() {
     return {
-      leftTable1: ["Available", "In Use", "Out of Service", "Total"],
-      leftTable2: ["Total No. of Charging", "Total Charging Time", "Total Charging Energy", "Estimated Carbon Sav ing"],
-      leftTable3: ["Average Charging Time", "Average Charging Energy"],
+      utits: [
+        "Hung Hom",
+        "Satin",
+        "Sham Shui Po",
+        "Shek Wu Hui",
+        "Tsing Yi",
+        "Yuen Long",
+      ],
+      leftTable1: [
+        { name: "Available", value: [] },
+        { name: "In Use", value: [] },
+        { name: "Out of Service", value: [] },
+        { name: "Total", value: [] },
+      ],
+      leftTable2: [
+        { name: "Total No. of Charging", value: [] },
+        { name: "Total Charging Time", value: [] },
+        { name: "Total Charging Energy", value: [] },
+        { name: "Estimated Carbon Sav ing", value: [] },
+      ],
+      leftTable3: [
+        { name: "Average Charging Time", value: [] },
+        { name: "Average Charging Energy", value: [] },
+      ],
+      sixDatas: {},
     };
   },
-  created(){
+  created() {
+    this.getSixDatas();
   },
-  methods:{
-     //
-    //
-    
+  methods: {
+    // 获取查询六个地区下充电桩等信息
+    getSixDatas() {
+      let data = {
+        userId: localStorage.getItem("userId"),
+      };
+      findBYN(data).then((res) => {
+        console.log("获取查询六个地区下充电桩等信息", res);
+        if (res.code == 100) {
+          let sixDatas = res.extend;
+          // this.sixDatas = res.extend;
+          let objDatas = [
+            sixDatas.hh||{},
+            sixDatas.s||{},
+            sixDatas.ssp||{},
+            sixDatas.swh||{},
+            sixDatas.ty||{},
+            sixDatas.yl||{},
+          ];
+          console.log(objDatas)
+          this.leftTable1[0].value = objDatas.map((item) => item.available?item.available:' ');
+          this.leftTable1[1].value = objDatas.map((item) => item.inuse?item.inuse:' ');
+          this.leftTable1[2].value = objDatas.map((item) => item.outofservice?item.outofservice:' ');
+          this.leftTable1[3].value = objDatas.map((item) => item.total?item.total:' ');
+          this.leftTable2[0].value = objDatas.map((item) => item.totalofcharging?item.totalofcharging:' ');
+          this.leftTable2[1].value = objDatas.map((item) => item.totalchargingtime?item.totalchargingtime:' ');
+          this.leftTable2[2].value = objDatas.map((item) => item.totalchargingenergy?item.totalchargingenergy:' ');
+          this.leftTable2[3].value = objDatas.map((item) => item.estimatedcarbonsaving?item.estimatedcarbonsaving:' ');
+          this.leftTable3[0].value = objDatas.map((item) => item.averagechargingtime?item.averagechargingtime:' ');
+          this.leftTable3[1].value = objDatas.map((item) => item.averagechargingenergy?item.averagechargingenergy:' ');
+        }
+      });
+    },
   },
 };
 </script>
@@ -92,11 +139,11 @@ export default {
   border-bottom: 1px solid #205cbf;
   height: 54px;
 }
-.srul-main:first-of-type{
-  border-top: none;  
+.srul-main:first-of-type {
+  border-top: none;
 }
 .srul-main:last-of-type {
-  border-bottom: none;  
+  border-bottom: none;
 }
 .srul > li {
   border-right: 1px solid #205cbf;
@@ -130,7 +177,7 @@ export default {
 .SummaryTable-left {
   width: 261px;
 }
-.slItem:first-of-type{
+.slItem:first-of-type {
   border-top: none;
 }
 .slItem {

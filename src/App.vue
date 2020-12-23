@@ -42,6 +42,9 @@ export default {
   background: url("./assets/index/bg02.png") no-repeat;
   background-size: 100% 100%;
 }
+.seleteDate input{
+  cursor: pointer !important;
+}
 .ortoptit {
   width: 640px;
   height: 42.7px;

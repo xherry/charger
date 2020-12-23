@@ -79,7 +79,7 @@
               layout=" prev, pager, next, jumper, ->, total, slot"
               :total="count1"
               hide-on-single-page
-              :page-size='9'
+              :page-size="9"
             >
             </el-pagination>
           </div>
@@ -139,7 +139,7 @@
               layout=" prev, pager, next, jumper, ->, total, slot"
               :total="count2"
               hide-on-single-page
-              :page-size='9'
+              :page-size="9"
             >
             </el-pagination>
           </div>
@@ -199,7 +199,7 @@ export default {
           if (action === "confirm") {
             instance.confirmButtonLoading = true;
             instance.confirmButtonText = "执行中...";
-            console.log(this.isUpdate1,this.isUpdate2)
+            console.log(this.isUpdate1, this.isUpdate2);
             if (this.isUpdate1 !== "") {
               let value = this.chargerNumberings[this.isUpdate1];
               let data = {
@@ -222,9 +222,9 @@ export default {
               });
             }
             if (this.isUpdate2 !== "") {
-              console.log(this.chargerNumberingList)
+              console.log(this.chargerNumberingList);
               let value = this.chargerNumberingList[this.isUpdate2];
-              console.log(value)
+              console.log(value);
               let data = {
                 userId: localStorage.getItem("userId"),
                 evChargerNumberingId: value.id,
@@ -232,20 +232,22 @@ export default {
                 numberStarting: value.numberStarting,
                 preview: value.preview,
               };
-              ECNSaveOrUpdEntity(data).then((res) => {
-                console.log(res);
-                instance.confirmButtonLoading = false;
-                done();
-                if (res.code == 100) {
-                  this.$message.success("修改成功");
-                  this.isUpdate1 = "";
-                  this.isUpdate2 = "";
-                  this.getCNFList();
-                }
-              }).catch(()=>{
-                instance.confirmButtonLoading = false;
-                done();
-              })
+              ECNSaveOrUpdEntity(data)
+                .then((res) => {
+                  console.log(res);
+                  instance.confirmButtonLoading = false;
+                  done();
+                  if (res.code == 100) {
+                    this.$message.success("修改成功");
+                    this.isUpdate1 = "";
+                    this.isUpdate2 = "";
+                    this.getCNFList();
+                  }
+                })
+                .catch(() => {
+                  instance.confirmButtonLoading = false;
+                  done();
+                });
             }
           } else {
             instance.confirmButtonLoading = false;
@@ -271,13 +273,28 @@ export default {
         page: this.page1,
         limit: 9,
       };
-      CNFindAll(data).then((res) => {
-        console.log("查询所有充电器编号", res);
-        if (res.code == 100) {
-          this.chargerNumberings = res.extend.chargerNumberingList;
-          this.count1 = res.extend.count;
-        }
+      let loadingInstance = this.$loading({
+        text: "加载中...",
+        background: "rgba(0,0,0,.5)",
       });
+      CNFindAll(data)
+        .then((res) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+          console.log("查询所有充电器编号", res);
+          if (res.code == 100) {
+            this.chargerNumberings = res.extend.chargerNumberingList;
+            this.count1 = res.extend.count;
+          }
+        })
+        .catch((err) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+        });
     },
     // 电动车充电器编号
     getCNFList() {

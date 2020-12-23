@@ -140,7 +140,7 @@
         layout=" prev, pager, next, jumper, ->, total, slot"
         :total="count"
         hide-on-single-page
-        :page-size='10'
+        :page-size="10"
       >
       </el-pagination>
     </div>
@@ -267,13 +267,28 @@ export default {
         page: this.page,
         limit: 10,
       };
-      CDFindAll(data).then((res) => {
-        console.log(res);
-        if (res.code == 100) {
-          this.centreDepartmentList = res.extend.centreDepartmentList;
-          this.count = res.extend.count;
-        }
+      let loadingInstance = this.$loading({
+        text: "加载中...",
+        background: "rgba(0,0,0,.5)",
       });
+      CDFindAll(data)
+        .then((res) => {
+          console.log(res);
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+          if (res.code == 100) {
+            this.centreDepartmentList = res.extend.centreDepartmentList;
+            this.count = res.extend.count;
+          }
+        })
+        .catch((err) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+        });
     },
   },
 };

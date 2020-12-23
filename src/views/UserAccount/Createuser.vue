@@ -146,7 +146,7 @@
               <img v-else src="../../assets/index/useraccount/03.png" alt="" />
             </div>
             <!-- @click="item.value = item.value == 0 ? 1 : 0" -->
-            <div class="mr86" >
+            <div class="mr86">
               <img
                 v-if="item.value == 0"
                 src="../../assets/index/useraccount/03.png"
@@ -255,19 +255,34 @@ export default {
         userType: this.utypes.userType,
         centreId: this.ctypes.centreId,
       };
-      addOrUpdEntity(data).then((res) => {
-        console.log(res);
-        if (res.code == 100) {
-          this.$message.success("创建成功");
-          for (let key in this.addUsers) {
-            this.addUsers[key] = "";
-          }
-          this.utypes.userType = "";
-          this.utypes.value = "";
-          this.ctypes.centreId = "";
-          this.ctypes.value = "";
-        }
+      let loadingInstance = this.$loading({
+        text: "添加中...",
+        background: "rgba(0,0,0,.5)",
       });
+      addOrUpdEntity(data)
+        .then((res) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+          console.log(res);
+          if (res.code == 100) {
+            this.$message.success("创建成功");
+            for (let key in this.addUsers) {
+              this.addUsers[key] = "";
+            }
+            this.utypes.userType = "";
+            this.utypes.value = "";
+            this.ctypes.centreId = "";
+            this.ctypes.value = "";
+          }
+        })
+        .catch((err) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+        });
     },
     sendCode() {
       sendSms({

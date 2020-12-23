@@ -177,15 +177,17 @@ export default {
         delEntity({
           userIds: localStorage.getItem("userId"),
           userId: this.uid,
-        }).then((res) => {
-          console.log("删除用户", res);
-          if (res.code == 100) {
-            this.getUserList();
-            this.$message.success("删除成功");
-          }
-        }).catch(()=>{
-           this.$message.warning("已取消");
         })
+          .then((res) => {
+            console.log("删除用户", res);
+            if (res.code == 100) {
+              this.getUserList();
+              this.$message.success("删除成功");
+            }
+          })
+          .catch(() => {
+            this.$message.warning("已取消");
+          });
       });
     },
     //
@@ -195,18 +197,33 @@ export default {
         page: this.page,
         limit: 9,
       };
-      pcUserFindByAll(data).then((res) => {
-        console.log("获取用户列表", res);
-        if (res.code == 100) {
-          res.extend.pcUserList.forEach((item) => {
-            item.centrs = ctype(item.centreId);
-            item.users = utype(item.userType);
-            item.choose = false;
-          });
-          this.pcUserList = JSON.parse(JSON.stringify(res.extend.pcUserList));
-          this.count = res.extend.count;
-        }
+      let loadingInstance = this.$loading({
+        text: "加载中...",
+        background: "rgba(0,0,0,.5)",
       });
+      pcUserFindByAll(data)
+        .then((res) => {
+          console.log("获取用户列表", res);
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+          if (res.code == 100) {
+            res.extend.pcUserList.forEach((item) => {
+              item.centrs = ctype(item.centreId);
+              item.users = utype(item.userType);
+              item.choose = false;
+            });
+            this.pcUserList = JSON.parse(JSON.stringify(res.extend.pcUserList));
+            this.count = res.extend.count;
+          }
+        })
+        .catch((err) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+        });
     },
   },
 };

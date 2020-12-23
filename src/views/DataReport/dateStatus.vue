@@ -38,6 +38,45 @@
               </div>
             </div>
           </div>
+          <div class="dsmleftitem cdltopitem flex flex-Updown-between">
+            <span>Start From</span>
+            <div class="seleteDate">
+              <el-date-picker
+                value-format="yyyy-MM-dd"
+                format="yyyy-MM-dd"
+                :clearable="false"
+                v-model="startTime"
+                type="date"
+                placeholder="选择日期"
+              >
+              </el-date-picker>
+            </div>
+            <p class="flex flex-Updown-between">
+              <span>{{ startTime }}</span>
+              <!-- :style="{
+                  transform: `rotate(${optionsId === item.id ? '180' : '0'}deg)`,
+                }" -->
+              <img src="../../assets/index/setting/10.png" alt="" />
+            </p>
+          </div>
+          <div class="dsmleftitem cdltopitem flex flex-Updown-between">
+            <span>End To</span>
+            <div class="seleteDate">
+              <el-date-picker
+                value-format="yyyy-MM-dd"
+                format="yyyy-MM-dd"
+                :clearable="false"
+                v-model="endTime"
+                type="date"
+                placeholder="选择日期"
+              >
+              </el-date-picker>
+            </div>
+            <p class="flex flex-Updown-between">
+              <span>{{ endTime }}</span>
+              <img src="../../assets/index/setting/10.png" alt="" />
+            </p>
+          </div>
           <p class="dttit">Data Type：</p>
           <div
             class="dtatas flex flex-Updown"
@@ -65,48 +104,49 @@
                 <p>Mileage Travelled Before Charging【km】</p>
               </li>
             </ul>
-            <!-- v-if="tableDatas.length != 0" -->
-            <template>
+            <!-- -->
+            <template  v-if="chargerInfoList.length != 0">
+              <!-- , updateId === index ? 'bshow' : '' -->
               <ul
-                :class="['uldatas', 'w100', updateId === index ? 'bshow' : '']"
-                v-for="(item, index) in 8"
-                :key="item + 's'"
-                @click="updateId = index"
+                :class="['uldatas', 'w100']"
+                v-for="(item, index) in chargerInfoList"
+                :key="index + 's'"
               >
+                <!-- @click="updateId = index" -->
                 <li>
-                  <p></p>
+                  <p>{{startTime}}</p>
                 </li>
                 <li>
-                  <p></p>
+                  <p>{{endTime}}</p>
                 </li>
                 <li v-if="DataTypes[0].choose">
-                  <p></p>
+                  <p>{{item.chargingVoltage}}</p>
                 </li>
                 <li v-if="DataTypes[1].choose">
-                  <p></p>
+                  <p>{{item.chargingCurrent}}</p>
                 </li>
                 <li v-if="DataTypes[2].choose">
-                  <p></p>
+                  <p>{{item.chargingPower}}</p>
                 </li>
                 <li v-if="DataTypes[3].choose">
-                  <p></p>
+                  <p>{{item.chargingEnergy}}</p>
                 </li>
                 <li v-if="DataTypes[4].choose">
-                  <p></p>
+                  <p>{{item.chargingTime}}</p>
                 </li>
                 <li v-if="DataTypes[5].choose">
-                  <p></p>
+                  <p>{{item.socBeforeCharging}}</p>
                 </li>
                 <li v-if="DataTypes[6].choose">
-                  <p></p>
+                  <p>{{item.mileageTravelled}}</p>
                 </li>
               </ul>
             </template>
-            <!-- <template v-else>
+            <template v-else>
               <ul class="uldatas w100">
                 <li><p>暂无数据！</p></li>
               </ul>
-            </template> -->
+            </template>
           </div>
           <div class="pagination">
             <el-pagination
@@ -160,11 +200,12 @@ export default {
         { name: "Manufacturer", value: "", children: [], id: 5 },
         { name: "Vehicle", value: "", children: [], id: 6 },
         { name: "Vehicle No.", value: "", children: [], id: 7 },
-        { name: "Start From", value: "", children: [], id: 8 },
-        { name: "End To", value: "", children: [], id: 9 },
       ],
+      startTime: "",
+      endTime: "",
       DataTypes: [],
       page: 1,
+      chargerInfoList:[]
     };
   },
   created() {
@@ -190,10 +231,8 @@ export default {
     },
     //条件筛选查询
     getParams() {
+      let datas = { userIds: localStorage.getItem("userId"), page: this.page, limit: 8 };
       let data = {
-        userIds: localStorage.getItem("userId"),
-        page: this.page,
-        limit: 8,
         centre: this.searchs[0].cid,
         location: this.searchs[1].value,
         chargerType: this.searchs[2].value,
@@ -201,10 +240,11 @@ export default {
         manufacturer: this.searchs[4].value,
         model: this.searchs[5].value,
         vehicleNo: this.searchs[6].value,
-        startDate: this.searchs[7].value,
-        endDate: this.searchs[8].value,
+        startDate: this.startTime,
+        endDate: this.endTime,
       };
-      findByParamsAll(data).then((res) => {
+      this.$store.commit("getChargerInfoData", data);
+      findByParamsAll({ ...data, ...datas }).then((res) => {
         console.log(res);
         if (res.code == 100) {
           this.chargerInfoList = res.extend.chargerInfoList;
@@ -217,6 +257,24 @@ export default {
 </script>
 
 <style scoped>
+.seleteDate {
+  width: 180px;
+  height: 31px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+.el-date-editor.el-input,
+.el-date-editor.el-input__inner > input {
+  width: 100% !important;
+  height: 31px !important;
+}
+.el-input__inner {
+  height: 31px !important;
+  box-sizing: border-box;
+}
 .Update > span {
   width: 160px;
   height: 44px;

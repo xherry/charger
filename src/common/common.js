@@ -28,3 +28,9 @@ export const ctype = (val) => {
 
 Vue.filter("utype", utype);
 Vue.filter("ctype", ctype);
+Vue.filter("valNO", (val) => {
+    if (!val || val == "null") {
+        return ""
+    }
+    return val;
+});

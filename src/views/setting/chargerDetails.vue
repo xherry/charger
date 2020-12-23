@@ -44,7 +44,11 @@
                 <span>{{
                   electricVehicle.image ? electricVehicle.image : "请选择图片"
                 }}</span>
-                <i v-if="electricVehicle.image" @click="upIcon==='el-icon-close'?electricVehicle.image='':''" :class="!isUpload?upIcon:'el-icon-loading'"></i>
+                <i
+                  v-if="electricVehicle.image"
+                  @click="upIcon === 'el-icon-close' ? (electricVehicle.image = '') : ''"
+                  :class="!isUpload ? upIcon : 'el-icon-loading'"
+                ></i>
               </p>
               <input
                 class="inputImg"
@@ -121,8 +125,8 @@ export default {
       count: 0,
       elist: [],
       oldObj: {},
-      isUpload:false,
-      upIcon:'',
+      isUpload: false,
+      upIcon: "",
     };
   },
   created() {
@@ -211,16 +215,20 @@ export default {
       this.isUpload = true;
       let data = new FormData();
       data.append("file", oFile.files[0]);
+      let loadingInstance = this.$loading({
+        text: "加载中...",
+        background: "rgba(0,0,0,.5)",
+      });
       imageUpload(data)
         .then((res) => {
           this.isUpload = false;
           console.log(res, "上传图片");
-          this.upIcon = "el-icon-check"
+          this.upIcon = "el-icon-check";
         })
         .catch(() => {
           this.upIcon = "el-icon-close";
           this.isUpload = false;
-          this.$message.warning('上传失败！')
+          this.$message.warning("上传失败！");
         });
       // this.imgName = oFile.files[0].name;
     },
@@ -241,13 +249,28 @@ export default {
         userId: localStorage.getItem("userId"),
         electricVehicleId: id,
       };
-      EVFindById(data).then((res) => {
-        console.log("查询单个车辆信息", res);
-        if (res.code == 100) {
-          this.oldObj = res.extend.electricVehicle;
-          this.electricVehicle = JSON.parse(JSON.stringify(res.extend.electricVehicle));
-        }
+      let loadingInstance = this.$loading({
+        text: "加载中...",
+        background: "rgba(0,0,0,.5)",
       });
+      EVFindById(data)
+        .then((res) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+          console.log("查询单个车辆信息", res);
+          if (res.code == 100) {
+            this.oldObj = res.extend.electricVehicle;
+            this.electricVehicle = JSON.parse(JSON.stringify(res.extend.electricVehicle));
+          }
+        })
+        .catch((err) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+        });
     },
   },
 };

@@ -14,11 +14,11 @@
         <div class="seleterBody" :style="{ height: isShowSlete ? '200px' : '0px' }">
           <div
             class="button seleter_item"
-            v-for="(item, index) in centerType"
-            :key="index"
-            @click="seleteCenter(item)"
+            v-for="(p, i) in centerType"
+            :key="i"
+            @click="seleteCenter(p)"
           >
-            {{ item.value }}
+            {{ p.value }}
           </div>
         </div>
       </div>
@@ -55,42 +55,50 @@
             </div>
           </li>
         </ul>
-        <template v-if="chargerInfoList.length != 0">
-          <ul
-            class="uldatas w100"
-            v-for="(item, index) in chargerInfoList"
-            :key="index"
-          >
-            <li><p>SSPO-001</p></li>
+        <!-- v-if="chargerInfoList.length != 0" -->
+        <template>
+          <ul class="uldatas w100" v-for="(item, index) in chargerInfoList" :key="index">
+            <li><p>{{item.chargerno|valNO}}</p></li>
             <li>
-              <p>Charging</p>
+              <p>{{item.status|valNO}}</p>
             </li>
             <li>
-              <p>ASD</p>
+              <p>{{item.chargertype|valNO}}</p>
             </li>
             <li>
-              <p>ASD1256</p>
+              <p>{{item.vehicleno|valNO}}</p>
             </li>
             <li>
-              <p>2:16</p>
+              <p>{{item.chargingtime|valNO}}</p>
             </li>
             <li>
-              <p>26</p>
+              <p>{{item.chargingenergy|valNO}}</p>
             </li>
             <li>
-              <p>26P</p>
+              <p>{{item.chargingvoltage|valNO}}</p>
             </li>
             <li>
-              <p>53</p>
+              <p>{{item.chargingcurrent|valNO}}</p>
             </li>
           </ul>
         </template>
-        <template v-else>
+        <!-- <template v-else>
           <ul class="uldatas w100">
             <li><p>暂无数据！</p></li>
           </ul>
-        </template>
+        </template> -->
       </div>
+    </div>
+    <div class="pagination">
+      <el-pagination
+        @current-change="sizeChange"
+        background
+        layout=" prev, pager, next, jumper, ->, total, slot"
+        :total="count"
+        :page-size="8"
+      >
+        <!-- hide-on-single-page -->
+      </el-pagination>
     </div>
   </div>
 </template>
@@ -117,6 +125,8 @@ export default {
         { centreId: 4, value: "Yuen Long Centre" },
         { centreId: 5, value: "Shek Wu Hui Centre" },
       ],
+      page:1,
+      count:0
     };
   },
   created() {},
@@ -124,11 +134,25 @@ export default {
     this.getCCECDetail();
   },
   methods: {
+    // 
+    sizeChange(value){
+      this.page = value;
+      this.getCCECDetail();
+    },
+    //
+    seleteCenter(values) {
+      this.ctypes = {
+        centreId: values.centreId,
+        value: values.value,
+      };
+      this.getCCECDetail();
+    },
+    //
     getCCECDetail() {
       let data = {
         userId: localStorage.getItem("userId"),
-        centre: this.ctypes.centreId,
-        location: this.Location,
+        // centre: this.ctypes.centreId,
+        // location: this.Location,
       };
       findByDetails(data).then((res) => {
         console.log("查询充电桩的实时数据", res);
@@ -143,6 +167,12 @@ export default {
 </script>
 
 <style scoped>
+.pagination{
+  bottom: -80px;
+}
+.Detailed{
+  position: absolute;
+}
 .uldatas img {
   width: 25px;
   height: 25px;
@@ -159,6 +189,7 @@ export default {
 .overRights {
   height: 714px;
   margin-top: 32px;
+  overflow: hidden;
 }
 .chargerTop {
   width: 100%;

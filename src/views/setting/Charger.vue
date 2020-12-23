@@ -186,13 +186,26 @@ export default {
         page: this.page,
         limit: 10,
       };
+      let loadingInstance = this.$loading({
+        text: "加载中...",
+        background:"rgba(0,0,0,.5)"
+      });
       ChargerFindAll(data).then((res) => {
         console.log(res, "分页查询所有充电桩");
+        this.$nextTick(() => {
+          // 以服务的方式调用的 Loading 需要异步关闭
+          loadingInstance.close();
+        });
         if (res.code == 100) {
           this.chargerList = res.extend.chargerList;
           this.count = res.extend.count;
         }
-      });
+      }).catch(()=>{
+        this.$nextTick(() => {
+          // 以服务的方式调用的 Loading 需要异步关闭
+          loadingInstance.close();
+        });
+      })
     },
   },
 };

@@ -35,7 +35,7 @@
         </div>
         <div class="dsrmr">
           <div class="echart" v-if="$store.state.DataTypes[0].choose">
-            <p >Charging Voltage【v】</p>
+            <p>Charging Voltage【v】</p>
             <div
               class=""
               :style="{ width: '110%', height: '100%' }"
@@ -43,7 +43,7 @@
             ></div>
           </div>
           <div class="echart" v-if="$store.state.DataTypes[1].choose">
-            <p >Average Charging Current【A】</p>
+            <p>Average Charging Current【A】</p>
             <div
               class=""
               :style="{ width: '110%', height: '100%' }"
@@ -51,7 +51,7 @@
             ></div>
           </div>
           <div class="echart" v-if="$store.state.DataTypes[2].choose">
-            <p >Average Charging Power【kw】</p>
+            <p>Average Charging Power【kw】</p>
             <div
               class=""
               :style="{ width: '110%', height: '100%' }"
@@ -59,7 +59,7 @@
             ></div>
           </div>
           <div class="echart" v-if="$store.state.DataTypes[3].choose">
-            <p >Total Charging Energy【kwh】</p>
+            <p>Total Charging Energy【kwh】</p>
             <div
               class=""
               :style="{ width: '110%', height: '100%' }"
@@ -67,14 +67,14 @@
             ></div>
           </div>
           <div class="echart" v-if="$store.state.DataTypes[4].choose">
-            <p >Charging Time【Hour】</p>
+            <p>Charging Time【Hour】</p>
             <div
               class=""
               :style="{ width: '110%', height: '100%' }"
               id="ChargingTime【Hour】"
             ></div>
           </div>
-          <div class="echart"  v-if="$store.state.DataTypes[5].choose">
+          <div class="echart" v-if="$store.state.DataTypes[5].choose">
             <p>SoC Before Charging【%】</p>
             <div
               class=""
@@ -83,7 +83,7 @@
             ></div>
           </div>
           <div class="echart" v-if="$store.state.DataTypes[6].choose">
-            <p >Mileage Travelled Before Charging【km】</p>
+            <p>Mileage Travelled Before Charging【km】</p>
             <div
               class=""
               :style="{ width: '110%', height: '100%' }"
@@ -122,32 +122,55 @@ export default {
     console.log(this.$store.state.DataTypes);
   },
   mounted() {
-    let _this = this;
-    this.$store.state.DataTypes.forEach((item, index) => {
-      if (item.choose) {
-        item.name = item.name.replace(/[ ]/gi, "");
-        _this.drawLine(item.name, false);
-      }
-    });
-    // _this.drawLine("SoC", false);
-    // _this.drawLine("DataType1", false);
-    // _this.drawLine("DataType2", false);
-    // _this.drawLine("DataType3", false);
-    // _this.drawLine("DataType4", false);
+    this.getParams();
   },
   methods: {
-    // 获取数据
-    getDatas() {
-      let data = {
-        userId: localStorage.getItem("userId"),
-        centre: "",
-        location: "",
-        chargerNo: "",
-        vehicleNo: "",
-      };
+    //条件筛选查询
+    getParams() {
+      let datas = { userIds: localStorage.getItem("userId"), page: 1, limit: 100 };
+      let data = this.$store.state.chargerInfoData;
+      let DataTypes = this.$store.state.DataTypes;
+      if(Object.keys(data).length===0){
+        this.$message.warning("请在上一页添加筛选条件");
+        return
+      }
+      findByParamsAll({ ...data, ...datas }).then((res) => {
+        console.log("条件筛选查询",res);
+        if (res.code == 100) {
+          let chargerInfoList = res.extend.chargerInfoList;
+          let chargingVoltage = chargerInfoList.map(item=>item.chargingVoltage), // 充电电压
+              chargingCurrent = chargerInfoList.map(item=>item.chargingCurrent), // 充电电流
+              chargingPower = chargerInfoList.map(item=>item.chargingPower), // 充电电源
+              chargingEnergy = chargerInfoList.map(item=>item.chargingEnergy), //充电能量
+              chargingTime = chargerInfoList.map(item=>item.chargingTime), //充电时间
+              socBeforeCharging = chargerInfoList.map(item=>item.socBeforeCharging), //soc前充电
+              mileageTravelled = chargerInfoList.map(item=>item.mileageTravelled); //里程
+          if(DataTypes[0].choose){
+            this.drawLine("ChargingVoltage【v】", false,chargingVoltage);
+          }
+           if(DataTypes[1].choose){
+            this.drawLine("AverageChargingCurrent【A】", false,chargingCurrent);
+          }
+          if(DataTypes[2].choose){
+            this.drawLine("AverageChargingPower【kw】", false,chargingPower);
+          }
+          if(DataTypes[3].choose){
+            this.drawLine("TotalChargingEnergy【kwh】", false,chargingEnergy);
+          }
+           if(DataTypes[4].choose){
+            this.drawLine("ChargingTime【Hour】", false,chargingTime);
+          }
+          if(DataTypes[5].choose){
+            this.drawLine("SoCBeforeCharging【%】", false,socBeforeCharging);
+          }
+          if(DataTypes[6].choose){
+            this.drawLine("MileageTravelledBeforeCharging【km】", false,mileageTravelled);
+          }
+        }
+      });
     },
     //
-    drawLine(id, ishowX) {
+    drawLine(id, ishowX,values) {
       // 基于准备好的dom，初始化echarts实例
       let myChart = echarts.init(document.getElementById(id));
       var count = 100;
@@ -156,15 +179,15 @@ export default {
       var gridHeight = 65;
 
       var data = {
-        cpu: [],
-        xMin: 0,
-        xMax: count * 100,
+        values: values,
+        // xMin: 0,
+        // xMax: count * 100,
       };
 
-      for (var i = 0; i < count; i++) {
-        var now = i * 100;
-        data.cpu.push([now, Math.floor(Math.random() * 100)]);
-      }
+      // for (var i = 0; i < count; i++) {
+      //   var now = i * 100;
+      //   data.cpu.push([now, Math.floor(Math.random() * 100)]);
+      // }
 
       function makeXAxis(gridIndex, opt) {
         return echarts.util.merge(
@@ -189,8 +212,8 @@ export default {
                 color: "#ddd",
               },
             },
-            min: data.xMin,
-            max: data.xMax,
+            // min: data.xMin,
+            // max: data.xMax,
             axisPointer: {
               lineStyle: {
                 color: "#00B7EE",
@@ -259,7 +282,7 @@ export default {
                 color: "#5193f2",
               });
               return echarts.util
-                .map(["time", "cpu"], function (seriesName) {
+                .map(["time", "value"], function (seriesName) {
                   for (var i = 0; i < params.length; i++) {
                     var param = params[i];
                     var style = "color: " + param.color;
@@ -362,7 +385,7 @@ export default {
                 color: "#27F3FD",
               },
             },
-            data: data.cpu,
+            data: data.values,
           },
         ],
       });

@@ -6,7 +6,7 @@ import { Message } from 'element-ui';
 axios.defaults.headers.post["Content-Type"] =
     "application/x-www-form-urlencoded";
 //超时时间10秒
-axios.defaults.timeout = 10000;
+// axios.defaults.timeout = 10000;
 export const $Post = (api, value) => {
     return new Promise((resolve, reject) => {
         axios({
@@ -71,6 +71,8 @@ export const findBIC = (data) => $Post("/api/chargerInfo/findByIndividualCharger
 export const findByDetails = (data) => $Post("/api/chargerInfo/findByDetails", data);
 // 条件筛选查询
 export const findByParamsAll = (data) => $Post("/api/chargerInfo/findByParamsAll", data);
+// 根据地区查询 充电桩的充电总时长等
+export const findByDataRecord = (data) => $Post("/api/chargerInfo/findByDataRecord", data);
 
 
 // 登陆部分

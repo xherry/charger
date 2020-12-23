@@ -30,13 +30,13 @@
               <p>{{ item.name }}</p>
             </li>
             <li>
+              <p v-if="item.value">{{ item.value.totalchargingtime}}</p>
+            </li>
+            <li>
               <p v-if="item.value">{{ item.value.totalofcharging }}</p>
             </li>
             <li>
-              <p  v-if="item.value">{{ item.value.totalchargingtime }}</p>
-            </li>
-            <li>
-              <p  v-if="item.value">{{ item.value.totalchargingenergy }}</p>
+              <p v-if="item.value">{{ item.value.totalchargingenergy }}</p>
             </li>
             <li>
               <p><button class="button sees" @click="seeDetails(item)">查看</button></p>
@@ -69,16 +69,16 @@
                 :key="index + 'k'"
               >
                 <li>
-                  <p>{{ item.cno }}</p>
+                  <p>{{ item.chargerno }}</p>
                 </li>
                 <li>
-                  <p>{{ item.h }}</p>
+                  <p>{{ item.chargingtime }}</p>
                 </li>
                 <li>
-                  <p>{{ item.ts }}</p>
+                  <p>{{ item.batterycapacity }}</p>
                 </li>
                 <li>
-                  <p>{{ item.kwh }}</p>
+                  <p>{{ item.chargingenergy }}</p>
                 </li>
               </ul>
             </div>
@@ -108,7 +108,7 @@
 </template>
 
 <script>
-import { findBYN } from "../../common/api";
+import { findBYN, findByDataRecord } from "../../common/api";
 export default {
   name: "UptodateStatus",
   data() {
@@ -133,10 +133,31 @@ export default {
   methods: {
     sizeChange(value) {
       this.page = value;
+      this.cdetails = JSON.parse(JSON.stringify(this.oldDatas)).splice(
+        (value - 1) * 10,
+        10
+      );
     },
+    //  根据地区查询 充电桩的充电总时长等
     seeDetails(value) {
       console.log(value);
       this.isToDetail = true;
+      let data = {
+        userId: localStorage.getItem("userId"),
+        centre: value.value.centre,
+        location: value.value.location,
+      };
+      findByDataRecord(data).then((res) => {
+        console.log(res, " 根据地区查询 充电桩的充电总时长等");
+        if (res.code == 100) {
+          this.oldDatas = res.extend.chargerInfoList;
+          this.cdetails = JSON.parse(JSON.stringify(res.extend.chargerInfoList)).splice(
+            0,
+            10
+          );
+          this.count = res.extend.count;
+        }
+      });
     },
     // 查询六个地区下充电桩等信息
     getSixData() {

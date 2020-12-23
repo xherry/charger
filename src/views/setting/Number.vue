@@ -19,10 +19,46 @@
             :key="index"
             @click="isUpdate = index"
           >
-            <li><p><input type="text" disabled v-model="item.id" v-if="item.vehicleNo!==null"></p></li>
-            <li><p><input type="text" :disabled='isUpdate !== index' v-model="item.vehicleIdentificationNo" v-if="item.vehicleIdentificationNo!==null"></p></li>
-            <li><p><input type="text" :disabled='isUpdate !== index' v-model="item.evModel" v-if="item.evModel!==null"></p></li>
-            <li><p><input type="text" :disabled='isUpdate !== index' v-model="item.vehicleNo" v-if="item.vehicleNo!==null"></p></li>
+            <li>
+              <p>
+                <input
+                  type="text"
+                  disabled
+                  v-model="item.id"
+                  v-if="item.vehicleNo !== null"
+                />
+              </p>
+            </li>
+            <li>
+              <p>
+                <input
+                  type="text"
+                  :disabled="isUpdate !== index"
+                  v-model="item.vehicleIdentificationNo"
+                  v-if="item.vehicleIdentificationNo !== null"
+                />
+              </p>
+            </li>
+            <li>
+              <p>
+                <input
+                  type="text"
+                  :disabled="isUpdate !== index"
+                  v-model="item.evModel"
+                  v-if="item.evModel !== null"
+                />
+              </p>
+            </li>
+            <li>
+              <p>
+                <input
+                  type="text"
+                  :disabled="isUpdate !== index"
+                  v-model="item.vehicleNo"
+                  v-if="item.vehicleNo !== null"
+                />
+              </p>
+            </li>
             <!-- <li @click="isShowSlete1 = isShowSlete1 === index ? '' : index">
               <p>001</p>
               <img
@@ -48,7 +84,7 @@
               </div>
             </li> -->
             <li @click="isShowSlete2 = isShowSlete2 === index ? '' : index">
-              <p>{{item.department}}</p>
+              <p>{{ item.department }}</p>
               <img
                 class="seleters"
                 :style="{
@@ -78,7 +114,7 @@
         layout=" prev, pager, next, jumper, ->, total, slot"
         :total="count"
         hide-on-single-page
-        :page-size='10'
+        :page-size="10"
       >
       </el-pagination>
     </div>
@@ -129,7 +165,7 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         beforeClose: (action, instance, done) => {
-          if(action === "confirm"){
+          if (action === "confirm") {
             instance.confirmButtonLoading = true;
             instance.confirmButtonText = "执行中...";
             VNSaveOrUpdEntity(data).then((res) => {
@@ -170,13 +206,28 @@ export default {
         page: this.page,
         limit: 10,
       };
-      VNFindAll(data).then((res) => {
-        console.log(res);
-        if (res.code == 100) {
-          this.vehicleNumberList = res.extend.vehicleNumberList;
-          this.count = res.extend.count;
-        }
+      let loadingInstance = this.$loading({
+        text: "加载中...",
+        background: "rgba(0,0,0,.5)",
       });
+      VNFindAll(data)
+        .then((res) => {
+          console.log(res);
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+          if (res.code == 100) {
+            this.vehicleNumberList = res.extend.vehicleNumberList;
+            this.count = res.extend.count;
+          }
+        })
+        .catch((err) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+        });
     },
   },
 };

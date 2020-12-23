@@ -36,21 +36,41 @@
           <li><p>Enable</p></li>
           <li><p>Disable</p></li>
         </ul>
-        <template v-if="chargerInfoList.length!=0">
+        <template v-if="chargerInfoList.length != 0">
           <ul class="uldatas w100" v-for="(item, index) in chargerInfoList" :key="index">
-            <li><p>SSPO-001</p></li>
             <li>
-              <img v-if="''" src="../../assets/index/useraccount/04.png" alt="" />
-              <img v-else src="../../assets/index/useraccount/03.png" alt="" />
+              <p>{{ item.chargerno }}</p>
             </li>
             <li>
-              <img v-if="''" src="../../assets/index/useraccount/03.png" alt="" />
-              <img v-else src="../../assets/index/useraccount/04.png" alt="" />
+              <img
+                v-if="item.status == 'Enable'"
+                src="../../assets/index/useraccount/04.png"
+                alt=""
+              />
+              <img
+                @click="setStatus(1, item.status, item.chargerno, item.centre)"
+                v-else
+                src="../../assets/index/useraccount/03.png"
+                alt=""
+              />
+            </li>
+            <li>
+              <img
+                v-if="item.status == 'Disable'"
+                src="../../assets/index/useraccount/04.png"
+                alt=""
+              />
+              <img
+                @click="setStatus(0, item.status, item.chargerno, item.centre)"
+                v-else
+                src="../../assets/index/useraccount/03.png"
+                alt=""
+              />
             </li>
           </ul>
         </template>
         <template v-else>
-           <ul class="uldatas w100">
+          <ul class="uldatas w100">
             <li><p>暂无数据！</p></li>
           </ul>
         </template>
@@ -63,6 +83,7 @@
         layout=" prev, pager, next, jumper, ->, total, slot"
         :total="count"
         hide-on-single-page
+        :page-size="10"
       >
       </el-pagination>
     </div>
@@ -70,7 +91,7 @@
 </template>
 
 <script>
-import { findByDetails } from "../../common/api";
+import { findByDetails, controlCharger } from "../../common/api";
 export default {
   name: "Centre",
   data() {
@@ -92,6 +113,7 @@ export default {
       Location: "",
       count: 0,
       page: 1,
+      oldDatas: [],
     };
   },
   created() {},
@@ -99,10 +121,42 @@ export default {
     this.getNowData();
   },
   methods: {
-    // 
-    sizeChange(value){
+    // 操作开关
+    setStatus(type, status, chargerno, centre) {
+      let data = {
+        userIds: localStorage.getItem("userId"),
+        type: type,
+        centre: centre,
+        chargerNo: chargerno,
+      };
+      if (status == "Disconnected" || status == "OffLine") {
+        this.$message.warning("设备离线！");
+        return;
+      }
+      if (type == 1) {
+        if (status != "Disable") {
+          this.$message.warning("无法启用！");
+          return;
+        }
+      }
+      if (type == 0) {
+        if (status == "Disable") {
+          this.$message.warning("无法启用！");
+          return;
+        }
+      }
+      controlCharger(data).then((res) => {
+        console.log(res, "操作开关");
+      });
+    },
+    //
+    sizeChange(value) {
       this.page = value;
-      this.getNowData();
+      // this.getNowData();
+      this.chargerInfoList = JSON.parse(JSON.stringify(this.oldDatas)).splice(
+        (value - 1) * 10 ,
+        10
+      );
     },
     // 选择中心
     seleteCenter(prop) {
@@ -116,30 +170,52 @@ export default {
     },
     // 查询充电桩的实时数据
     getNowData() {
+      let datas =
+        this.ctypes.centreId && this.Location
+          ? {
+              centre: this.ctypes.centreId,
+              location: this.Location,
+            }
+          : {};
       let data = {
         page: this.page,
-        count: 10,
+        limit: 10,
         userId: localStorage.getItem("userId"),
-        centre: this.ctypes.centreId,
-        location: this.Location,
+        ...datas,
       };
+      let loadingInstance = this.$loading({
+        text: "加载中...",
+        background:"rgba(0,0,0,.5)"
+      });
       findByDetails(data).then((res) => {
         console.log(res, "查询充电桩的实时数据");
+        this.$nextTick(() => {
+          // 以服务的方式调用的 Loading 需要异步关闭
+          loadingInstance.close();
+        });
         if (res.code == 100) {
-          this.chargerInfoList = res.extend.chargerInfoList;
+          this.oldDatas = res.extend.chargerInfoList;
+          this.chargerInfoList = JSON.parse(
+            JSON.stringify(res.extend.chargerInfoList)
+          ).splice(0, 10);
           this.count = res.extend.count;
         }
-      });
+      }).catch(()=>{
+        this.$nextTick(() => {
+          // 以服务的方式调用的 Loading 需要异步关闭
+          loadingInstance.close();
+        });
+      })
     },
   },
 };
 </script>
 
 <style scoped>
-.pagination{
+.pagination {
   bottom: -80px;
 }
-.Centre{
+.Centre {
   position: relative;
 }
 .uldatas img {

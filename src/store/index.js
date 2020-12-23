@@ -36,6 +36,17 @@ export default new Vuex.Store({
             { name: "SoC Before Charging【%】", choose: true, id: "6" },
             { name: "Mileage Travelled Before Charging【km】", choose: true, id: "7" },
         ],
+        chargerInfoData: {
+            // centre: '',
+            // location: "",
+            // chargerType: '',
+            // chargerNo: '',
+            // manufacturer: "",
+            // model: "",
+            // vehicleNo: "",
+            // startDate: "",
+            // endDate: ""
+        }
     },
     mutations: {
         changeShowBottom(state, value) {
@@ -55,7 +66,10 @@ export default new Vuex.Store({
         },
         showTableUl(state, value) {
             state.DataTypes = value;
-        }
+        },
+        getChargerInfoData(state, value) {
+            state.chargerInfoData = value;
+        },
     },
     actions: {},
     modules: {}

@@ -10,7 +10,7 @@
             <li><p>Image Uploaded</p></li>
           </ul>
           <!-- v-if="eveList.length!=0" -->
-          <template v-if="eveList.length!=0">
+          <template v-if="eveList.length != 0">
             <ul
               class="uldatas w100"
               @click="toChargerDetails(item.id)"
@@ -75,7 +75,7 @@ export default {
       this.$router.push({
         name: "chargerDetails",
         query: {
-          id:id
+          id: id,
         },
       });
     },
@@ -91,13 +91,28 @@ export default {
         page: this.page,
         limit: 10,
       };
-      EVFindAll(data).then((res) => {
-        console.log("查询所有的车辆信息", res);
-        if (res.code == 100) {
-          this.count = res.extend.count;
-          this.eveList = res.extend.electricVehicleList;
-        }
+      let loadingInstance = this.$loading({
+        text: "加载中...",
+        background: "rgba(0,0,0,.5)",
       });
+      EVFindAll(data)
+        .then((res) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+          console.log("查询所有的车辆信息", res);
+          if (res.code == 100) {
+            this.count = res.extend.count;
+            this.eveList = res.extend.electricVehicleList;
+          }
+        })
+        .catch((err) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+        });
     },
   },
 };

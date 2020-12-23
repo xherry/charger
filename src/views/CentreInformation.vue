@@ -2,9 +2,22 @@
   <div class="CentreInformation flex rz mt50">
     <div class="overLeft">
       <p>Centre Information</p>
-      <div :class="[seletNavIndex == item.id ? 'ol-item1' : 'ol-item2', 'flex', 'flex-Updown-between']" @click="$router.push(item.RouterPush), (seletNavIndex = item.id)" v-for="item in leftNavs" :key="item.id">
+      <div
+        :class="[
+          seletNavIndex == item.id ? 'ol-item1' : 'ol-item2',
+          'flex',
+          'flex-Updown-between',
+        ]"
+        @click="$router.push(item.RouterPush), (seletNavIndex = item.id)"
+        v-for="item in leftNavs"
+        :key="item.id"
+      >
         <span>{{ item.name }}</span>
-        <img class="ml27" :src="seletNavIndex == item.id ? item.seletImg : item.img" alt="" />
+        <img
+          class="ml27"
+          :src="seletNavIndex == item.id ? item.seletImg : item.img"
+          alt=""
+        />
       </div>
     </div>
     <div>
@@ -36,6 +49,13 @@ export default {
         },
       ],
     };
+  },
+  created() {
+    this.leftNavs.forEach((item) => {
+      if (item.RouterPush === window.location.href.split("#")[1].split("/")[2]) {
+        this.seletNavIndex = item.id;
+      }
+    });
   },
 };
 </script>

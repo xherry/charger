@@ -170,7 +170,7 @@
             layout=" prev, pager, next, jumper, ->, total, slot"
             :total="count"
             hide-on-single-page
-            :page-size='7'
+            :page-size="7"
           >
           </el-pagination>
         </div>
@@ -303,16 +303,31 @@ export default {
         page: this.page,
         limit: 7,
       };
-      roleKeyFindAll(data).then((res) => {
-        console.log(res);
-        if (res.code == 100) {
-          let dataList = res.extend.roleKeyList.reverse();
-          this.oldRoleKeyList = dataList;
-          console.log(this.oldRoleKeyList);
-          this.roleKeyList = JSON.parse(JSON.stringify(dataList));
-          this.count = res.extend.count;
-        }
+      let loadingInstance = this.$loading({
+        text: "加载中...",
+        background: "rgba(0,0,0,.5)",
       });
+      roleKeyFindAll(data)
+        .then((res) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+          console.log(res);
+          if (res.code == 100) {
+            let dataList = res.extend.roleKeyList.reverse();
+            this.oldRoleKeyList = dataList;
+            console.log(this.oldRoleKeyList);
+            this.roleKeyList = JSON.parse(JSON.stringify(dataList));
+            this.count = res.extend.count;
+          }
+        })
+        .catch((err) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+        });
     },
   },
 };
