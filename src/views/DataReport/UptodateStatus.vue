@@ -1,6 +1,10 @@
 <template>
   <div class="UptodateStatus">
-    <button v-if="isToDetail" class="button goback" @click="isToDetail = false">
+    <button
+      v-if="isToDetail"
+      class="button goback"
+      @click="(isToDetail = false), (queryData = {})"
+    >
       返回
     </button>
     <div class="overRights">
@@ -30,7 +34,7 @@
               <p>{{ item.name }}</p>
             </li>
             <li>
-              <p v-if="item.value">{{ item.value.totalchargingtime}}</p>
+              <p v-if="item.value">{{ item.value.totalchargingtime }}</p>
             </li>
             <li>
               <p v-if="item.value">{{ item.value.totalofcharging }}</p>
@@ -124,7 +128,8 @@ export default {
         { centreId: 4, name: "Tsing Yi", value: null },
         { centreId: 5, name: "Yuen Long", value: null },
       ],
-      cdetails: [{ h: "", ts: "", kwh: "", cno: "SSP001" }],
+      cdetails: [],
+      queryData: {},
     };
   },
   created() {
@@ -133,51 +138,95 @@ export default {
   methods: {
     sizeChange(value) {
       this.page = value;
-      this.cdetails = JSON.parse(JSON.stringify(this.oldDatas)).splice(
-        (value - 1) * 10,
-        10
-      );
+      // this.cdetails = JSON.parse(JSON.stringify(this.oldDatas)).splice(
+      //   (value - 1) * 10,
+      //   10
+      // );
+      this.findData();
     },
     //  根据地区查询 充电桩的充电总时长等
     seeDetails(value) {
-      console.log(value);
+      // console.log(value);
+      if (!value.value) {
+        this.$message.warning("无更多数据！");
+        return;
+      }
+      this.queryData = value;
       this.isToDetail = true;
+      this.findData();
+    },
+    // 根据地区查询 充电桩的充电总时长等2
+    findData() {
+      let value = this.queryData;
       let data = {
         userId: localStorage.getItem("userId"),
         centre: value.value.centre,
         location: value.value.location,
+        limit: 10,
+        page: this.page,
       };
-      findByDataRecord(data).then((res) => {
-        console.log(res, " 根据地区查询 充电桩的充电总时长等");
-        if (res.code == 100) {
-          this.oldDatas = res.extend.chargerInfoList;
-          this.cdetails = JSON.parse(JSON.stringify(res.extend.chargerInfoList)).splice(
-            0,
-            10
-          );
-          this.count = res.extend.count;
-        }
+      let loadingInstance = this.$loading({
+        text: "加载中...",
+        background: "rgba(0,0,0,.5)",
       });
+      findByDataRecord(data)
+        .then((res) => {
+          // console.log(res, " 根据地区查询 充电桩的充电总时长等");
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+          if (res.code == 100) {
+            // this.oldDatas = res.extend.chargerInfoList;
+            this.cdetails = res.extend.chargerInfoList || [];
+            //  JSON.parse(JSON.stringify(res.extend.chargerInfoList)).splice(
+            //   0,
+            //   10
+            // );
+            this.count = res.extend.count;
+          }
+        })
+        .catch((err) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+        });
     },
     // 查询六个地区下充电桩等信息
     getSixData() {
       let data = {
         userId: localStorage.getItem("userId"),
       };
-      findBYN(data).then((res) => {
-        console.log(res, "查询六个地区下充电桩等信息");
-        if (res.code == 100) {
-          let values = res.extend;
-          this.centerType = [
-            { centreId: 0, name: "Hung Hom", value: values.hh },
-            { centreId: 1, name: "Satin", value: values.s },
-            { centreId: 2, name: "Sham Shui Po", value: values.ssp },
-            { centreId: 3, name: "Shek Wu Hui", value: values.swh },
-            { centreId: 4, name: "Tsing Yi", value: values.ty },
-            { centreId: 5, name: "Yuen Long", value: values.yl },
-          ];
-        }
+      let loadingInstance = this.$loading({
+        text: "加载中...",
+        background: "rgba(0,0,0,.5)",
       });
+      findBYN(data)
+        .then((res) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+          // console.log(res, "查询六个地区下充电桩等信息");
+          if (res.code == 100) {
+            let values = res.extend;
+            this.centerType = [
+              { centreId: 0, name: "Hung Hom", value: values.hh },
+              { centreId: 1, name: "Satin", value: values.s },
+              { centreId: 2, name: "Sham Shui Po", value: values.ssp },
+              { centreId: 3, name: "Shek Wu Hui", value: values.swh },
+              { centreId: 4, name: "Tsing Yi", value: values.ty },
+              { centreId: 5, name: "Yuen Long", value: values.yl },
+            ];
+          }
+        })
+        .catch((err) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+        });
     },
   },
 };

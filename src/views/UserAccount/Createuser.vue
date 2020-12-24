@@ -265,7 +265,7 @@ export default {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
           });
-          console.log(res);
+          // console.log(res);
           if (res.code == 100) {
             this.$message.success("创建成功");
             for (let key in this.addUsers) {
@@ -288,7 +288,7 @@ export default {
       sendSms({
         account: this.addUsers.phone,
       }).then((res) => {
-        console.log(res);
+        // console.log(res);
       });
     },
   },

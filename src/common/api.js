@@ -29,7 +29,7 @@ export const $Post = (api, value) => {
 }
 export const imageUpload = (formData) => {
     return new Promise((resolve, reject) => {
-        let api = "http://192.168.1.2:8233/test/upload/list";
+        let api = base_url + "/api/upload/uploadFileNow";
         // let formData = new FormData();
         // formData.append("userId", "1");
         // for (var i = 0; i < this.fileList.length; i++) {
@@ -46,7 +46,7 @@ export const imageUpload = (formData) => {
             })
             .then((res) => {
                 console.log(res);
-                resolve(res)
+                resolve(res.data)
             })
             .catch((err) => {
                 console.log(err);

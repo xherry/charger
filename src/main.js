@@ -14,7 +14,8 @@ import "./common/element";
 
 // 
 import "./common/common";
-
+// 
+Vue.prototype.$base_url = "http://8.210.178.104";
 
 // 路由守卫
 import "./common/routingGuard";

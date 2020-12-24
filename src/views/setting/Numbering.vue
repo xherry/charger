@@ -199,7 +199,7 @@ export default {
           if (action === "confirm") {
             instance.confirmButtonLoading = true;
             instance.confirmButtonText = "执行中...";
-            console.log(this.isUpdate1, this.isUpdate2);
+            // console.log(this.isUpdate1, this.isUpdate2);
             if (this.isUpdate1 !== "") {
               let value = this.chargerNumberings[this.isUpdate1];
               let data = {
@@ -210,7 +210,7 @@ export default {
                 chargerType: value.chargerType,
               };
               CNSaveOrUpdEntity(data).then((res) => {
-                console.log(res);
+                // console.log(res);
                 instance.confirmButtonLoading = false;
                 done();
                 if (res.code == 100) {
@@ -222,9 +222,9 @@ export default {
               });
             }
             if (this.isUpdate2 !== "") {
-              console.log(this.chargerNumberingList);
+              // console.log(this.chargerNumberingList);
               let value = this.chargerNumberingList[this.isUpdate2];
-              console.log(value);
+              // console.log(value);
               let data = {
                 userId: localStorage.getItem("userId"),
                 evChargerNumberingId: value.id,
@@ -234,7 +234,7 @@ export default {
               };
               ECNSaveOrUpdEntity(data)
                 .then((res) => {
-                  console.log(res);
+                  // console.log(res);
                   instance.confirmButtonLoading = false;
                   done();
                   if (res.code == 100) {
@@ -283,7 +283,7 @@ export default {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
           });
-          console.log("查询所有充电器编号", res);
+          // console.log("查询所有充电器编号", res);
           if (res.code == 100) {
             this.chargerNumberings = res.extend.chargerNumberingList;
             this.count1 = res.extend.count;
@@ -304,7 +304,7 @@ export default {
         limit: 9,
       };
       ECNFindAll(data).then((res) => {
-        console.log("电动车充电器编号", res);
+        // console.log("电动车充电器编号", res);
         if (res.code == 100) {
           this.chargerNumberingList = res.extend.evChargerNumberingList;
           this.count2 = res.extend.count;

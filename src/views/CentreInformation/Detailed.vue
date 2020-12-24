@@ -58,27 +58,29 @@
         <!-- v-if="chargerInfoList.length != 0" -->
         <template>
           <ul class="uldatas w100" v-for="(item, index) in chargerInfoList" :key="index">
-            <li><p>{{item.chargerno|valNO}}</p></li>
             <li>
-              <p>{{item.status|valNO}}</p>
+              <p>{{ item.chargerno | valNO }}</p>
             </li>
             <li>
-              <p>{{item.chargertype|valNO}}</p>
+              <p>{{ item.status | valNO }}</p>
             </li>
             <li>
-              <p>{{item.vehicleno|valNO}}</p>
+              <p>{{ item.chargertype | valNO }}</p>
             </li>
             <li>
-              <p>{{item.chargingtime|valNO}}</p>
+              <p>{{ item.vehicleno | valNO }}</p>
             </li>
             <li>
-              <p>{{item.chargingenergy|valNO}}</p>
+              <p>{{ item.chargingtime | valNO }}</p>
             </li>
             <li>
-              <p>{{item.chargingvoltage|valNO}}</p>
+              <p>{{ item.chargingenergy | valNO }}</p>
             </li>
             <li>
-              <p>{{item.chargingcurrent|valNO}}</p>
+              <p>{{ item.chargingvoltage | valNO }}</p>
+            </li>
+            <li>
+              <p>{{ item.chargingcurrent | valNO }}</p>
             </li>
           </ul>
         </template>
@@ -95,7 +97,7 @@
         background
         layout=" prev, pager, next, jumper, ->, total, slot"
         :total="count"
-        :page-size="8"
+        :page-size="10"
       >
         <!-- hide-on-single-page -->
       </el-pagination>
@@ -125,8 +127,8 @@ export default {
         { centreId: 4, value: "Yuen Long Centre" },
         { centreId: 5, value: "Shek Wu Hui Centre" },
       ],
-      page:1,
-      count:0
+      page: 1,
+      count: 0,
     };
   },
   created() {},
@@ -134,8 +136,8 @@ export default {
     this.getCCECDetail();
   },
   methods: {
-    // 
-    sizeChange(value){
+    //
+    sizeChange(value) {
       this.page = value;
       this.getCCECDetail();
     },
@@ -149,28 +151,51 @@ export default {
     },
     //
     getCCECDetail() {
+      let datas =
+        this.ctypes.centreId && this.Location
+          ? {
+              centre: this.ctypes.centreId,
+              location: this.Location,
+            }
+          : {};
       let data = {
+        page: this.page,
+        limit: 10,
         userId: localStorage.getItem("userId"),
-        // centre: this.ctypes.centreId,
-        // location: this.Location,
+        ...datas,
       };
-      findByDetails(data).then((res) => {
-        console.log("查询充电桩的实时数据", res);
-        if (res.code == 100) {
-          this.chargerInfoList = res.extend.chargerInfoList;
-          this.count = res.extend.count;
-        }
+      let loadingInstance = this.$loading({
+        text: "加载中...",
+        background: "rgba(0,0,0,.5)",
       });
+      findByDetails(data)
+        .then((res) => {
+          // console.log("查询充电桩的实时数据", res);
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+          if (res.code == 100) {
+            this.chargerInfoList = res.extend.chargerInfoList;
+            this.count = res.extend.count;
+          }
+        })
+        .catch((err) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+        });
     },
   },
 };
 </script>
 
 <style scoped>
-.pagination{
+.pagination {
   bottom: -80px;
 }
-.Detailed{
+.Detailed {
   position: absolute;
 }
 .uldatas img {

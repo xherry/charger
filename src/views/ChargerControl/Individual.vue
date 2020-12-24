@@ -165,7 +165,7 @@ export default {
         vehicleNo: this.navList[2].value,
       };
       findBIC(data).then((res) => {
-        console.log("根据条件查询充电状态", res);
+        // console.log("根据条件查询充电状态", res);
         if (res.code == 100) {
           this.chargerInfo = res.extend.chargerInfo || {};
         }
@@ -217,7 +217,7 @@ export default {
         chargerNo: this.chargerInfo.chargerNo,
       };
       controlCharger(data).then((res) => {
-        console.log(res, "控制设备");
+        // console.log(res, "控制设备");
         if (res.code == 100) {
           this.$message.success("启用成功！");
           this.getIndividualCharger();

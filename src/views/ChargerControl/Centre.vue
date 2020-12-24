@@ -113,7 +113,6 @@ export default {
       Location: "",
       count: 0,
       page: 1,
-      oldDatas: [],
     };
   },
   created() {},
@@ -146,17 +145,20 @@ export default {
         }
       }
       controlCharger(data).then((res) => {
-        console.log(res, "操作开关");
+        // console.log(res, "操作开关");
+        if(res.code==100){
+          this.$message.success('启用成功！')
+        }
       });
     },
     //
     sizeChange(value) {
       this.page = value;
-      // this.getNowData();
-      this.chargerInfoList = JSON.parse(JSON.stringify(this.oldDatas)).splice(
-        (value - 1) * 10 ,
-        10
-      );
+      this.getNowData();
+      // this.chargerInfoList = JSON.parse(JSON.stringify(this.oldDatas)).splice(
+      //   (value - 1) * 10 ,
+      //   10
+      // );
     },
     // 选择中心
     seleteCenter(prop) {
@@ -188,16 +190,13 @@ export default {
         background:"rgba(0,0,0,.5)"
       });
       findByDetails(data).then((res) => {
-        console.log(res, "查询充电桩的实时数据");
+        // console.log(res, "查询充电桩的实时数据");
         this.$nextTick(() => {
           // 以服务的方式调用的 Loading 需要异步关闭
           loadingInstance.close();
         });
         if (res.code == 100) {
-          this.oldDatas = res.extend.chargerInfoList;
-          this.chargerInfoList = JSON.parse(
-            JSON.stringify(res.extend.chargerInfoList)
-          ).splice(0, 10);
+          this.chargerInfoList = res.extend.chargerInfoList
           this.count = res.extend.count;
         }
       }).catch(()=>{

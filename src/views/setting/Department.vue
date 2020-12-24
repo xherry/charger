@@ -203,7 +203,7 @@ export default {
             instance.confirmButtonLoading = true;
             instance.confirmButtonText = "执行中...";
             roleKeySOE(data).then((res) => {
-              console.log(res, "修改权限");
+              // console.log(res, "修改权限");
               if (res.code == 100) {
                 let {
                   id,
@@ -223,7 +223,7 @@ export default {
                   department,
                 };
                 CDSaveOrUpdEntity(data).then((res) => {
-                  console.log(res);
+                  // console.log(res);
                   if (res.code == 100) {
                     done();
                     instance.confirmButtonLoading = false;
@@ -273,7 +273,7 @@ export default {
       });
       CDFindAll(data)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();

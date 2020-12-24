@@ -243,7 +243,7 @@ export default {
         smsPasscode,
       };
       let roleKey = JSON.parse(localStorage.getItem("roleKey"));
-      console.log(roleKey);
+      // console.log(roleKey);
       this.$msgbox({
         title: "提示",
         message: "确认修改权限？",
@@ -255,7 +255,7 @@ export default {
             instance.confirmButtonLoading = true;
             instance.confirmButtonText = "执行中...";
             roleKeySOE(data).then((res) => {
-              console.log(res, "修改权限");
+              // console.log(res, "修改权限");
               if (res.code == 100) {
                 instance.confirmButtonLoading = false;
                 done();
@@ -313,11 +313,11 @@ export default {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
           });
-          console.log(res);
+          // console.log(res);
           if (res.code == 100) {
             let dataList = res.extend.roleKeyList.reverse();
             this.oldRoleKeyList = dataList;
-            console.log(this.oldRoleKeyList);
+            // console.log(this.oldRoleKeyList);
             this.roleKeyList = JSON.parse(JSON.stringify(dataList));
             this.count = res.extend.count;
           }

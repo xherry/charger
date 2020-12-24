@@ -29,7 +29,13 @@
       >
         <span>{{ item.name }}</span>
         <div class="seleter flex flex-Updown-between">
-          <input type="text" placeholder="namename" v-model="item.value" />
+          <input
+            type="text"
+            @input="getValue"
+            :data-id="item.id"
+            placeholder="namename"
+            v-model="item.value"
+          />
         </div>
       </div>
     </div>
@@ -40,37 +46,54 @@
       <div class="dialog01">
         <div class="cartword">
           <p class="diaName">Mileage after Charge</p>
-          <p class="diaValue">150 km</p>
+          <p class="diaValue">
+            {{ chargerInfo.mileagetravelled | valNO }}
+            {{ chargerInfo.mileagetravelled ? "km" : "" }}
+          </p>
         </div>
       </div>
       <div class="dialog02">
         <div class="cartword">
           <p class="diaName">Charging Tinme</p>
-          <p class="diaValue">30 min</p>
+          <p class="diaValue">
+            {{ chargerInfo.chargingtime | valNO }}
+            {{ chargerInfo.chargingtime ? "min" : "" }}
+          </p>
         </div>
       </div>
       <div class="dialog03">
         <div class="cartword">
           <p class="diaName">Charging Energy</p>
-          <p class="diaValue">13 kwh</p>
+          <p class="diaValue">
+            {{ chargerInfo.chargingenergy | valNO }}
+            {{ chargerInfo.chargingenergy ? "kwh" : "" }}
+          </p>
         </div>
       </div>
       <div class="dialog04">
         <div class="cartword">
           <p class="diaName">Charging Voltage</p>
-          <p class="diaValue">380 V</p>
+          <p class="diaValue">
+            {{ chargerInfo.batterycapacity | valNO }}
+            {{ chargerInfo.batterycapacity ? "V" : "" }}
+          </p>
         </div>
       </div>
       <div class="dialog05">
         <div class="cartword">
           <p class="diaName">Battery Capacity</p>
-          <p class="diaValue">65 %</p>
+          <p class="diaValue">
+            {{ chargerInfo.vehicleno | valNO }} {{ chargerInfo.vehicleno ? "%" : "" }}
+          </p>
         </div>
       </div>
       <div class="dialog06">
         <div class="cartword">
           <p class="diaName">Charging Current</p>
-          <p class="diaValue">20 A</p>
+          <p class="diaValue">
+            {{ chargerInfo.chargingcurrent | valNO }}
+            {{ chargerInfo.chargingcurrent ? "A" : "" }}
+          </p>
         </div>
       </div>
       <!-- <div class="buttons7 flex flex-Updown-between">
@@ -113,15 +136,18 @@ export default {
       navList: [
         {
           name: "Location",
-          value: "111",
+          value: "",
+          id: 1,
         },
         {
           name: "Charger NO.",
-          value: "222",
+          value: "",
+          id: 2,
         },
         {
           name: "Vehicle No.",
-          value: "333",
+          value: "",
+          id: 3,
         },
       ],
       chargerInfo: {},
@@ -131,6 +157,11 @@ export default {
     this.getIndividualCharger();
   },
   methods: {
+    // getValue
+    getValue() {
+      // let navList = this.navList;
+      this.getIndividualCharger();
+    },
     //根据条件查询充电状态
     getIndividualCharger() {
       let data = {
@@ -140,12 +171,27 @@ export default {
         chargerNo: this.navList[1].value,
         vehicleNo: this.navList[2].value,
       };
-      findBIC(data).then((res) => {
-        console.log("根据条件查询充电状态", res);
-        if (res.code == 100) {
-          this.chargerInfo = res.extend.chargerInfo;
-        }
+      let loadingInstance = this.$loading({
+        text: "加载中...",
+        background: "rgba(0,0,0,.5)",
       });
+      findBIC(data)
+        .then((res) => {
+          // console.log("根据条件查询充电状态", res);
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+          if (res.code == 100) {
+            this.chargerInfo = res.extend.chargerInfo || {};
+          }
+        })
+        .catch(() => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+        });
     },
     seleteCenter(prop) {
       this.ctypes.centreId = prop.centreId;

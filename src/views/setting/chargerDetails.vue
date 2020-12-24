@@ -42,11 +42,11 @@
               <!-- <input type="text" v-model="imgName" placeholder="选择图片" /> -->
               <p class="flex flex-Updown-between">
                 <span>{{
-                  electricVehicle.image ? electricVehicle.image : "请选择图片"
+                  imgName ? imgName : "请选择图片"
                 }}</span>
                 <i
-                  v-if="electricVehicle.image"
-                  @click="upIcon === 'el-icon-close' ? (electricVehicle.image = '') : ''"
+                  v-if="imgName"
+                  @click="upIcon === 'el-icon-close' ? (imgName = '') : ''"
                   :class="!isUpload ? upIcon : 'el-icon-loading'"
                 ></i>
               </p>
@@ -87,7 +87,7 @@
       <div class="cdright">
         <p>Preview</p>
         <div class="cdrmiddle">
-          <img src="../../assets/index/setting/09.png" alt="" />
+          <img :src="electricVehicle.image?electricVehicle.image:require('../../assets/index/setting/09.png')" alt="" />
         </div>
       </div>
     </div>
@@ -127,6 +127,7 @@ export default {
       oldObj: {},
       isUpload: false,
       upIcon: "",
+      
     };
   },
   created() {
@@ -151,13 +152,13 @@ export default {
         limit: 6,
       };
       EVFindAll(data).then((res) => {
-        console.log("查询所有的车辆信息", res);
+        // console.log("查询所有的车辆信息", res);
         if (res.code == 100) {
           if (res.extend.count > 6 && Math.ceil(res.extend.count / 6) < this.page) {
             this.$message.warning("无更多数据！");
             return;
           }
-          console.log(Math.ceil(res.extend.count / 6));
+          // console.log(Math.ceil(res.extend.count / 6));
           this.elist = [...this.elist, ...res.extend.electricVehicleList];
           this.count = res.extend.count;
         }
@@ -174,7 +175,7 @@ export default {
       };
       this.$msgbox({
         title: "提示",
-        message: "确认修改权限？",
+        message: "确认修改？",
         showCancelButton: true,
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -199,15 +200,13 @@ export default {
     },
     // 选择图片
     seleteImg(e) {
-      console.log(e);
       let files = e.target.files[0];
-      this.electricVehicle.image = files.name;
+      this.imgName = files.name;
     },
     // 上传图片
     uploadImg() {
       this.isUpload = true;
       let oFile = document.querySelector("#file"); //获取input file节点
-      console.log(oFile.files);
       if (oFile.files.length == 0) {
         this.$message.warning("请选择图片！");
         return;
@@ -215,22 +214,23 @@ export default {
       this.isUpload = true;
       let data = new FormData();
       data.append("file", oFile.files[0]);
-      let loadingInstance = this.$loading({
-        text: "加载中...",
-        background: "rgba(0,0,0,.5)",
-      });
       imageUpload(data)
         .then((res) => {
-          this.isUpload = false;
-          console.log(res, "上传图片");
-          this.upIcon = "el-icon-check";
+          // console.log(res)
+          if(res.code==0){
+            this.$message.success("上传成功！");
+            this.isUpload = false;
+            // console.log(res, "上传图片");
+            this.upIcon = "el-icon-check";
+            this.electricVehicle.image = this.$base_url + res.data.srcs;
+          }
+
         })
         .catch(() => {
           this.upIcon = "el-icon-close";
           this.isUpload = false;
           this.$message.warning("上传失败！");
         });
-      // this.imgName = oFile.files[0].name;
     },
     // 获取下拉框信息
     getOptions() {
@@ -238,7 +238,7 @@ export default {
         userId: localStorage.getItem("userId"),
       };
       EVFindBySelect(data).then((res) => {
-        console.log("获取下拉框信息", res);
+        // console.log("获取下拉框信息", res);
         if (res.code == 100) {
           this.electricVehicleList = res.extend.electricVehicleList;
         }
@@ -259,10 +259,11 @@ export default {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
           });
-          console.log("查询单个车辆信息", res);
+          // console.log("查询单个车辆信息", res);
           if (res.code == 100) {
             this.oldObj = res.extend.electricVehicle;
             this.electricVehicle = JSON.parse(JSON.stringify(res.extend.electricVehicle));
+            this.imgName = JSON.parse(JSON.stringify(res.extend.electricVehicle)).image;
           }
         })
         .catch((err) => {
@@ -285,6 +286,13 @@ export default {
   bottom: 0px;
   opacity: 0;
   /* visibility: hidden; */
+}
+.inputs>p>span{
+   width: 85% !important;
+   display: inline-block;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
 }
 .head {
   cursor: pointer;

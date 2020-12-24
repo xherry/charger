@@ -101,7 +101,7 @@ export default {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
           });
-          console.log("查询所有的车辆信息", res);
+          // console.log("查询所有的车辆信息", res);
           if (res.code == 100) {
             this.count = res.extend.count;
             this.eveList = res.extend.electricVehicleList;

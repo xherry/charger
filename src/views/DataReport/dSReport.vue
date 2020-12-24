@@ -2,7 +2,7 @@
   <div class="dSReport">
     <div class="overRights">
       <p class="ortoptit">Report Includes</p>
-      <div class="dsrmain flex">
+      <div class="dsrmain flex" id="dsrmain">
         <div class="dsrml">
           <div class="dtatas flex flex-Updown">
             <div class="dtspan">
@@ -15,14 +15,14 @@
           </div>
           <div
             class="dtatas flex flex-Updown"
-            v-for="item in DataTypes"
+            v-for="(item,index) in DataTypes"
             :key="'d' + item.id"
           >
             <div class="seleteImg" @click="item.Table = !item.Table">
               <img v-if="item.Table" src="../../assets/index/useraccount/04.png" alt="" />
               <img v-else src="../../assets/index/useraccount/03.png" alt="" />
             </div>
-            <div class="seleteImg" @click="item.Figure = !item.Figure">
+            <div class="seleteImg" @click="isSetPDF(index)">
               <img
                 v-if="item.Figure"
                 src="../../assets/index/useraccount/04.png"
@@ -33,25 +33,28 @@
             <p>{{ item.name }}</p>
           </div>
         </div>
-        <div class="dsrmr">
+        <div class="dsrmr" id="dsrmr">
+          <!--  -->
           <div class="echart" v-if="$store.state.DataTypes[0].choose">
-            <p>Charging Voltage【v】</p>
+            <p>Charging Voltage</p>
             <div
               class=""
               :style="{ width: '110%', height: '100%' }"
               id="ChargingVoltage【v】"
             ></div>
           </div>
+          <!--  -->
           <div class="echart" v-if="$store.state.DataTypes[1].choose">
-            <p>Average Charging Current【A】</p>
+            <p>Average Charging Current</p>
             <div
               class=""
               :style="{ width: '110%', height: '100%' }"
               id="AverageChargingCurrent【A】"
             ></div>
           </div>
+          <!--  -->
           <div class="echart" v-if="$store.state.DataTypes[2].choose">
-            <p>Average Charging Power【kw】</p>
+            <p>Average Charging Power</p>
             <div
               class=""
               :style="{ width: '110%', height: '100%' }"
@@ -59,7 +62,7 @@
             ></div>
           </div>
           <div class="echart" v-if="$store.state.DataTypes[3].choose">
-            <p>Total Charging Energy【kwh】</p>
+            <p>Total Charging Energy</p>
             <div
               class=""
               :style="{ width: '110%', height: '100%' }"
@@ -67,7 +70,7 @@
             ></div>
           </div>
           <div class="echart" v-if="$store.state.DataTypes[4].choose">
-            <p>Charging Time【Hour】</p>
+            <p>Charging Time</p>
             <div
               class=""
               :style="{ width: '110%', height: '100%' }"
@@ -75,7 +78,7 @@
             ></div>
           </div>
           <div class="echart" v-if="$store.state.DataTypes[5].choose">
-            <p>SoC Before Charging【%】</p>
+            <p>SoC Before Charging</p>
             <div
               class=""
               :style="{ width: '110%', height: '100%' }"
@@ -83,7 +86,7 @@
             ></div>
           </div>
           <div class="echart" v-if="$store.state.DataTypes[6].choose">
-            <p>Mileage Travelled Before Charging【km】</p>
+            <p>Mileage Travelled Before Charging</p>
             <div
               class=""
               :style="{ width: '110%', height: '100%' }"
@@ -92,7 +95,7 @@
           </div>
         </div>
         <p class="Update flex flex-Updown">
-          <span class="button">Generate PDF</span>
+          <span class="button" @click="printOut('Generate')">Generate PDF</span>
           <span class="button">Download</span>
         </p>
       </div>
@@ -101,76 +104,162 @@
 </template>
 
 <script>
+import html2canvas from "html2canvas";
+import JsPDF from "jspdf";
 import { findBIC, findByParamsAll } from "../../common/api";
 import echarts from "echarts";
 export default {
   name: "dSReport",
   data() {
     return {
-      DataTypes: [
-        { name: "Charging Voltage", Table: false, Figure: false, id: "1" },
-        { name: "Average Charging Current", Table: false, Figure: false, id: "2" },
-        { name: "Average Charging Power", Table: false, Figure: false, id: "3" },
-        { name: "Charging Energy", Table: false, Figure: false, id: "4" },
-        { name: "Charging Time", Table: false, Figure: false, id: "5" },
-        { name: "SoC", Table: false, Figure: false, id: "6" },
-        { name: "Mile age Travelled", Table: false, Figure: false, id: "7" },
-      ],
+      DataTypes: [],
     };
   },
   created() {
-    console.log(this.$store.state.DataTypes);
+    // console.log(this.$store.state.DataTypes);
+    this.DataTypes = [
+      {
+        name: "Charging Voltage",
+        Table: false,
+        Figure: this.$store.state.DataTypes[0].choose,
+        id: "1",
+      },
+      {
+        name: "Average Charging Current",
+        Table: false,
+        Figure: this.$store.state.DataTypes[1].choose,
+        id: "2",
+      },
+      {
+        name: "Average Charging Power",
+        Table: false,
+        Figure: this.$store.state.DataTypes[2].choose,
+        id: "3",
+      },
+      {
+        name: "Charging Energy",
+        Table: false,
+        Figure: this.$store.state.DataTypes[3].choose,
+        id: "4",
+      },
+      {
+        name: "Charging Time",
+        Table: false,
+        Figure: this.$store.state.DataTypes[4].choose,
+        id: "5",
+      },
+      {
+        name: "SoC",
+        Table: false,
+        Figure: this.$store.state.DataTypes[5].choose,
+        id: "6",
+      },
+      {
+        name: "Mile age Travelled",
+        Table: false,
+        Figure: this.$store.state.DataTypes[6].choose,
+        id: "7",
+      },
+    ];
   },
   mounted() {
     this.getParams();
   },
   methods: {
-    //条件筛选查询
-    getParams() {
-      let datas = { userIds: localStorage.getItem("userId"), page: 1, limit: 100 };
-      let data = this.$store.state.chargerInfoData;
-      let DataTypes = this.$store.state.DataTypes;
-      if(Object.keys(data).length===0){
-        this.$message.warning("请在上一页添加筛选条件");
-        return
-      }
-      findByParamsAll({ ...data, ...datas }).then((res) => {
-        console.log("条件筛选查询",res);
-        if (res.code == 100) {
-          let chargerInfoList = res.extend.chargerInfoList;
-          let chargingVoltage = chargerInfoList.map(item=>item.chargingVoltage), // 充电电压
-              chargingCurrent = chargerInfoList.map(item=>item.chargingCurrent), // 充电电流
-              chargingPower = chargerInfoList.map(item=>item.chargingPower), // 充电电源
-              chargingEnergy = chargerInfoList.map(item=>item.chargingEnergy), //充电能量
-              chargingTime = chargerInfoList.map(item=>item.chargingTime), //充电时间
-              socBeforeCharging = chargerInfoList.map(item=>item.socBeforeCharging), //soc前充电
-              mileageTravelled = chargerInfoList.map(item=>item.mileageTravelled); //里程
-          if(DataTypes[0].choose){
-            this.drawLine("ChargingVoltage【v】", false,chargingVoltage);
-          }
-           if(DataTypes[1].choose){
-            this.drawLine("AverageChargingCurrent【A】", false,chargingCurrent);
-          }
-          if(DataTypes[2].choose){
-            this.drawLine("AverageChargingPower【kw】", false,chargingPower);
-          }
-          if(DataTypes[3].choose){
-            this.drawLine("TotalChargingEnergy【kwh】", false,chargingEnergy);
-          }
-           if(DataTypes[4].choose){
-            this.drawLine("ChargingTime【Hour】", false,chargingTime);
-          }
-          if(DataTypes[5].choose){
-            this.drawLine("SoCBeforeCharging【%】", false,socBeforeCharging);
-          }
-          if(DataTypes[6].choose){
-            this.drawLine("MileageTravelledBeforeCharging【km】", false,mileageTravelled);
-          }
-        }
-      });
+    // 
+    isSetPDF(index){
+      this.DataTypes[index].Figure = !this.DataTypes[index].Figure;
+      let oldDataTypes = this.$store.state.DataTypes;
+      oldDataTypes[index].choose = !oldDataTypes[index].choose;
+      this.$store.commit("showTableUl",oldDataTypes);
     },
-    //
-    drawLine(id, ishowX,values) {
+    // 导出PDF
+    printOut(name) {
+      let shareContent = document.getElementById("dsrmr"); //需要截图的包裹的（原生的）DOM 对象
+      let width = shareContent.clientWidth, //获取dom 宽度
+        backgroundColor = "#999999",
+        height = shareContent.clientHeight, //获取dom 高度
+        canvas = document.createElement("canvas"), //创建一个canvas节点
+        scale = 1; //定义任意放大倍数 支持小数
+      canvas.width = width * scale; //定义canvas 宽度 * 缩放
+      canvas.height = height * scale; //定义canvas高度 *缩放
+      canvas.style.width = shareContent.clientWidth * scale + "px";
+      canvas.style.height = shareContent.clientHeight * scale + "px";
+      canvas.getContext("2d").scale(scale, scale); //获取context,设置scale
+      let opts = {
+        scale: scale, // 添加的scale 参数
+        canvas: canvas, //自定义 canvas
+        logging: false, //日志开关，便于查看html2canvas的内部执行流程
+        backgroundColor,
+        width: width, //dom 原始宽度
+        height: height,
+        useCORS: true, // 【重要】开启跨域配置
+      };
+      window.pageYoffset = 0;
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      setTimeout(() => {
+        html2canvas(shareContent, opts).then(() => {
+          var contentWidth = canvas.width;
+          var contentHeight = canvas.height;
+          //一页pdf显示html页面生成的canvas高度;
+          var pageHeight = (contentWidth / 592.28) * 841.89;
+          //未生成pdf的html页面高度
+          var leftHeight = contentHeight;
+          //页面偏移
+          var position = 0;
+          //a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
+          var imgWidth = 595.28;
+          var imgHeight = (592.28 / contentWidth) * contentHeight;
+          var pageData = canvas.toDataURL("image/jpeg", 1.0);
+          // var PDF = new JsPDF("", "pt", "a4");
+          let arrDPI = this.js_getDPI(); //获取显示器DPI
+          let dpiX = 96;
+          let dpiY = 96;
+          if (arrDPI.length > 0) {
+            dpiX = arrDPI[0];
+            dpiY = arrDPI[1];
+          }
+          //l:横向， p：纵向；单位： in:英寸，mm毫米；画布大小：a3,a4,leter,[]（当内容为数组时，为自定义大小）
+          let PDF = new JsPDF("l", "in", [
+            (contentWidth + 10) / dpiX,
+            (contentHeight + 10) / dpiY,
+          ]); // 自定义页面大小
+          PDF.setFillColor(188, 188, 188);
+          if (leftHeight <= pageHeight) {
+            PDF.addImage(pageData, "JPEG", 5 / dpiX, 5 / dpiY);
+          } else {
+            while (leftHeight > 0) {
+              PDF.addImage(pageData, "JPEG", 0, position);
+              leftHeight -= pageHeight;
+              position -= 841.89;
+              if (leftHeight > 0) {
+                PDF.addPage();
+              }
+            }
+          }
+          PDF.save(name + ".pdf"); // 这里是导出的文件名
+        });
+      }, 500);
+    },
+    js_getDPI() {
+      var arrDPI = new Array();
+      if (window.screen.deviceXDPI != undefined) {
+        arrDPI[0] = window.screen.deviceXDPI;
+        arrDPI[1] = window.screen.deviceYDPI;
+      } else {
+        var tmpNode = document.createElement("DIV");
+        tmpNode.style.cssText =
+          "width:1in;height:1in;position:absolute;left:0px;top:0px;z-index:99;visibility:hidden";
+        document.body.appendChild(tmpNode);
+        arrDPI[0] = parseInt(tmpNode.offsetWidth);
+        arrDPI[1] = parseInt(tmpNode.offsetHeight);
+        tmpNode.parentNode.removeChild(tmpNode);
+      }
+      return arrDPI;
+    },
+    //绘制出图表
+    drawLine(id, ishowX, values, unit) {
       // 基于准备好的dom，初始化echarts实例
       let myChart = echarts.init(document.getElementById(id));
       var count = 100;
@@ -179,15 +268,15 @@ export default {
       var gridHeight = 65;
 
       var data = {
-        values: values,
+        values: [],
         // xMin: 0,
         // xMax: count * 100,
       };
 
-      // for (var i = 0; i < count; i++) {
-      //   var now = i * 100;
-      //   data.cpu.push([now, Math.floor(Math.random() * 100)]);
-      // }
+      for (var i = 0; i < count; i++) {
+        var now = i * 100;
+        data.values.push([now, Math.floor(Math.random() * 100)]);
+      }
 
       function makeXAxis(gridIndex, opt) {
         return echarts.util.merge(
@@ -278,7 +367,7 @@ export default {
             if (params.length) {
               params.unshift({
                 seriesName: "time",
-                value: [null, Math.floor(params[0].value[0]) + " ms"],
+                value: [null, Math.floor(params[0].value[0]) + "" + unit],
                 color: "#5193f2",
               });
               return echarts.util
@@ -376,7 +465,7 @@ export default {
         ],
         series: [
           {
-            name: "cpu",
+            name: "value",
             type: "line",
             symbol: "circle",
             symbolSize: 2,
@@ -390,6 +479,70 @@ export default {
         ],
       });
     },
+    //条件筛选查询
+    getParams() {
+      let datas = { userIds: localStorage.getItem("userId"), page: 1, limit: 100 };
+      let data = this.$store.state.chargerInfoData;
+      let DataTypes = this.$store.state.DataTypes;
+      if (Object.keys(data).length === 0) {
+        this.$message.warning("请在上一页添加筛选条件");
+        // return;
+      }
+      let loadingInstance = this.$loading({
+        text: "加载中...",
+        background: "rgba(0,0,0,.5)",
+      });
+      findByParamsAll({ ...data, ...datas })
+        .then((res) => {
+          // console.log("条件筛选查询", res);
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+          if (res.code == 100) {
+            let chargerInfoList = res.extend.chargerInfoList;
+            let chargingVoltage = chargerInfoList.map((item) => item.chargingVoltage), // 充电电压
+              chargingCurrent = chargerInfoList.map((item) => item.chargingCurrent), // 充电电流
+              chargingPower = chargerInfoList.map((item) => item.chargingPower), // 充电电源
+              chargingEnergy = chargerInfoList.map((item) => item.chargingEnergy), //充电能量
+              chargingTime = chargerInfoList.map((item) => item.chargingTime), //充电时间
+              socBeforeCharging = chargerInfoList.map((item) => item.socBeforeCharging), //soc前充电
+              mileageTravelled = chargerInfoList.map((item) => item.mileageTravelled); //里程
+            if (DataTypes[0].choose) {
+              this.drawLine("ChargingVoltage【v】", false, chargingVoltage, "V");
+            }
+            if (DataTypes[1].choose) {
+              this.drawLine("AverageChargingCurrent【A】", false, chargingCurrent, "A");
+            }
+            if (DataTypes[2].choose) {
+              this.drawLine("AverageChargingPower【kw】", false, chargingPower, "kw");
+            }
+            if (DataTypes[3].choose) {
+              this.drawLine("TotalChargingEnergy【kwh】", false, chargingEnergy, "kwh");
+            }
+            if (DataTypes[4].choose) {
+              this.drawLine("ChargingTime【Hour】", false, chargingTime, "Hour");
+            }
+            if (DataTypes[5].choose) {
+              this.drawLine("SoCBeforeCharging【%】", false, socBeforeCharging, "%");
+            }
+            if (DataTypes[6].choose) {
+              this.drawLine(
+                "MileageTravelledBeforeCharging【km】",
+                false,
+                mileageTravelled,
+                "km"
+              );
+            }
+          }
+        })
+        .catch((err) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+        });
+    },
   },
 };
 </script>
@@ -402,6 +555,7 @@ export default {
   /* margin-left: 150px; */
   margin-top: 10px;
   position: relative;
+  color: rgb(188, 188, 188);
 }
 .echart > p {
   position: absolute;
@@ -409,11 +563,20 @@ export default {
   font-size: 14px;
   /* transform: ; */
   top: 50%;
-  left: -15px;
+  left: -5px;
   z-index: 99999999;
-  width: 70px;
+  width: 50px;
   text-align: center;
-  transform: translateY(-50%) rotateZ(-90deg);
+  height: 70px;
+  transform: translateY(-50%) rotate(-90deg);
+  white-space: pre-wrap;
+}
+.dsrmr {
+  /* width: 900px; */
+  height: 100%;
+  /* background: #000; */
+  padding-left: 50px;
+  padding-right: 20px;
 }
 .dsrml {
   padding-left: 36px;

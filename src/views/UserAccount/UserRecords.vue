@@ -161,9 +161,12 @@ export default {
       delete uinfo["createTime"];
       let uinfos = { userIds: uinfo.id, ...uinfo };
       delete uinfos["id"];
-      console.log(uinfos);
+      // console.log(uinfos);
       CDSaveOrUpdEntity(uinfos).then((res) => {
-        console.log(res);
+        // console.log(res);
+        if(res.code==100){
+          this.$message.success("修改成功！");
+        }
       });
     },
     // 删除用户
@@ -179,7 +182,7 @@ export default {
           userId: this.uid,
         })
           .then((res) => {
-            console.log("删除用户", res);
+            // console.log("删除用户", res);
             if (res.code == 100) {
               this.getUserList();
               this.$message.success("删除成功");
@@ -203,7 +206,7 @@ export default {
       });
       pcUserFindByAll(data)
         .then((res) => {
-          console.log("获取用户列表", res);
+          // console.log("获取用户列表", res);
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();

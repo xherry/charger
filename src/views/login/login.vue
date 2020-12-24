@@ -121,15 +121,16 @@ export default {
       Login(this.userInfo).then((res) => {
         console.log(res);
         if (res.code == 100) {
-           this.$router.replace("index");
           localStorage.setItem("userId", res.extend.pcUser.id);
           localStorage.setItem("roleKey", JSON.stringify(res.extend.roleKey));
           this.$store.commit("getUserInfo", res.extend);
-          // if (res.extend.roleKey.smsPasscode == 0) {
-          //   this.iscode = true;
-          // } else {
-          //   this.$router.replace("index");
-          // }
+          //  this.$router.replace("index");
+          if (res.extend.roleKey.smsPasscode == 0) {
+            this.iscode = true;
+          } else {
+            this.$router.replace("index");
+            this.$message.success("登陆成功！")
+          }
         }
       });
     },
@@ -141,9 +142,14 @@ export default {
       }
       loginTwo({ ...this.userInfo, phoneCode: this.phoneCode }).then((res) => {
         console.log(res);
+        // if(res.code==100){
+
+        // }else{
+        //   localStorage.clear();
+        // }
         this.$router.replace("index");
         localStorage.setItem("loginType", "0");
-      });
+      })
     },
   },
 };

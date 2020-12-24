@@ -105,7 +105,7 @@
               </li>
             </ul>
             <!-- -->
-            <template  v-if="chargerInfoList.length != 0">
+            <template v-if="chargerInfoList.length != 0">
               <!-- , updateId === index ? 'bshow' : '' -->
               <ul
                 :class="['uldatas', 'w100']"
@@ -114,31 +114,31 @@
               >
                 <!-- @click="updateId = index" -->
                 <li>
-                  <p>{{startTime}}</p>
+                  <p>{{ startTime }}</p>
                 </li>
                 <li>
-                  <p>{{endTime}}</p>
+                  <p>{{ endTime }}</p>
                 </li>
                 <li v-if="DataTypes[0].choose">
-                  <p>{{item.chargingVoltage}}</p>
+                  <p>{{ item.chargingVoltage }}</p>
                 </li>
                 <li v-if="DataTypes[1].choose">
-                  <p>{{item.chargingCurrent}}</p>
+                  <p>{{ item.chargingCurrent }}</p>
                 </li>
                 <li v-if="DataTypes[2].choose">
-                  <p>{{item.chargingPower}}</p>
+                  <p>{{ item.chargingPower }}</p>
                 </li>
                 <li v-if="DataTypes[3].choose">
-                  <p>{{item.chargingEnergy}}</p>
+                  <p>{{ item.chargingEnergy }}</p>
                 </li>
                 <li v-if="DataTypes[4].choose">
-                  <p>{{item.chargingTime}}</p>
+                  <p>{{ item.chargingTime }}</p>
                 </li>
                 <li v-if="DataTypes[5].choose">
-                  <p>{{item.socBeforeCharging}}</p>
+                  <p>{{ item.socBeforeCharging }}</p>
                 </li>
                 <li v-if="DataTypes[6].choose">
-                  <p>{{item.mileageTravelled}}</p>
+                  <p>{{ item.mileageTravelled }}</p>
                 </li>
               </ul>
             </template>
@@ -205,7 +205,7 @@ export default {
       endTime: "",
       DataTypes: [],
       page: 1,
-      chargerInfoList:[]
+      chargerInfoList: [],
     };
   },
   created() {
@@ -229,6 +229,7 @@ export default {
       this.searchs[0].cid = value.centreId;
       this.getParams();
     },
+   
     //条件筛选查询
     getParams() {
       let datas = { userIds: localStorage.getItem("userId"), page: this.page, limit: 8 };
@@ -243,14 +244,29 @@ export default {
         startDate: this.startTime,
         endDate: this.endTime,
       };
-      this.$store.commit("getChargerInfoData", data);
-      findByParamsAll({ ...data, ...datas }).then((res) => {
-        console.log(res);
-        if (res.code == 100) {
-          this.chargerInfoList = res.extend.chargerInfoList;
-          this.count = res.extend.count;
-        }
+      let loadingInstance = this.$loading({
+        text: "加载中...",
+        background: "rgba(0,0,0,.5)",
       });
+      this.$store.commit("getChargerInfoData", data);
+      findByParamsAll({ ...data, ...datas })
+        .then((res) => {
+          // console.log("条件筛选查询", res);
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+          if (res.code == 100) {
+            this.chargerInfoList = res.extend.chargerInfoList;
+            this.count = res.extend.count;
+          }
+        })
+        .catch((err) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+        });
     },
   },
 };
