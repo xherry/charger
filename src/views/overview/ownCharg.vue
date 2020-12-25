@@ -31,9 +31,9 @@
         <div class="seleter flex flex-Updown-between">
           <input
             type="text"
-            @input="getValue"
+            @blur="getValue"
             :data-id="item.id"
-            placeholder="namename"
+            :placeholder="item.name"
             v-model="item.value"
           />
         </div>
@@ -154,12 +154,20 @@ export default {
     };
   },
   mounted() {
-    this.getIndividualCharger();
+    // this.getIndividualCharger();
   },
   methods: {
     // getValue
     getValue() {
       // let navList = this.navList;
+      try {
+        if (this.navList[0].value === "") throw "地区不能为空";
+        if (this.navList[1].value === "") throw "充电器编号不能为空";
+        if (this.navList[2].value === "") throw "车牌号不能为空";
+      } catch (err) {
+        this.$message.warning(err);
+        return;
+      }
       this.getIndividualCharger();
     },
     //根据条件查询充电状态
@@ -184,6 +192,9 @@ export default {
           });
           if (res.code == 100) {
             this.chargerInfo = res.extend.chargerInfo || {};
+            if (!res.extend.chargerInfo) {
+              this.$message.warning("暂无数据！");
+            }
           }
         })
         .catch(() => {

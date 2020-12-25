@@ -182,8 +182,8 @@ export default {
       searchs: [
         {
           name: "Centre",
-          value: "Shatin Centre",
-          cid: "0",
+          value: "",
+          cid: "",
           children: [
             { centreId: 0, name: "Shatin Centre" },
             { centreId: 1, name: "Hung HoM HQ" },
@@ -198,8 +198,8 @@ export default {
         { name: "Charger Type", value: "", children: [], id: 3 },
         { name: "Charger No.", value: "", children: [], id: 4 },
         { name: "Manufacturer", value: "", children: [], id: 5 },
-        { name: "Vehicle", value: "", children: [], id: 6 },
-        { name: "Vehicle No.", value: "", children: [], id: 7 },
+        { name: "Model", value: "", children: [], id: 6 },
+        { name: "Vehicle No.", value: "", children: [], id: 6 },
       ],
       startTime: "",
       endTime: "",
@@ -227,12 +227,26 @@ export default {
     seleteCenter(value) {
       this.searchs[0].value = value.name;
       this.searchs[0].cid = value.centreId;
-      this.getParams();
+      // this.getParams();
     },
-   
+
     //条件筛选查询
     getParams() {
-      let datas = { userIds: localStorage.getItem("userId"), page: this.page, limit: 8 };
+      let searchs = this.searchs;
+      try {
+        if (searchs[0].cid === "") throw "请选择中心！";
+        if (searchs[1].value === "") throw "请输入地址！";
+        if (searchs[2].value === "") throw "请输入充电桩类型！";
+        if (searchs[3].value === "") throw "请输入充电桩编号！";
+        // if (searchs[4].value === "") throw "请输入车辆类型！";
+        // if (searchs[5].value === "") throw "请输入车辆类型model！";
+        if (searchs[6].value === "") throw "请输入车牌号码！";
+        if (this.startTime === "") throw "请输入开始时间！";
+        if (this.endTime === "") throw "请输入结束时间！";
+      } catch (err) {
+        this.$message.warning(err);
+        return;
+      }
       let data = {
         centre: this.searchs[0].cid,
         location: this.searchs[1].value,
@@ -244,6 +258,7 @@ export default {
         startDate: this.startTime,
         endDate: this.endTime,
       };
+      let datas = { userIds: localStorage.getItem("userId"), page: this.page, limit: 8 };
       let loadingInstance = this.$loading({
         text: "加载中...",
         background: "rgba(0,0,0,.5)",
@@ -251,7 +266,7 @@ export default {
       this.$store.commit("getChargerInfoData", data);
       findByParamsAll({ ...data, ...datas })
         .then((res) => {
-          // console.log("条件筛选查询", res);
+          console.log("条件筛选查询", res);
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();

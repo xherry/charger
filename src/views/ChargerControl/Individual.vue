@@ -29,7 +29,12 @@
       >
         <span>{{ item.name }}</span>
         <div class="seleter flex flex-Updown-between">
-          <input type="text" placeholder="namename" v-model="item.value" />
+          <input
+            type="text"
+            @blur="getValue"
+            :placeholder="item.name"
+            v-model="item.value"
+          />
         </div>
       </div>
     </div>
@@ -131,18 +136,9 @@ export default {
         { centreId: 5, value: "Shek Wu Hui Centre" },
       ],
       navList: [
-        {
-          name: "Location",
-          value: "111",
-        },
-        {
-          name: "Charger NO.",
-          value: "222",
-        },
-        {
-          name: "Vehicle No.",
-          value: "333",
-        },
+        { name: "Location", value: "" },
+        { name: "Charger NO.", value: "" },
+        { name: "Vehicle No.", value: "" },
       ],
       chargerInfo: {},
       roleKey: {},
@@ -152,9 +148,21 @@ export default {
     this.roleKey = JSON.parse(localStorage.getItem("roleKey"));
   },
   mounted() {
-    this.getIndividualCharger();
+    // this.getIndividualCharger();
   },
   methods: {
+    //
+    getValue() {
+      try {
+        if (this.navList[0].value === "") throw "地区不能为空";
+        if (this.navList[1].value === "") throw "充电器编号不能为空";
+        if (this.navList[2].value === "") throw "车牌号不能为空";
+      } catch (err) {
+        this.$message.warning(err);
+        return;
+      }
+      this.getIndividualCharger();
+    },
     //根据条件查询充电状态
     getIndividualCharger() {
       let data = {
@@ -165,9 +173,12 @@ export default {
         vehicleNo: this.navList[2].value,
       };
       findBIC(data).then((res) => {
-        // console.log("根据条件查询充电状态", res);
+        console.log("根据条件查询充电状态", res);
         if (res.code == 100) {
           this.chargerInfo = res.extend.chargerInfo || {};
+          if (!res.extend.chargerInfo) {
+            this.$message.warning("暂无数据！");
+          }
         }
       });
     },
@@ -175,6 +186,14 @@ export default {
       this.ctypes.centreId = prop.centreId;
       this.ctypes.value = prop.value;
       this.isShowSlete2 = false;
+      try {
+        if (this.navList[0].value === "") throw "地区不能为空";
+        if (this.navList[1].value === "") throw "充电器编号不能为空";
+        if (this.navList[2].value === "") throw "车牌号不能为空";
+      } catch (err) {
+        this.$message.warning(err);
+        return;
+      }
       this.getIndividualCharger();
     },
     // 控制设备

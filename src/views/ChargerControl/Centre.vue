@@ -147,7 +147,8 @@ export default {
       controlCharger(data).then((res) => {
         // console.log(res, "操作开关");
         if(res.code==100){
-          this.$message.success('启用成功！')
+          this.$message.success('启用成功！');
+          this.getNowData();
         }
       });
     },
@@ -173,7 +174,7 @@ export default {
     // 查询充电桩的实时数据
     getNowData() {
       let datas =
-        this.ctypes.centreId && this.Location
+        this.ctypes.centreId!=='' && this.Location!==''
           ? {
               centre: this.ctypes.centreId,
               location: this.Location,
@@ -190,7 +191,7 @@ export default {
         background:"rgba(0,0,0,.5)"
       });
       findByDetails(data).then((res) => {
-        // console.log(res, "查询充电桩的实时数据");
+        console.log(res, "查询充电桩的实时数据");
         this.$nextTick(() => {
           // 以服务的方式调用的 Loading 需要异步关闭
           loadingInstance.close();

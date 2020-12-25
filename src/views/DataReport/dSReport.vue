@@ -15,7 +15,7 @@
           </div>
           <div
             class="dtatas flex flex-Updown"
-            v-for="(item,index) in DataTypes"
+            v-for="(item, index) in DataTypes"
             :key="'d' + item.id"
           >
             <div class="seleteImg" @click="item.Table = !item.Table">
@@ -95,7 +95,7 @@
           </div>
         </div>
         <p class="Update flex flex-Updown">
-          <span class="button" @click="printOut('Generate')">Generate PDF</span>
+          <span class="button" @click="printOut('Report')">Generate PDF</span>
           <span class="button">Download</span>
         </p>
       </div>
@@ -166,15 +166,21 @@ export default {
     this.getParams();
   },
   methods: {
-    // 
-    isSetPDF(index){
+    //
+    isSetPDF(index) {
       this.DataTypes[index].Figure = !this.DataTypes[index].Figure;
       let oldDataTypes = this.$store.state.DataTypes;
       oldDataTypes[index].choose = !oldDataTypes[index].choose;
-      this.$store.commit("showTableUl",oldDataTypes);
+      this.$store.commit("showTableUl", oldDataTypes);
     },
     // 导出PDF
     printOut(name) {
+      let strIsFalse = this.DataTypes.filter((item) => !item.Figure);
+      console.log(strIsFalse);
+      if (strIsFalse.length === this.DataTypes.length) {
+        this.$message.warning("请选择至少一条内容！");
+        return;
+      }
       let shareContent = document.getElementById("dsrmr"); //需要截图的包裹的（原生的）DOM 对象
       let width = shareContent.clientWidth, //获取dom 宽度
         backgroundColor = "#999999",
@@ -483,10 +489,11 @@ export default {
     getParams() {
       let datas = { userIds: localStorage.getItem("userId"), page: 1, limit: 100 };
       let data = this.$store.state.chargerInfoData;
+      console.log(data)
       let DataTypes = this.$store.state.DataTypes;
       if (Object.keys(data).length === 0) {
         this.$message.warning("请在上一页添加筛选条件");
-        // return;
+        return;
       }
       let loadingInstance = this.$loading({
         text: "加载中...",
@@ -494,13 +501,17 @@ export default {
       });
       findByParamsAll({ ...data, ...datas })
         .then((res) => {
-          // console.log("条件筛选查询", res);
+          console.log("条件筛选查询", res);
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
           });
           if (res.code == 100) {
             let chargerInfoList = res.extend.chargerInfoList;
+            if(chargerInfoList.length==0){
+              this.$message.warning("暂无数据！")
+              return
+            }
             let chargingVoltage = chargerInfoList.map((item) => item.chargingVoltage), // 充电电压
               chargingCurrent = chargerInfoList.map((item) => item.chargingCurrent), // 充电电流
               chargingPower = chargerInfoList.map((item) => item.chargingPower), // 充电电源
