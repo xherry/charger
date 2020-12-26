@@ -1,6 +1,9 @@
 <template>
   <div id="app">
-    <router-view />
+    <keep-alive>
+      <router-view v-show="$route.meta.keepAlive" />
+    </keep-alive>
+    <router-view v-show="!$route.meta.keepAlive"></router-view>
   </div>
 </template>
 
@@ -28,8 +31,8 @@ export default {
   color: #ffffff;
 }
 .bgs {
-  background: url("./assets/index/bg01.png") no-repeat;
-  background-size: 100% 100%;
+  /* background: url("./assets/index/bg01.png") no-repeat;
+  background-size: 100% 100%; */
   /* border-top: 0.5px solid transparent; */
 }
 .topBg {
@@ -39,10 +42,10 @@ export default {
   top: 0;
   left: 0;
   z-index: 1;
-  background: url("./assets/index/bg02.png") no-repeat;
-  background-size: 100% 100%;
+  /* background: url("./assets/index/bg02.png") no-repeat;
+  background-size: 100% 100%; */
 }
-.seleteDate input{
+.seleteDate input {
   cursor: pointer !important;
 }
 .ortoptit {
@@ -258,17 +261,17 @@ input::-webkit-input-placeholder {
 input::-ms-input-placeholder {
   color: #666;
 }
-li .imgSelete{
+li .imgSelete {
   position: absolute;
   right: 0;
   /* top: 50%; */
   /* transform: translateY(-50%); */
   margin-left: 0;
 }
-.el-pager{
+.el-pager {
   background: transparent !important;
 }
-.pagination{
+.pagination {
   width: 100%;
   position: absolute;
   bottom: 0px;
@@ -277,13 +280,14 @@ li .imgSelete{
   box-sizing: border-box;
   z-index: 33;
 }
-.el-pagination__jump,.el-pagination__total{
+.el-pagination__jump,
+.el-pagination__total {
   color: #fff !important;
 }
-.el-pagination.is-background .el-pager li:not(.disabled).active{
+.el-pagination.is-background .el-pager li:not(.disabled).active {
   background: #143c7c !important;
 }
 .bshow {
-  box-shadow: inset  0 0 10px 0 #ffffff;
+  box-shadow: inset 0 0 10px 0 #ffffff;
 }
 </style>

@@ -1,7 +1,7 @@
-import axios from "axios";
+// import axios from "axios";
 import Qs from "qs";
 export const base_url = "http://8.210.178.104";
-import { Message } from 'element-ui';
+// import { Message } from 'element-ui';
 
 axios.defaults.headers.post["Content-Type"] =
     "application/x-www-form-urlencoded";

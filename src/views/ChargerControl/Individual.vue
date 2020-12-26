@@ -97,17 +97,17 @@
         </div>
       </div>
       <div class="buttons7 flex flex-Updown-between">
-        <div class="flex flex-Updown" v-show="roleKey.controlOtherChargers == 1">
+        <div class="flex flex-Updown" v-show="roleKey.controlOtherChargers == 0">
           <div class="blues button" @click="ControlEquipment(1)">Enable</div>
           <div class="greens button" @click="ControlEquipment(0)">Disable</div>
         </div>
         <div></div>
-        <div class="flex flex-Updown" v-show="roleKey.controlOwnCharger == 1">
+        <div class="flex flex-Updown" v-show="roleKey.controlOwnCharger == 0">
           <div class="blues button" @click="ControlEquipment(3)">Start</div>
           <div class="greens button" @click="ControlEquipment(2)">Stop</div>
         </div>
         <div></div>
-        <div class="flex flex-Updown" v-show="roleKey.controlOtherChargers == 1">
+        <div class="flex flex-Updown" v-show="roleKey.controlOtherChargers == 0">
           <div class="blues button" @click="ControlEquipment(4)">LMS</div>
           <div class="greens button" @click="ControlEquipment(5)">Full</div>
         </div>
@@ -238,7 +238,7 @@ export default {
       controlCharger(data).then((res) => {
         // console.log(res, "控制设备");
         if (res.code == 100) {
-          this.$message.success("启用成功！");
+          this.$message.success("发送命令成功！");
           this.getIndividualCharger();
         }
       });

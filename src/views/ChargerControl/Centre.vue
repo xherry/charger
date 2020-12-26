@@ -36,44 +36,34 @@
           <li><p>Enable</p></li>
           <li><p>Disable</p></li>
         </ul>
-        <template v-if="chargerInfoList.length != 0">
+        <div v-if="chargerInfoList.length != 0">
           <ul class="uldatas w100" v-for="(item, index) in chargerInfoList" :key="index">
             <li>
               <p>{{ item.chargerno }}</p>
             </li>
-            <li>
+            <li @click="setStatus(1, item.status, item.chargerno, item.centre)">
               <img
-                v-if="item.status == 'Enable'"
+                v-if="item.status != 'Disabled'"
                 src="../../assets/index/useraccount/04.png"
                 alt=""
               />
-              <img
-                @click="setStatus(1, item.status, item.chargerno, item.centre)"
-                v-else
-                src="../../assets/index/useraccount/03.png"
-                alt=""
-              />
+              <img v-else src="../../assets/index/useraccount/03.png" alt="" />
             </li>
-            <li>
+            <li @click="setStatus(0, item.status, item.chargerno, item.centre)">
               <img
                 v-if="item.status == 'Disable'"
                 src="../../assets/index/useraccount/04.png"
                 alt=""
               />
-              <img
-                @click="setStatus(0, item.status, item.chargerno, item.centre)"
-                v-else
-                src="../../assets/index/useraccount/03.png"
-                alt=""
-              />
+              <img v-else src="../../assets/index/useraccount/03.png" alt="" />
             </li>
           </ul>
-        </template>
-        <template v-else>
+        </div>
+        <div v-else>
           <ul class="uldatas w100">
             <li><p>暂无数据！</p></li>
           </ul>
-        </template>
+        </div>
       </div>
     </div>
     <div class="pagination">
@@ -145,9 +135,9 @@ export default {
         }
       }
       controlCharger(data).then((res) => {
-        // console.log(res, "操作开关");
-        if(res.code==100){
-          this.$message.success('启用成功！');
+        console.log(res, "操作开关");
+        if (res.code == 100) {
+          this.$message.success("发送命令成功！");
           this.getNowData();
         }
       });
@@ -174,7 +164,7 @@ export default {
     // 查询充电桩的实时数据
     getNowData() {
       let datas =
-        this.ctypes.centreId!=='' && this.Location!==''
+        this.ctypes.centreId !== "" && this.Location !== ""
           ? {
               centre: this.ctypes.centreId,
               location: this.Location,
@@ -188,24 +178,26 @@ export default {
       };
       let loadingInstance = this.$loading({
         text: "加载中...",
-        background:"rgba(0,0,0,.5)"
+        background: "rgba(0,0,0,.5)",
       });
-      findByDetails(data).then((res) => {
-        console.log(res, "查询充电桩的实时数据");
-        this.$nextTick(() => {
-          // 以服务的方式调用的 Loading 需要异步关闭
-          loadingInstance.close();
+      findByDetails(data)
+        .then((res) => {
+          console.log(res, "查询充电桩的实时数据");
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+          if (res.code == 100) {
+            this.chargerInfoList = res.extend.chargerInfoList;
+            this.count = res.extend.count;
+          }
+        })
+        .catch(() => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
         });
-        if (res.code == 100) {
-          this.chargerInfoList = res.extend.chargerInfoList
-          this.count = res.extend.count;
-        }
-      }).catch(()=>{
-        this.$nextTick(() => {
-          // 以服务的方式调用的 Loading 需要异步关闭
-          loadingInstance.close();
-        });
-      })
     },
   },
 };
@@ -228,7 +220,7 @@ export default {
   overflow-x: hidden;
   overflow-y: auto;
 }
-.urtable > ul {
+.urtable ul {
   padding: 0 380px;
   box-sizing: border-box;
 }

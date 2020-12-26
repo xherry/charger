@@ -35,6 +35,7 @@
         </div>
         <div class="dsrmr" id="dsrmr">
           <!--  -->
+          <!--   -->
           <div class="echart" v-if="$store.state.DataTypes[0].choose">
             <p>Charging Voltage</p>
             <div
@@ -104,10 +105,10 @@
 </template>
 
 <script>
+// import echarts from "echarts";
 import html2canvas from "html2canvas";
 import JsPDF from "jspdf";
 import { findBIC, findByParamsAll } from "../../common/api";
-import echarts from "echarts";
 export default {
   name: "dSReport",
   data() {
@@ -274,15 +275,15 @@ export default {
       var gridHeight = 65;
 
       var data = {
-        values: [],
+        values: values,
         // xMin: 0,
         // xMax: count * 100,
       };
 
-      for (var i = 0; i < count; i++) {
-        var now = i * 100;
-        data.values.push([now, Math.floor(Math.random() * 100)]);
-      }
+      // for (var i = 0; i < count; i++) {
+      //   var now = i * 100;
+      //   data.values.push([now, Math.floor(Math.random() * 100)]);
+      // }
 
       function makeXAxis(gridIndex, opt) {
         return echarts.util.merge(

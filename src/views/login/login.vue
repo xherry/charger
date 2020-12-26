@@ -1,9 +1,11 @@
 <template>
   <div class="loginBox">
-    <div class="login-img"></div>
+    <div class="login-img">
+      <img class="childAll" :src="loginImg" v-if="!showLoading" alt="" />
+    </div>
     <div class="login-input-box">
       <div id="inputValue" v-if="!iscode">
-        <template v-if="!isVisitors">
+        <div v-if="!isVisitors">
           <p class="wtl">Welcome to login</p>
           <div class="login-input userID">
             <img src="../../assets/index/login/04.png" alt="" />
@@ -42,7 +44,7 @@
           </div>
           <div class="button loginButton" @click="toLogin">login</div>
           <p class="clgs vtl" @click="isVisitors = true">Visitors to login</p>
-        </template>
+        </div>
         <div class="visitors" v-else>
           <img src="../../assets/icon.png" alt="" />
           <div class="button loginButton" @click="visitorLogin">Visitors to login</div>
@@ -94,6 +96,27 @@ export default {
       },
       phoneCode: "",
       phone: "",
+      loginImg: require("../../assets/index/login/06.png"),
+      showLoading:true
+    };
+  },
+  mounted() {
+    let bgImg = new Image();
+    bgImg.src = this.loginImg; // 获取背景图片的url
+    let loadingInstance = this.$loading({
+      text: "页面加载中...",
+      background: "rgba(0,0,0,.5)",
+    });
+    bgImg.onerror = () => {
+      console.log("img onerror");
+    };
+    bgImg.onload = () => {
+      // 等背景图片加载成功后 去除loading
+      this.$nextTick(() => {
+        // 以服务的方式调用的 Loading 需要异步关闭
+        loadingInstance.close();
+      });
+      this.showLoading = false
     };
   },
   methods: {
@@ -129,7 +152,7 @@ export default {
             this.iscode = true;
           } else {
             this.$router.replace("index");
-            this.$message.success("登陆成功！")
+            this.$message.success("登陆成功！");
           }
         }
       });
@@ -149,7 +172,7 @@ export default {
         // }
         this.$router.replace("index");
         localStorage.setItem("loginType", "0");
-      })
+      });
     },
   },
 };
@@ -297,8 +320,8 @@ export default {
   position: absolute;
   top: 198px;
   left: 101px;
-  background: url("../../assets/index/login/06.png") no-repeat;
-  background-size: 100% 100%;
+  /* background: url("../../assets/index/login/06.png") no-repeat;
+  background-size: 100% 100%; */
 }
 .login-input-box {
   position: absolute;

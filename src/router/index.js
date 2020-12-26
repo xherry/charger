@@ -1,12 +1,13 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import login from '../views/login/login.vue';
+// import Vue from 'vue'
+// import VueRouter from 'vue-router'
+// import login from '../views/login/login.vue';
 
-Vue.use(VueRouter)
+// Vue.use(VueRouter)
 
 const routes = [{
     path: '/',
     name: 'Home',
+    // meta: { keepAlive: true },
     component: () =>
         import ( /* webpackChunkName: "about" */ '../views/Home.vue'),
     redirect: { name: 'Selectlogin' }, // 跳转到下一级第一个
@@ -22,13 +23,16 @@ const routes = [{
         {
             path: 'login',
             name: 'login',
+            meta: { keepAlive: true },
             // route level code-splitting
             // this generates a separate chunk (about.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
-            component: login
+            component: () =>
+                import ( /* webpackChunkName: "about" */ '../views/login/login.vue'),
         }, {
             path: 'index',
             name: 'index',
+            meta: { keepAlive: true },
             component: () =>
                 import ( /* webpackChunkName: "about" */ '../views/index.vue'),
         }, {

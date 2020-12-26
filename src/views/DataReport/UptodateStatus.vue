@@ -10,7 +10,7 @@
     <div class="overRights">
       <p class="ortoptit">Summary of All Centre Charging Information</p>
       <!-- 数据 -->
-      <template v-if="!isToDetail">
+      <div v-if="!isToDetail">
         <div class="ustable">
           <ul class="ustabletit">
             <li>
@@ -47,9 +47,9 @@
             </li>
           </ul>
         </div>
-      </template>
+      </div>
       <!-- 详情 -->
-      <template v-else>
+      <div v-else>
         <div class="ustable">
           <ul class="ustabletit">
             <li>
@@ -65,7 +65,7 @@
               <p>Total Charging Energy(kW/h)</p>
             </li>
           </ul>
-          <template v-if="cdetails.length != 0">
+          <div v-if="cdetails.length != 0">
             <div class="udetails">
               <ul
                 class="ustablemain"
@@ -86,16 +86,16 @@
                 </li>
               </ul>
             </div>
-          </template>
-          <template v-else>
+          </div>
+          <div v-else>
             <ul class="ustablemain">
               <li>
                 <p>暂无数据！</p>
               </li>
             </ul>
-          </template>
+          </div>
         </div>
-      </template>
+      </div>
     </div>
     <div class="pagination">
       <el-pagination

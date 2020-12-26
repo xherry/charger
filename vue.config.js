@@ -11,9 +11,10 @@
 //         })
 // }
 
-
+const CompressionPlugin = require('compression-webpack-plugin');
 module.exports = {
     lintOnSave: false, //这里禁止使用eslint-loader
+    productionSourceMap: false,
     publicPath: './',
     chainWebpack: config => {
         // 移除 prefetch 插件（解决首次进入页面所有资源预加载）
@@ -32,4 +33,21 @@ module.exports = {
             })
             .end()
     },
+    configureWebpack: config => {
+            if (process.env.NODE_ENV === 'production') {
+                return {
+                    plugins: [
+                        new CompressionPlugin({
+                            algorithm: 'gzip',
+                            test: /\.(js|css)$/, // 匹配文件名
+                            threshold: 10240, // 对超过10k的数据压缩
+                            deleteOriginalAssets: false, // 不删除源文件
+                            minRatio: 0.8 // 压缩比
+                        })
+                    ]
+                }
+            }
+        }
+        // 添加cdn引用包  module.exports内
+
 }

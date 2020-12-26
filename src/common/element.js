@@ -1,4 +1,4 @@
-import Vue from "vue";
+// import Vue from "vue";
 import "element-ui/lib/theme-chalk/index.css";
 import { Message, MessageBox, Pagination, DatePicker, Loading } from 'element-ui';
 import elTableInfiniteScroll from 'element-ui';

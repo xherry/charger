@@ -160,7 +160,7 @@ export default {
         department: value.department,
       };
       this.$msgbox({
-        message: "确认修改权限？",
+        message: "确认修改？",
         showCancelButton: true,
         confirmButtonText: "确定",
         cancelButtonText: "取消",

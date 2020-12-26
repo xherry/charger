@@ -105,7 +105,7 @@
               </li>
             </ul>
             <!-- -->
-            <template v-if="chargerInfoList.length != 0">
+            <div v-if="chargerInfoList.length != 0">
               <!-- , updateId === index ? 'bshow' : '' -->
               <ul
                 :class="['uldatas', 'w100']"
@@ -141,12 +141,12 @@
                   <p>{{ item.mileageTravelled }}</p>
                 </li>
               </ul>
-            </template>
-            <template v-else>
+            </div>
+            <div v-else>
               <ul class="uldatas w100">
                 <li><p>暂无数据！</p></li>
               </ul>
-            </template>
+            </div>
           </div>
           <div class="pagination">
             <el-pagination

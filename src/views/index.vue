@@ -18,55 +18,58 @@
       </div>
     </div>
     <div class="indexRight">
+      <img class="childAll pa" :src="middleBg" v-show="!showLoading" alt="">
       <img src="../assets/icon.png" class="plogo" alt="" />
-      <div class="flex flex-center nav1 w100 navItems">
-        <div :class="['navs-item']" @click="routerPush('overview')">
-          <img :class="['navsimg', 'bs']" src="../assets/index/01.png" alt="" />
-          <p>Overview</p>
+      <div class="childAll allNavs">
+        <div class="flex flex-center nav1 w100 navItems">
+          <div :class="['navs-item']" @click="routerPush('overview')">
+            <img :class="['navsimg', 'bs']" src="../assets/index/01.png" alt="" />
+            <p>Overview</p>
+          </div>
+          <div class="navs-item" @click="routerPush('CentreInformation')">
+            <img
+              :class="['navsimg', loginType == 1 ? '' : 'bs']"
+              src="../assets/index/03.png"
+              alt=""
+            />
+            <p>Centre Information</p>
+          </div>
         </div>
-        <div class="navs-item" @click="routerPush('CentreInformation')">
-          <img
-            :class="['navsimg', loginType == 1 ? '' : 'bs']"
-            src="../assets/index/03.png"
-            alt=""
-          />
-          <p>Centre Information</p>
+        <div class="flex flex-center nav2 w100 navItems">
+          <div class="navs-item" @click="routerPush('ChargerControl')">
+            <img
+              :class="['navsimg', loginType != '1' ? 'bs' : '']"
+              src="../assets/index/02.png"
+              alt=""
+            />
+            <p>Charger Control</p>
+          </div>
+          <div class="navs-item" @click="routerPush('UserAccount')">
+            <img
+              :class="['navsimg', loginType != '1' ? 'bs' : '']"
+              src="../assets/index/04.png"
+              alt=""
+            />
+            <p>User Account</p>
+          </div>
         </div>
-      </div>
-      <div class="flex flex-center nav2 w100 navItems">
-        <div class="navs-item" @click="routerPush('ChargerControl')">
-          <img
-            :class="['navsimg', loginType != '1' ? 'bs' : '']"
-            src="../assets/index/02.png"
-            alt=""
-          />
-          <p>Charger Control</p>
-        </div>
-        <div class="navs-item" @click="routerPush('UserAccount')">
-          <img
-            :class="['navsimg', loginType != '1' ? 'bs' : '']"
-            src="../assets/index/04.png"
-            alt=""
-          />
-          <p>User Account</p>
-        </div>
-      </div>
-      <div class="flex flex-center nav3 w100 navItems">
-        <div class="navs-item" @click="routerPush('DataReport')">
-          <img
-            :class="['navsimg', loginType != '1' ? 'bs' : '']"
-            src="../assets/index/05.png"
-            alt=""
-          />
-          <p>Data Report</p>
-        </div>
-        <div class="navs-item" @click="routerPush('setting')">
-          <img
-            :class="['navsimg', loginType != '1' ? 'bs' : '']"
-            src="../assets/index/06.png"
-            alt=""
-          />
-          <p>System Settings</p>
+        <div class="flex flex-center nav3 w100 navItems">
+          <div class="navs-item" @click="routerPush('DataReport')">
+            <img
+              :class="['navsimg', loginType != '1' ? 'bs' : '']"
+              src="../assets/index/05.png"
+              alt=""
+            />
+            <p>Data Report</p>
+          </div>
+          <div class="navs-item" @click="routerPush('setting')">
+            <img
+              :class="['navsimg', loginType != '1' ? 'bs' : '']"
+              src="../assets/index/06.png"
+              alt=""
+            />
+            <p>System Settings</p>
+          </div>
         </div>
       </div>
     </div>
@@ -89,13 +92,32 @@ export default {
         { key: "Mobile：", name: "" },
       ],
       loginType: "",
+      middleBg:require  ("../assets/index/middlebg.png"),
+      showLoading:true
     };
   },
   created() {
     this.loginType = localStorage.getItem("loginType");
+    this.getUserInfo();
   },
   mounted() {
-    this.getUserInfo();
+    let bgImg = new Image();
+    bgImg.src = this.middleBg; // 获取背景图片的url
+    let loadingInstance = this.$loading({
+      text: "加载中...",
+      background: "rgba(0,0,0,.5)",
+    });
+    bgImg.onerror = () => {
+      console.log("img onerror");
+    };
+    bgImg.onload = () => {
+      // 等背景图片加载成功后 去除loading
+      this.$nextTick(() => {
+        // 以服务的方式调用的 Loading 需要异步关闭
+        loadingInstance.close();
+      });
+      this.showLoading  = false
+    };
   },
   methods: {
     // 路由跳转
@@ -147,6 +169,12 @@ export default {
 .nav2 .navs-item:nth-child(2) {
   margin-left: 750px;
 }
+.allNavs{
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 9;
+}
 .navItems {
   color: #28f7ff;
   font-size: 24px;
@@ -179,12 +207,16 @@ export default {
 .indexRight {
   width: 1849px;
   height: 878px;
-  background: url("../assets/index/middlebg.png") no-repeat;
-  background-size: 100% 100%;
+  /* background: url("../assets/index/middlebg.png") no-repeat;
+  background-size: 100% 100%; */
   position: absolute;
   top: 202px;
   left: 32px;
   z-index: 10;
+}
+.pa{
+  position: absolute;
+  z-index: 0;
 }
 .userItem .valueKey:nth-child(2) > span:first-child {
   opacity: 0;

@@ -1,14 +1,22 @@
 <template>
   <div class="parent bgs">
+    <!-- ./assets/index/bg01.png -->
+    <img class="childAll ps" :src="bg01" v-if="!showLoading" alt="" />
     <header-top></header-top>
-    <div class="topBg"></div>
+    <div class="topBg">
+      <img class="childAll" :src="bg02" alt="" />
+    </div>
     <div class="parentBottoms">
       <router-view />
     </div>
-     <div v-if="$store.state.IsShowBottom"  @click="$router.push('/index')" class="ol-item2 flex flex-Updown-between ol-bottom">
+    <div
+      v-if="$store.state.IsShowBottom"
+      @click="$router.push('/index')"
+      class="ol-item2 flex flex-Updown-between ol-bottom"
+    >
       <span>Back to Main</span>
       <img class="mr27" src="../assets/index/overview/05.png" alt="" />
-    </div> 
+    </div>
   </div>
 </template>
 
@@ -17,19 +25,45 @@ export default {
   name: "Home",
   data() {
     return {
-      path:''
+      path: "",
+      bg01: require("../assets/index/bg01.png"),
+      bg02: require("../assets/index/bg02.png"),
+      showLoading: true, // 显示loading
     };
   },
-  
+  mounted() {
+    let bgImg = new Image();
+    bgImg.src = this.bg01; // 获取背景图片的url
+    let loadingInstance = this.$loading({
+      text: "加载中...",
+      background: "rgba(0,0,0,.5)",
+    });
+    bgImg.onerror = () => {
+      console.log("img onerror");
+    };
+    bgImg.onload = () => {
+      // 等背景图片加载成功后 去除loading
+      this.$nextTick(() => {
+        // 以服务的方式调用的 Loading 需要异步关闭
+        loadingInstance.close();
+      });
+      this.showLoading = false;
+    };
+  },
 };
 </script>
 
 <style scoped>
-.parentBottoms{
+.ps {
+  position: absolute;
+  z-index: 0;
+  background: #09264d;
+}
+.parentBottoms {
   height: 962px;
   border-top: 0.5px solid transparent;
 }
-.parent{
+.parent {
   position: relative;
   overflow-y: auto;
 }
