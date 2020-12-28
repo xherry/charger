@@ -36,12 +36,12 @@ export default {
           RouterPush: "UptodateStatus",
         },
         {
-          name: "date Status",
+          name: "Date Status",
           id: 2,
           RouterPush: "dateStatus",
         },
         {
-          name: "date Status（Report）",
+          name: "Date Status（Report）",
           id: 3,
           RouterPush: "dSReport",
         },

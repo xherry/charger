@@ -166,7 +166,7 @@ export default {
         page: this.page,
       };
       let loadingInstance = this.$loading({
-        text: "加载中...",
+        text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
       findByDataRecord(data)
@@ -199,7 +199,7 @@ export default {
         userId: localStorage.getItem("userId"),
       };
       let loadingInstance = this.$loading({
-        text: "加载中...",
+        text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
       findBYN(data)
@@ -240,7 +240,7 @@ export default {
   font-size: 16px;
   outline: 0;
   border: 0;
-  background: rgb(32 93 193);
+  background: rgb(32,93,193);
   position: absolute;
   top: 40px;
   left: 55px;

@@ -26,7 +26,7 @@
               <input type="text"  v-model="infos.Centre" class="blueInput" />
             </div>
             <div class="flex cdltopitem flex-Updown">
-              <span>Depar tment</span>
+              <span>Department</span>
               <input type="text"  v-model="infos.Department" class="blueInput" />
             </div>
           </div>

@@ -5,11 +5,14 @@
       <div class="dm-left">
         <ul class="ultit">
           <li><p>Center</p></li>
+          <li><p>Department</p></li>
           <li><p>Address</p></li>
           <li><p>Location ( Carpark / Floor )</p></li>
+          <li></li>
         </ul>
         <template v-if="centreDepartmentList.length != 0">
           <ul
+            id="uldatas"
             :class="['uldatas', 'w100', isUpdate1 === index ? 'bshow' : '']"
             v-for="(item, index) in centreDepartmentList"
             :key="'s' + index"
@@ -51,8 +54,18 @@
                 <input
                   :disabled="isUpdate1 != index"
                   type="text"
+                  v-model="item.department"
+                  v-if="item.department != null"
+                />
+              </p>
+            </li>
+            <li>
+              <p>
+                <input
+                  type="text"
+                  :disabled="isUpdate1 != index"
                   v-model="item.address"
-                  v-if="item.address != null"
+                  v-if="item.location != null"
                 />
               </p>
             </li>
@@ -66,6 +79,12 @@
                 />
               </p>
             </li>
+            <li>
+              <div>
+                <p class="button toManage">Charge Manage</p>
+                <p class="button toManage">EV Manage</p>
+              </div>
+            </li>
           </ul>
         </template>
         <template v-else>
@@ -76,7 +95,7 @@
           </ul>
         </template>
       </div>
-      <div class="dm-right">
+      <!-- <div class="dm-right">
         <ul class="ultit">
           <li><p>Center</p></li>
           <li><p>Department</p></li>
@@ -130,8 +149,8 @@
               <p>暂无数据！</p>
             </li>
           </ul>
-        </template>
-      </div>
+        </template> -->
+      <!-- </div> -->
     </div>
     <div class="pagination">
       <el-pagination
@@ -178,6 +197,7 @@ export default {
         { centreId: 4, value: "Yuen Long Centre" },
         { centreId: 5, value: "Shek Wu Hui Centre" },
       ],
+      centerTypes:[],
       page: 1,
     };
   },
@@ -268,12 +288,12 @@ export default {
         limit: 10,
       };
       let loadingInstance = this.$loading({
-        text: "加载中...",
+        text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
       CDFindAll(data)
         .then((res) => {
-          // console.log(res);
+          console.log(res);
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
@@ -295,6 +315,19 @@ export default {
 </script>
 
 <style scoped>
+.toManage{
+  /* background:  rgb(81, 136, 224); */
+  /* width: 200px; */
+  /* height: 30px; */
+  /* text-align: center; */
+  /* line-height: 30px; */
+  /* border-radius: 0; */
+  color: aqua;
+  font-size: 14px;
+}
+.toManage:first-child{
+  margin-bottom: 10px;
+}
 .Department {
   position: relative;
 }
@@ -308,8 +341,11 @@ export default {
   position: relative;
   /* overflow: hidden; */
 }
+/* .departmentMiddle .dm-left  ul li{
+  height:  300px !important;
+} */
 .dm-left {
-  width: 810px;
+  width: 100%;
   height: 680px;
   margin-right: 68px;
 }

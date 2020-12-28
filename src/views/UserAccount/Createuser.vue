@@ -10,7 +10,7 @@
         <div class="createleft">
           <p class="leftTit">User information↓</p>
           <div class="cdltopitem flex flex-Updown-between">
-            <span>User type</span>
+            <span>User Type</span>
             <p class="flex flex-Updown-between" @click="isShowSlete1 = !isShowSlete1">
               <span>{{ utypes.value }}</span>
               <img
@@ -39,11 +39,11 @@
             <input type="text" v-model="addUsers.userId" placeholder="User  ID" />
           </div>
           <div class="cdltopitem flex flex-Updown-between">
-            <span>Password</span>
+            <span>Password (Random)</span>
             <input type="password" v-model="addUsers.password" placeholder="password" />
           </div>
           <div class="cdltopitem flex flex-Updown-between">
-            <span>Centre (optional)</span>
+            <span>Centre (Optional)</span>
             <p class="flex flex-Updown-between" @click="isShowSlete2 = !isShowSlete2">
               <span>{{ ctypes.value }}</span>
               <img
@@ -68,7 +68,7 @@
             </div>
           </div>
           <div class="cdltopitem flex flex-Updown-between">
-            <span>Department (optional)</span>
+            <span>Department (Optional)</span>
             <input type="text" v-model="addUsers.department" placeholder="howhow" />
           </div>
           <p class="leftTit">Contact information↓</p>
@@ -81,7 +81,7 @@
             <input type="text" v-model="addUsers.email" placeholder="this  is ID" />
           </div>
           <div class="cdltopitem flex flex-Updown-between">
-            <span>Staff (optional)</span>
+            <span>Staff ID (Optional)</span>
             <input type="text" v-model="addUsers.staffId" placeholder="whatwhat" />
           </div>
           <div class="cdltopitem flex flex-Updown-between">
@@ -96,9 +96,9 @@
           </div>
         </div>
         <div class="createright">
-          <p class="js">Creator cannot create a new user with accessrights higher than</p>
+          <p class="js">Creator cannot create a new user with access rights higher than his own level</p>
           <div class="cdltopitem cdltopitem2 mr40 flex flex-Updown-between">
-            <span>User type</span>
+            <span>User Type</span>
             <!--  @click="isShowSlete3 = !isShowSlete3" -->
             <p class="flex flex-Updown-between">
               <span>{{ roleKey.userType | utype }}</span>
@@ -195,12 +195,12 @@ export default {
         value: "",
       },
       userTypes: [
-        { userType: 0, value: "guest" },
-        { userType: 1, value: "generalUser" },
-        { userType: 2, value: "operator" },
-        { userType: 3, value: "superUser" },
-        { userType: 4, value: "adminstrator" },
-        { userType: 5, value: "systemManager" },
+        { userType: 0, value: "Guest" },
+        { userType: 1, value: "GeneralUser" },
+        { userType: 2, value: "Operator" },
+        { userType: 3, value: "SuperUser" },
+        { userType: 4, value: "Adminstrator" },
+        { userType: 5, value: "SystemManager" },
       ],
       ctypes: {
         centreId: "",
@@ -256,7 +256,7 @@ export default {
         centreId: this.ctypes.centreId,
       };
       let loadingInstance = this.$loading({
-        text: "添加中...",
+        text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
       addOrUpdEntity(data)

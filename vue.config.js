@@ -18,7 +18,17 @@ module.exports = {
     publicPath: './',
     chainWebpack: config => {
         // 移除 prefetch 插件（解决首次进入页面所有资源预加载）
-        config.plugins.delete('prefetch');
+        // config.plugins.delete('prefetch');
+        /* 添加分析工具*/
+        if (process.env.NODE_ENV === 'production') {
+            if (process.env.npm_config_report) {
+                config
+                    .plugin('webpack-bundle-analyzer')
+                    .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
+                    .end();
+                config.plugins.delete('prefetch')
+            }
+        }
         // types.forEach(type => addStyleResource(config.module.rule('less').oneOf(type)))
         // 这里写你的样样式类型
         config.module

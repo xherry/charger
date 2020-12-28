@@ -37,6 +37,29 @@ export default {
   data() {
     return {
       seletNavIndex: 1,
+      // leftNavs:[
+      //   {
+      //     name: "Centre & Department",
+      //     img: require("../assets/index/setting/05.png"),
+      //     seletImg: require("../assets/index/setting/015.png"),
+      //     id: 1,
+      //     RouterPush: "Department",
+      //   },
+      //    {
+      //     name: "Charge Manage",
+      //     img: require("../assets/index/setting/02.png"),
+      //     seletImg: require("../assets/index/setting/016.png"),
+      //     id: 2,
+      //     RouterPush: "Charger",
+      //   },
+      //   {
+      //     name: "EV Manage",
+      //     img: require("../assets/index/setting/12.png"),
+      //     seletImg: require("../assets/index/setting/04.png"),
+      //     id: 3,
+      //     RouterPush: "ElectricVehicle",
+      //   },
+      // ],
       leftNavs: [
         {
           name: "Centre Department",

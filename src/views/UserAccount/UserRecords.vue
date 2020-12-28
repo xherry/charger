@@ -4,8 +4,8 @@
       <p class="ortoptit">User Records</p>
       <div class="urtable">
         <ul class="ultit">
-          <li><p>User Id</p></li>
-          <li><p>Staf Id</p></li>
+          <li><p>User ID</p></li>
+          <li><p>Staff ID</p></li>
           <li><p>Name</p></li>
           <li><p>User Type</p></li>
           <li><p>Centre</p></li>
@@ -201,7 +201,7 @@ export default {
         limit: 9,
       };
       let loadingInstance = this.$loading({
-        text: "加载中...",
+        text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
       pcUserFindByAll(data)

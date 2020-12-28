@@ -28,26 +28,31 @@
       </div>
     </div>
     <div class="overRights">
-      <p class="ortoptit">Control Centre EV Charger</p>
+      <p class="ortoptit">Detailed Centre Information</p>
       <div class="urtable">
         <ul class="ultit">
-          <li><p>Charge No.</p></li>
+          <li><p>Charger No.</p></li>
           <li><p>Status</p></li>
           <li><p>EV Type</p></li>
-          <li><p>Vehicle No</p></li>
+          <li><p>Vehicle No.</p></li>
           <li>
             <div>
               <p>Charging Time</p>
-              <p>(HOUR)</p>
+              <p>(Hour)</p>
             </div>
           </li>
           <li>
             <div>
               <p>Charging Energy</p>
-              <p>(kw/h)</p>
+              <p>(kWh)</p>
             </div>
           </li>
-          <li><p>Charging Voltage</p></li>
+          <li>
+            <div>
+              <p>Charging Voltage</p>
+              <p>(V)</p>
+            </div>
+          </li>
           <li>
             <div>
               <p>Charging Current</p>
@@ -56,7 +61,7 @@
           </li>
         </ul>
         <!-- v-if="chargerInfoList.length != 0" -->
-        <template>
+        <div>
           <ul class="uldatas w100" v-for="(item, index) in chargerInfoList" :key="index">
             <li>
               <p>{{ item.chargerno | valNO }}</p>
@@ -83,12 +88,12 @@
               <p>{{ item.chargingcurrent | valNO }}</p>
             </li>
           </ul>
-        </template>
-        <!-- <template v-else>
+        </div>
+        <!-- <div v-else>
           <ul class="uldatas w100">
             <li><p>暂无数据！</p></li>
           </ul>
-        </template> -->
+        </div> -->
       </div>
     </div>
     <div class="pagination">
@@ -165,7 +170,7 @@ export default {
         ...datas,
       };
       let loadingInstance = this.$loading({
-        text: "加载中...",
+        text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
       findByDetails(data)

@@ -45,7 +45,7 @@
       </div>
       <div class="dialog01">
         <div class="cartword">
-          <p class="diaName">Mileage after Charge</p>
+          <p class="diaName">Mileage after Charge（km）</p>
           <p class="diaValue">
             {{ chargerInfo.mileagetravelled | valNO }}
             {{ chargerInfo.mileagetravelled ? "km" : "" }}
@@ -54,7 +54,7 @@
       </div>
       <div class="dialog02">
         <div class="cartword">
-          <p class="diaName">Charging Tinme</p>
+          <p class="diaName">Charging Tinme（Hour）</p>
           <p class="diaValue">
             {{ chargerInfo.chargingtime | valNO }}
             {{ chargerInfo.chargingtime ? "min" : "" }}
@@ -63,7 +63,7 @@
       </div>
       <div class="dialog03">
         <div class="cartword">
-          <p class="diaName">Charging Energy</p>
+          <p class="diaName">Charging Energy（kWh）</p>
           <p class="diaValue">
             {{ chargerInfo.chargingenergy | valNO }}
             {{ chargerInfo.chargingenergy ? "kwh" : "" }}
@@ -72,7 +72,7 @@
       </div>
       <div class="dialog04">
         <div class="cartword">
-          <p class="diaName">Charging Voltage</p>
+          <p class="diaName">Charging Voltage（V）</p>
           <p class="diaValue">
             {{ chargerInfo.batterycapacity | valNO }}
             {{ chargerInfo.batterycapacity ? "V" : "" }}
@@ -81,7 +81,7 @@
       </div>
       <div class="dialog05">
         <div class="cartword">
-          <p class="diaName">Battery Capacity</p>
+          <p class="diaName">Battery Capacity（%）</p>
           <p class="diaValue">
             {{ chargerInfo.vehicleno | valNO }} {{ chargerInfo.vehicleno ? "%" : "" }}
           </p>
@@ -89,7 +89,7 @@
       </div>
       <div class="dialog06">
         <div class="cartword">
-          <p class="diaName">Charging Current</p>
+          <p class="diaName">Charging Current（A）</p>
           <p class="diaValue">
             {{ chargerInfo.chargingcurrent | valNO }}
             {{ chargerInfo.chargingcurrent ? "A" : "" }}
@@ -180,7 +180,7 @@ export default {
         vehicleNo: this.navList[2].value,
       };
       let loadingInstance = this.$loading({
-        text: "加载中...",
+        text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
       findBIC(data)

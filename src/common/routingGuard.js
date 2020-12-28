@@ -1,6 +1,6 @@
 import router from '../router/index';
 import store from '../store/index';
-import { Message } from 'element-ui';
+// import { Message } from 'element-ui';
 
 // 路由守卫
 router.beforeEach((to, from, next) => {

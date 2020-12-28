@@ -31,12 +31,12 @@ export default {
       seletNavIndex: 1,
       leftNavs: [
         {
-          name: "Creat  user  type",
+          name: "Creat  User  Type",
           id: 1,
           RouterPush: "Creatusertype",
         },
         {
-          name: "Create  user",
+          name: "Create  User",
           id: 2,
           RouterPush: "Createuser",
         },

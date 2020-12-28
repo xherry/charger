@@ -33,10 +33,10 @@
             <p>{{ item.name }}</p>
           </div>
         </div>
-        <div class="dsrmr" id="dsrmr">
+        <div class="dsrmr" id="dsrmr" ref="dsrmr">
           <!--  -->
-          <!--   -->
-          <div class="echart" v-if="$store.state.DataTypes[0].choose">
+          <!-- v-if="$store.state.DataTypes[0].choose"  -->
+          <div class="echart">
             <p>Charging Voltage</p>
             <div
               class=""
@@ -45,7 +45,7 @@
             ></div>
           </div>
           <!--  -->
-          <div class="echart" v-if="$store.state.DataTypes[1].choose">
+          <div class="echart" v-show="$store.state.DataTypes[1].choose">
             <p>Average Charging Current</p>
             <div
               class=""
@@ -54,7 +54,7 @@
             ></div>
           </div>
           <!--  -->
-          <div class="echart" v-if="$store.state.DataTypes[2].choose">
+          <div class="echart" v-show="$store.state.DataTypes[2].choose">
             <p>Average Charging Power</p>
             <div
               class=""
@@ -62,7 +62,7 @@
               id="AverageChargingPower【kw】"
             ></div>
           </div>
-          <div class="echart" v-if="$store.state.DataTypes[3].choose">
+          <div class="echart" v-show="$store.state.DataTypes[3].choose">
             <p>Total Charging Energy</p>
             <div
               class=""
@@ -70,7 +70,7 @@
               id="TotalChargingEnergy【kwh】"
             ></div>
           </div>
-          <div class="echart" v-if="$store.state.DataTypes[4].choose">
+          <div class="echart" v-show="$store.state.DataTypes[4].choose">
             <p>Charging Time</p>
             <div
               class=""
@@ -78,7 +78,7 @@
               id="ChargingTime【Hour】"
             ></div>
           </div>
-          <div class="echart" v-if="$store.state.DataTypes[5].choose">
+          <div class="echart" v-show="$store.state.DataTypes[5].choose">
             <p>SoC Before Charging</p>
             <div
               class=""
@@ -86,7 +86,7 @@
               id="SoCBeforeCharging【%】"
             ></div>
           </div>
-          <div class="echart" v-if="$store.state.DataTypes[6].choose">
+          <div class="echart" v-show="$store.state.DataTypes[6].choose">
             <p>Mileage Travelled Before Charging</p>
             <div
               class=""
@@ -165,6 +165,7 @@ export default {
   },
   mounted() {
     this.getParams();
+    this.drawLine("ChargingVoltage【v】", false, [], "V");
   },
   methods: {
     //
@@ -176,81 +177,83 @@ export default {
     },
     // 导出PDF
     printOut(name) {
-      let strIsFalse = this.DataTypes.filter((item) => !item.Figure);
-      console.log(strIsFalse);
-      if (strIsFalse.length === this.DataTypes.length) {
-        this.$message.warning("请选择至少一条内容！");
-        return;
-      }
-      let shareContent = document.getElementById("dsrmr"); //需要截图的包裹的（原生的）DOM 对象
-      let width = shareContent.clientWidth, //获取dom 宽度
-        backgroundColor = "#999999",
-        height = shareContent.clientHeight, //获取dom 高度
-        canvas = document.createElement("canvas"), //创建一个canvas节点
-        scale = 1; //定义任意放大倍数 支持小数
-      canvas.width = width * scale; //定义canvas 宽度 * 缩放
-      canvas.height = height * scale; //定义canvas高度 *缩放
-      canvas.style.width = shareContent.clientWidth * scale + "px";
-      canvas.style.height = shareContent.clientHeight * scale + "px";
-      canvas.getContext("2d").scale(scale, scale); //获取context,设置scale
-      let opts = {
-        scale: scale, // 添加的scale 参数
-        canvas: canvas, //自定义 canvas
-        logging: false, //日志开关，便于查看html2canvas的内部执行流程
-        backgroundColor,
-        width: width, //dom 原始宽度
-        height: height,
-        useCORS: true, // 【重要】开启跨域配置
-      };
-      window.pageYoffset = 0;
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
-      setTimeout(() => {
-        html2canvas(shareContent, opts).then(() => {
-          var contentWidth = canvas.width;
-          var contentHeight = canvas.height;
-          //一页pdf显示html页面生成的canvas高度;
-          var pageHeight = (contentWidth / 592.28) * 841.89;
-          //未生成pdf的html页面高度
-          var leftHeight = contentHeight;
-          //页面偏移
-          var position = 0;
-          //a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
-          var imgWidth = 595.28;
-          var imgHeight = (592.28 / contentWidth) * contentHeight;
-          var pageData = canvas.toDataURL("image/jpeg", 1.0);
-          // var PDF = new JsPDF("", "pt", "a4");
-          let arrDPI = this.js_getDPI(); //获取显示器DPI
-          let dpiX = 96;
-          let dpiY = 96;
-          if (arrDPI.length > 0) {
-            dpiX = arrDPI[0];
-            dpiY = arrDPI[1];
-          }
-          //l:横向， p：纵向；单位： in:英寸，mm毫米；画布大小：a3,a4,leter,[]（当内容为数组时，为自定义大小）
-          let PDF = new JsPDF("l", "in", [
-            (contentWidth + 10) / dpiX,
-            (contentHeight + 10) / dpiY,
-          ]); // 自定义页面大小
-          PDF.setFillColor(188, 188, 188);
-          if (leftHeight <= pageHeight) {
-            PDF.addImage(pageData, "JPEG", 5 / dpiX, 5 / dpiY);
-          } else {
-            while (leftHeight > 0) {
-              PDF.addImage(pageData, "JPEG", 0, position);
-              leftHeight -= pageHeight;
-              position -= 841.89;
-              if (leftHeight > 0) {
-                PDF.addPage();
+      this.$nextTick(() => {
+        let strIsFalse = this.DataTypes.filter((item) => !item.Figure);
+        console.log(strIsFalse);
+        if (strIsFalse.length === this.DataTypes.length) {
+          this.$message.warning("请选择至少一条内容！");
+          return;
+        }
+        let shareContent = this.$refs.dsrmr; //document.getElementById("dsrmr"); //需要截图的包裹的（原生的）DOM 对象
+        let width = shareContent.clientWidth, //950, //获取dom 宽度
+          backgroundColor = "#333333",
+          height = shareContent.clientHeight, //获取dom 高度
+          canvas = document.createElement("canvas"), //创建一个canvas节点
+          scale = 1; //定义任意放大倍数 支持小数
+        canvas.width = width * scale; //定义canvas 宽度 * 缩放
+        canvas.height = height * scale; //定义canvas高度 *缩放
+        canvas.style.width = shareContent.clientWidth * scale + "px";
+        canvas.style.height = shareContent.clientHeight * scale + "px";
+        canvas.getContext("2d").scale(scale, scale); //获取context,设置scale
+        let opts = {
+          scale: scale, // 添加的scale 参数
+          canvas: canvas, //自定义 canvas
+          logging: false, //日志开关，便于查看html2canvas的内部执行流程
+          backgroundColor,
+          width: width, //dom 原始宽度
+          height: height,
+          useCORS: true, // 【重要】开启跨域配置
+        };
+        window.pageYoffset = 0;
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+        setTimeout(() => {
+          html2canvas(shareContent, opts).then(() => {
+            let contentWidth = canvas.width;
+            let contentHeight = canvas.height;
+            //一页pdf显示html页面生成的canvas高度;
+            let pageHeight = (contentWidth / 592.28) * 841.89;
+            //未生成pdf的html页面高度
+            let leftHeight = contentHeight;
+            //页面偏移
+            let position = 0;
+            //a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
+            let imgWidth = 595.28;
+            let imgHeight = (592.28 / contentWidth) * contentHeight;
+            let pageData = canvas.toDataURL("image/jpeg", 1.0);
+            // var PDF = new jspdf("", "pt", "a4");
+            let arrDPI = this.js_getDPI(); //获取显示器DPI
+            let dpiX = 96;
+            let dpiY = 96;
+            if (arrDPI.length > 0) {
+              dpiX = arrDPI[0];
+              dpiY = arrDPI[1];
+            }
+            //l:横向， p：纵向；单位： in:英寸，mm毫米；画布大小：a3,a4,leter,[]（当内容为数组时，为自定义大小）
+            let PDF = new jspdf("l", "in", [
+              (contentWidth + 10) / dpiX,
+              (contentHeight + 10) / dpiY,
+            ]); // 自定义页面大小
+            if (leftHeight <= pageHeight) {
+              PDF.addImage(pageData, "JPEG", 5 / dpiX, 5 / dpiY);
+            } else {
+              while (leftHeight > 0) {
+                PDF.addImage(pageData, "JPEG", 0, position);
+                leftHeight -= pageHeight;
+                position -= 841.89;
+                if (leftHeight > 0) {
+                  PDF.addPage();
+                }
               }
             }
-          }
-          PDF.save(name + ".pdf"); // 这里是导出的文件名
-        });
-      }, 500);
+            PDF.save(name + ".pdf"); // 这里是导出的文件名
+          });
+        }, 500);
+      });
     },
     js_getDPI() {
       var arrDPI = new Array();
+      console.log(window.screen.deviceXDPI);
       if (window.screen.deviceXDPI != undefined) {
         arrDPI[0] = window.screen.deviceXDPI;
         arrDPI[1] = window.screen.deviceYDPI;
@@ -280,10 +283,10 @@ export default {
         // xMax: count * 100,
       };
 
-      // for (var i = 0; i < count; i++) {
-      //   var now = i * 100;
-      //   data.values.push([now, Math.floor(Math.random() * 100)]);
-      // }
+      for (var i = 0; i < count; i++) {
+        var now = i * 100;
+        data.values.push([now, Math.floor(Math.random() * 100)]);
+      }
 
       function makeXAxis(gridIndex, opt) {
         return echarts.util.merge(
@@ -490,14 +493,14 @@ export default {
     getParams() {
       let datas = { userIds: localStorage.getItem("userId"), page: 1, limit: 100 };
       let data = this.$store.state.chargerInfoData;
-      console.log(data)
       let DataTypes = this.$store.state.DataTypes;
       if (Object.keys(data).length === 0) {
         this.$message.warning("请在上一页添加筛选条件");
+        // this.$message.warning("请在上一页添加筛选条件");
         return;
       }
       let loadingInstance = this.$loading({
-        text: "加载中...",
+        text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
       findByParamsAll({ ...data, ...datas })
@@ -509,9 +512,9 @@ export default {
           });
           if (res.code == 100) {
             let chargerInfoList = res.extend.chargerInfoList;
-            if(chargerInfoList.length==0){
-              this.$message.warning("暂无数据！")
-              return
+            if (chargerInfoList.length == 0) {
+              this.$message.warning("暂无数据！");
+              return;
             }
             let chargingVoltage = chargerInfoList.map((item) => item.chargingVoltage), // 充电电压
               chargingCurrent = chargerInfoList.map((item) => item.chargingCurrent), // 充电电流
@@ -575,7 +578,7 @@ export default {
   font-size: 14px;
   /* transform: ; */
   top: 50%;
-  left: -5px;
+  left: 30px;
   z-index: 99999999;
   width: 50px;
   text-align: center;
@@ -584,11 +587,12 @@ export default {
   white-space: pre-wrap;
 }
 .dsrmr {
-  /* width: 900px; */
+  /* width: 950px; */
   height: 100%;
   /* background: #000; */
-  padding-left: 50px;
+  padding-left: 0px;
   padding-right: 20px;
+  position: relative;
 }
 .dsrml {
   padding-left: 36px;

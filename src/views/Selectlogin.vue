@@ -147,6 +147,24 @@
             ></div>
           </div>
         </div>
+        <div class="sixItemBottom">
+          <div class="sixItem flex flex-Updown">
+            <div style="opacity: 0"></div>
+            <span>No.of charger available</span>
+          </div>
+          <div class="sixItem flex flex-Updown">
+            <div style="background: rgb(0, 175, 80)"></div>
+            <span>more than 5</span>
+          </div>
+          <div class="flex sixItem flex-Updown">
+            <div style="background: rgb(254, 217, 102)"></div>
+            <span>3 to 5</span>
+          </div>
+          <div class="flex sixItem flex-Updown">
+            <div style="background: rgb(244, 122, 47)"></div>
+            <span>1 to 2</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -175,32 +193,56 @@ export default {
 </script>
 
 <style scoped>
+.sixItemBottom {
+  margin-top: 50px;
+  /* width: 100%; */
+  /* display: inline-block; */
+}
+.sixItem {
+  width: 308px;
+  margin: 0 auto;
+  /* margin: 0 auto; */
+  margin-bottom: 10px;
+}
+.sixItem div {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+.sixItem:first-child span {
+  text-decoration: underline;
+}
+.sixItem span {
+  color: #fff;
+  font-size: 26px;
+}
 .ortoptit {
   margin-top: 5px;
 }
 .sh6 {
-  top: 110px;
-  left: 769px;
+  top: 100px;
+  left: 634px;
 }
 .sh5 {
-  top: 435px;
-  left: 639px;
+  top: 315px;
+  left: 479px;
 }
 .sh4 {
-  top: 310px;
-  left: 537px;
+  top: 223px;
+  left: 397px;
 }
 .sh3 {
-  top: 313px;
-  left: 322px;
+  top: 223px;
+  left: 235px;
 }
 .sh2 {
-  top: 143px;
-  left: 103px;
+  top: 153px;
+  left: 70px;
 }
 .sh1 {
-  top: 65px;
-  left: 414px;
+  top: 40px;
+  left: 305px;
 }
 .greens {
   background: rgb(0, 175, 80) !important;
@@ -219,7 +261,7 @@ export default {
   height: 25px;
   position: absolute;
   border-radius: 50%;
-  box-shadow: 0 0 5px 0 #fff; 
+  box-shadow: 0 0 5px 0 #fff;
   background: #fff;
 }
 @keyframes bb {
@@ -251,9 +293,9 @@ export default {
 .sixLogin {
   position: relative;
   z-index: 9999;
-  width: 80%;
-  height: 700px;
-  margin-left: 10%;
+  width: 60%;
+  height: 500px;
+  margin-left: 20%;
   margin-top: 70px;
 }
 </style>

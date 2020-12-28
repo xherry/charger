@@ -41,7 +41,7 @@ export default {
           seletImg: require("../assets/index/setting/07.png"),
         },
         {
-          name: "Detailed",
+          name: "Details",
           id: 2,
           RouterPush: "Detailed",
           img: require("../assets/index/setting/01.png"),

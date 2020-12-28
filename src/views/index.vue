@@ -104,7 +104,7 @@ export default {
     let bgImg = new Image();
     bgImg.src = this.middleBg; // 获取背景图片的url
     let loadingInstance = this.$loading({
-      text: "加载中...",
+      text: "Loading...",
       background: "rgba(0,0,0,.5)",
     });
     bgImg.onerror = () => {

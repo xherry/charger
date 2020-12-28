@@ -1,7 +1,7 @@
 <template>
   <div class="">
     <div class="overRights">
-      <p class="ortoptit">Create User Access Rights</p>
+      <p class="ortoptit">User Access Rights</p>
       <div class="access">
         <div class="flex userTable">
           <ul class="userTable-left">
@@ -23,8 +23,8 @@
           <div class="userTableRight">
             <p>Webpage Login Control</p>
             <ul>
-              <li>User id Password</li>
-              <li>SMS Password</li>
+              <li>User ID + Password</li>
+              <li>SMS Passcode</li>
             </ul>
           </div>
         </div>
@@ -35,7 +35,9 @@
             @click="seleteUl(index, item.id)"
           >
             <ul class="userTable-left bp">
-              <li><span>1</span></li>
+              <li>
+                <span>{{ item.userType | uLevel }}</span>
+              </li>
               <li>
                 <span>{{ item.userType | utype }}</span>
               </li>
@@ -304,7 +306,7 @@ export default {
         limit: 7,
       };
       let loadingInstance = this.$loading({
-        text: "加载中...",
+        text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
       roleKeyFindAll(data)
@@ -313,7 +315,7 @@ export default {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
           });
-          // console.log(res);
+          console.log(res, "获取权限列表");
           if (res.code == 100) {
             let dataList = res.extend.roleKeyList.reverse();
             this.oldRoleKeyList = dataList;

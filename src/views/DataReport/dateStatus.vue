@@ -260,7 +260,7 @@ export default {
       };
       let datas = { userIds: localStorage.getItem("userId"), page: this.page, limit: 8 };
       let loadingInstance = this.$loading({
-        text: "加载中...",
+        text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
       this.$store.commit("getChargerInfoData", data);

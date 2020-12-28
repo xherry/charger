@@ -2,10 +2,11 @@
   <div class="loginBox">
     <div class="login-img">
       <img class="childAll" :src="loginImg" v-if="!showLoading" alt="" />
+      <img src="../../assets/icon.png" class="plogo" alt="" />
     </div>
     <div class="login-input-box">
       <div id="inputValue" v-if="!iscode">
-        <div v-if="!isVisitors">
+        <div>
           <p class="wtl">Welcome to login</p>
           <div class="login-input userID">
             <img src="../../assets/index/login/04.png" alt="" />
@@ -43,15 +44,15 @@
             />
           </div>
           <div class="button loginButton" @click="toLogin">login</div>
-          <p class="clgs vtl" @click="isVisitors = true">Visitors to login</p>
+          <!-- <p class="clgs vtl" @click="isVisitors = true">Visitors to login</p> -->
         </div>
-        <div class="visitors" v-else>
+        <!-- <div class="visitors" v-else>
           <img src="../../assets/icon.png" alt="" />
           <div class="button loginButton" @click="visitorLogin">Visitors to login</div>
           <div class="button loginButton clg" @click="isVisitors = false">
             Account password login
           </div>
-        </div>
+        </div> -->
       </div>
       <div id="inputCode" v-else>
         <div class="codeValue" style="margin-bottom: 0">
@@ -97,14 +98,14 @@ export default {
       phoneCode: "",
       phone: "",
       loginImg: require("../../assets/index/login/06.png"),
-      showLoading:true
+      showLoading: true,
     };
   },
   mounted() {
     let bgImg = new Image();
     bgImg.src = this.loginImg; // 获取背景图片的url
     let loadingInstance = this.$loading({
-      text: "页面加载中...",
+      text: "Loading...",
       background: "rgba(0,0,0,.5)",
     });
     bgImg.onerror = () => {
@@ -116,7 +117,7 @@ export default {
         // 以服务的方式调用的 Loading 需要异步关闭
         loadingInstance.close();
       });
-      this.showLoading = false
+      this.showLoading = false;
     };
   },
   methods: {
@@ -135,11 +136,16 @@ export default {
       });
     },
     toLogin() {
-      try {
-        if (!this.userInfo.userId) throw "Please enter the User ID";
-        if (!this.userInfo.password) throw "Please enter the Password";
-      } catch (err) {
-        return this.$message.warning(err);
+      if (this.userInfo.userId === "" && this.userInfo.password === "") {
+        //  chargerNumber: "",
+        // vehicleNumber: "",
+        if (this.userInfo.chargerNumber !== "" || this.userInfo.vehicleNumber !== "") {
+          this.visitorLogin();
+          return;
+        }
+        if (this.userInfo.chargerNumber === "" && this.userInfo.vehicleNumber === "") {
+          return this.$message.warning("请输入登录信息");
+        }
       }
       Login(this.userInfo).then((res) => {
         console.log(res);
@@ -322,6 +328,13 @@ export default {
   left: 101px;
   /* background: url("../../assets/index/login/06.png") no-repeat;
   background-size: 100% 100%; */
+}
+.plogo {
+  width: 200px;
+  height: 45px;
+  position: absolute;
+  top: 80px;
+  left: 410px;
 }
 .login-input-box {
   position: absolute;

@@ -18,7 +18,7 @@
           </p>
         </div>
         <div class="SummaryTable-right">
-          <p class="srtit">centre</p>
+          <p class="srtit">Centre</p>
           <ul class="srul-top srul">
             <li v-for="item in utits" :key="item">
               <p>{{ item }}</p>
@@ -67,7 +67,7 @@ export default {
     return {
       utits: [
         "Hung Hom",
-        "Satin",
+        "Shatin",
         "Sham Shui Po",
         "Shek Wu Hui",
         "Tsing Yi",
@@ -81,13 +81,13 @@ export default {
       ],
       leftTable2: [
         { name: "Total No. of Charging", value: [] },
-        { name: "Total Charging Time", value: [] },
-        { name: "Total Charging Energy", value: [] },
-        { name: "Estimated Carbon Sav ing", value: [] },
+        { name: "Total Charging Time【Hour】", value: [] },
+        { name: "Total Charging Energy【kWh】", value: [] },
+        { name: "Estimated Carbon Saving", value: [] },
       ],
       leftTable3: [
         { name: "Average Charging Time", value: [] },
-        { name: "Average Charging Energy", value: [] },
+        { name: "Average Charging Energy【kWh】", value: [] },
       ],
       sixDatas: {},
     };
@@ -191,7 +191,7 @@ export default {
 }
 .srtit {
   font-size: 14px;
-  width: 1145px;
+  width: 100%;
   text-align: center;
   border-left: 1px solid #205cbf;
   border-bottom: 1px solid #205cbf;
@@ -205,12 +205,13 @@ export default {
   border-bottom: 1px solid #205cbf;
   background: #0d264e;
   height: 52px;
+  width: 100%;
 }
 .SummaryTable-left .div {
   width: 100%;
 }
 .SummaryTable-left {
-  width: 261px;
+  width: 23%;
 }
 .slItem:first-of-type {
   border-top: none;

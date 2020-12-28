@@ -207,7 +207,7 @@ export default {
         limit: 10,
       };
       let loadingInstance = this.$loading({
-        text: "加载中...",
+        text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
       VNFindAll(data)
