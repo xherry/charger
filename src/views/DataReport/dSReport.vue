@@ -35,8 +35,8 @@
         </div>
         <div class="dsrmr" id="dsrmr" ref="dsrmr">
           <!--  -->
-          <!-- v-if="$store.state.DataTypes[0].choose"  -->
-          <div class="echart">
+          <!--   -->
+          <div class="echart" v-if="$store.state.DataTypes[0].choose">
             <p>Charging Voltage</p>
             <div
               class=""
@@ -108,7 +108,7 @@
 // import echarts from "echarts";
 import html2canvas from "html2canvas";
 import JsPDF from "jspdf";
-import { findBIC, findByParamsAll } from "../../common/api";
+import { findBIC, findByParamsAll, excelExp } from "../../common/api";
 export default {
   name: "dSReport",
   data() {
@@ -165,7 +165,6 @@ export default {
   },
   mounted() {
     this.getParams();
-    this.drawLine("ChargingVoltage【v】", false, [], "V");
   },
   methods: {
     //
@@ -181,7 +180,7 @@ export default {
         let strIsFalse = this.DataTypes.filter((item) => !item.Figure);
         console.log(strIsFalse);
         if (strIsFalse.length === this.DataTypes.length) {
-          this.$message.warning("请选择至少一条内容！");
+          this.$message.warning("Please select at least one content！");
           return;
         }
         let shareContent = this.$refs.dsrmr; //document.getElementById("dsrmr"); //需要截图的包裹的（原生的）DOM 对象
@@ -230,7 +229,7 @@ export default {
               dpiY = arrDPI[1];
             }
             //l:横向， p：纵向；单位： in:英寸，mm毫米；画布大小：a3,a4,leter,[]（当内容为数组时，为自定义大小）
-            let PDF = new jspdf("l", "in", [
+            let PDF = new JsPDF("l", "in", [
               (contentWidth + 10) / dpiX,
               (contentHeight + 10) / dpiY,
             ]); // 自定义页面大小
@@ -283,10 +282,10 @@ export default {
         // xMax: count * 100,
       };
 
-      for (var i = 0; i < count; i++) {
-        var now = i * 100;
-        data.values.push([now, Math.floor(Math.random() * 100)]);
-      }
+      // for (var i = 0; i < count; i++) {
+      //   var now = i * 100;
+      //   data.values.push([now, Math.floor(Math.random() * 100)]);
+      // }
 
       function makeXAxis(gridIndex, opt) {
         return echarts.util.merge(
@@ -495,7 +494,8 @@ export default {
       let data = this.$store.state.chargerInfoData;
       let DataTypes = this.$store.state.DataTypes;
       if (Object.keys(data).length === 0) {
-        this.$message.warning("请在上一页添加筛选条件");
+        // this.$message.warning("Add a filter condition on the previous page");
+        // return this.$message.warning("Add a filter condition on the previous page！");
         // this.$message.warning("请在上一页添加筛选条件");
         return;
       }
@@ -513,7 +513,7 @@ export default {
           if (res.code == 100) {
             let chargerInfoList = res.extend.chargerInfoList;
             if (chargerInfoList.length == 0) {
-              this.$message.warning("暂无数据！");
+              this.$message.warning("Temporarily no data！");
               return;
             }
             let chargingVoltage = chargerInfoList.map((item) => item.chargingVoltage), // 充电电压

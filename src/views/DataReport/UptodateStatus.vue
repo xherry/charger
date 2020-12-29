@@ -7,6 +7,29 @@
     >
       返回
     </button>
+    <div class="cneterShow flex flex-Updown" v-if="isToDetail">
+      <span>Center</span>
+      <div class="flex flex-Updown-between" @click="isOptionsId = !isOptionsId">
+        <span>{{ ctypes.value }}</span>
+        <img
+          :style="{
+            transform: `rotate(${isOptionsId ? '180' : '0'}deg)`,
+          }"
+          src="../../assets/index/setting/10.png"
+          alt=""
+        />
+        <div class="seleterBody" :style="{ height: isOptionsId ? '200px' : '0px' }">
+          <div
+            class="button seleter_item"
+            v-for="(p, i) in centerType"
+            :key="i + 'ss'"
+            @click="seleteCenter(p)"
+          >
+            {{ p.name }}
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="overRights">
       <p class="ortoptit">Summary of All Centre Charging Information</p>
       <!-- 数据 -->
@@ -17,13 +40,13 @@
               <p>Centre</p>
             </li>
             <li>
-              <p>Total Charging Time(h)</p>
+              <p>Total Charging Time（Hour）</p>
             </li>
             <li>
-              <p>Total Charging Time(ts)</p>
+              <p>Total No. of Charging（Time）</p>
             </li>
             <li>
-              <p>Total Charging Energy(kW/h)</p>
+              <p>Total Charging Energy（kWh）</p>
             </li>
             <li>
               <p>Detail</p>
@@ -40,10 +63,10 @@
               <p v-if="item.value">{{ item.value.totalofcharging }}</p>
             </li>
             <li>
-              <p v-if="item.value">{{ item.value.totalchargingenergy }}</p>
+              <p v-if="item.value">{{ item.value.totalchargingenergy | val2 }}</p>
             </li>
             <li>
-              <p><button class="button sees" @click="seeDetails(item)">查看</button></p>
+              <p><button class="button sees" @click="seeDetails(item)">View</button></p>
             </li>
           </ul>
         </div>
@@ -56,13 +79,22 @@
               <p>Charger No.</p>
             </li>
             <li>
-              <p>Total Charging Time(h)</p>
+              <p>Status</p>
             </li>
             <li>
-              <p>Total Charging Time(ts)</p>
+              <p>Charging Power（kW）</p>
             </li>
             <li>
-              <p>Total Charging Energy(kW/h)</p>
+              <p>Charging Time（Hour）</p>
+            </li>
+            <li>
+              <p>Charging Type</p>
+            </li>
+            <li>
+              <p>Vehicle No.</p>
+            </li>
+            <li>
+              <p>EV Type</p>
             </li>
           </ul>
           <div v-if="cdetails.length != 0">
@@ -76,13 +108,22 @@
                   <p>{{ item.chargerno }}</p>
                 </li>
                 <li>
-                  <p>{{ item.chargingtime }}</p>
+                  <p>{{ item.status }}</p>
                 </li>
                 <li>
-                  <p>{{ item.batterycapacity }}</p>
+                  <p>{{ item.ChargingPower }}</p>
                 </li>
                 <li>
-                  <p>{{ item.chargingenergy }}</p>
+                  <p>{{ item.ChargingTime }}</p>
+                </li>
+                <li>
+                  <p>{{ item.ChargingType }}</p>
+                </li>
+                <li>
+                  <p>{{ item.VehicleNo }}</p>
+                </li>
+                <li>
+                  <p>{{ "" }}</p>
                 </li>
               </ul>
             </div>
@@ -90,7 +131,7 @@
           <div v-else>
             <ul class="ustablemain">
               <li>
-                <p>暂无数据！</p>
+                <p>No Data！</p>
               </li>
             </ul>
           </div>
@@ -118,11 +159,13 @@ export default {
   data() {
     return {
       isToDetail: false,
+      isOptionsId: false,
       count: 0,
       page: 1,
+      centreId: "",
       centerType: [
         { centreId: 0, name: "Hung Hom", value: null },
-        { centreId: 1, name: "Satin", value: null },
+        { centreId: 1, name: "Shatin", value: null },
         { centreId: 2, name: "Sham Shui Po", value: null },
         { centreId: 3, name: "Shek Wu Hui", value: null },
         { centreId: 4, name: "Tsing Yi", value: null },
@@ -130,25 +173,37 @@ export default {
       ],
       cdetails: [],
       queryData: {},
+      ctypes: {
+        centreId: "",
+        value: "",
+      },
     };
   },
   created() {
     this.getSixData();
   },
+  filters: {
+    val2(val) {
+      return Number(val).toFixed(2);
+    },
+  },
   methods: {
+    seleteCenter(p) {
+      // this.centreId = p.centreId;
+      this.ctypes.centreId = p.centreId;
+      this.ctypes.value = p.name;
+      this.queryData.centre = p.centreId;
+      this.findData();
+    },
     sizeChange(value) {
       this.page = value;
-      // this.cdetails = JSON.parse(JSON.stringify(this.oldDatas)).splice(
-      //   (value - 1) * 10,
-      //   10
-      // );
       this.findData();
     },
     //  根据地区查询 充电桩的充电总时长等
     seeDetails(value) {
       // console.log(value);
       if (!value.value) {
-        this.$message.warning("无更多数据！");
+        this.$message.warning("No more data！");
         return;
       }
       this.queryData = value;
@@ -213,7 +268,7 @@ export default {
             let values = res.extend;
             this.centerType = [
               { centreId: 0, name: "Hung Hom", value: values.hh },
-              { centreId: 1, name: "Satin", value: values.s },
+              { centreId: 1, name: "Shatin", value: values.s },
               { centreId: 2, name: "Sham Shui Po", value: values.ssp },
               { centreId: 3, name: "Shek Wu Hui", value: values.swh },
               { centreId: 4, name: "Tsing Yi", value: values.ty },
@@ -233,6 +288,33 @@ export default {
 </script>
 
 <style scoped>
+.cneterShow {
+  position: absolute;
+  right: 60px;
+  top: 30px;
+  z-index: 9999;
+}
+.cneterShow span {
+  font-size: 18px;
+}
+.cneterShow > div {
+  width: 224px;
+  height: 38px;
+  border: 1px solid #63d1ff;
+  border-radius: 4px;
+  background: transparent;
+  padding: 0 17px 0 23px;
+  box-sizing: border-box;
+  color: #63d1ff;
+  font-size: 17px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+.cneterShow > div > img {
+  width: 15px;
+  height: 10px;
+  transition: all 0.2s linear;
+}
 .goback {
   width: 80px;
   height: 30px;
@@ -240,7 +322,7 @@ export default {
   font-size: 16px;
   outline: 0;
   border: 0;
-  background: rgb(32,93,193);
+  background: rgb(32, 93, 193);
   position: absolute;
   top: 40px;
   left: 55px;

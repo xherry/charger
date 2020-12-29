@@ -30,7 +30,7 @@
           </template>
           <template v-else>
             <ul class="uldatas w100">
-              <li><p>暂无数据！</p></li>
+              <li><p>No Data！</p></li>
             </ul>
           </template>
         </div>

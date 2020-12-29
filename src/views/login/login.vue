@@ -144,7 +144,7 @@ export default {
           return;
         }
         if (this.userInfo.chargerNumber === "" && this.userInfo.vehicleNumber === "") {
-          return this.$message.warning("请输入登录信息");
+          return this.$message.warning("Please enter login information");
         }
       }
       Login(this.userInfo).then((res) => {
@@ -158,7 +158,7 @@ export default {
             this.iscode = true;
           } else {
             this.$router.replace("index");
-            this.$message.success("登陆成功！");
+            this.$message.success("Log in successfully！");
           }
         }
       });

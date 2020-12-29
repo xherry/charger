@@ -24,7 +24,7 @@
       </div>
       <div class="ct-item flex flex-Updown-between">
         <span>Location</span>
-        <input type="text" v-model="Location" placeholder="wherehere" />
+        <input type="text" v-model="Location" placeholder="Location" />
       </div>
       <div class="Confirm button" @click="demandData">Confirm</div>
     </div>
@@ -32,7 +32,7 @@
       <p class="ortoptit">Control Centre EV Charger</p>
       <div class="urtable">
         <ul class="ultit">
-          <li><p>Charge No.</p></li>
+          <li><p>Charger No.</p></li>
           <li><p>Enable</p></li>
           <li><p>Disable</p></li>
         </ul>
@@ -61,7 +61,7 @@
         </div>
         <div v-else>
           <ul class="uldatas w100">
-            <li><p>暂无数据！</p></li>
+            <li><p>No Data！</p></li>
           </ul>
         </div>
       </div>
@@ -93,7 +93,7 @@ export default {
       },
       centerType: [
         { centreId: 0, value: "Shatin Centre" },
-        { centreId: 1, value: "Hung HoM HQ" },
+        { centreId: 1, value: "Hung Hom HQ" },
         { centreId: 2, value: "Sham Shui Po Centre" },
         { centreId: 3, value: "Tsing Yi Centre" },
         { centreId: 4, value: "Yuen Long Centre" },
@@ -119,25 +119,25 @@ export default {
         chargerNo: chargerno,
       };
       if (status == "Disconnected" || status == "OffLine") {
-        this.$message.warning("设备离线！");
+        this.$message.warning("Equipment offline！");
         return;
       }
       if (type == 1) {
         if (status != "Disable") {
-          this.$message.warning("无法启用！");
+          this.$message.warning("Unable to enable！");
           return;
         }
       }
       if (type == 0) {
         if (status == "Disable") {
-          this.$message.warning("无法启用！");
+          this.$message.warning("Unable to enable！");
           return;
         }
       }
       controlCharger(data).then((res) => {
-        console.log(res, "操作开关");
+        // console.log(res, "操作开关");
         if (res.code == 100) {
-          this.$message.success("发送命令成功！");
+          this.$message.success("Send command successfully！");
           this.getNowData();
         }
       });

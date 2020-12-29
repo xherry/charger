@@ -23,11 +23,13 @@
     <div v-if="navSeleted == 1">
       <div>
         <div class="overRight">
-          <p class="ortoptit">Charger Network</p>
+          <p class="ortoptit">{{navSeleted == 1?'Charger Network':'Individual Charger'}}</p>
           <div class="sixLogin">
-            <img src="../assets/index/0004.png" class="childAll" alt="" />
+            <img src="../assets/index/0005.png" class="childAll" alt="" />
             <div class="childAll stronghold">
               <div
+                @mouseover="showEwm(1)"
+                @mouseout="showEwm(0)"
                 :class="[
                   'sh1',
                   'strong',
@@ -50,6 +52,8 @@
                 @click="tologin(5)"
               ></div>
               <div
+                @mouseover="showEwm(1)"
+                @mouseout="showEwm(0)"
                 :class="[
                   'sh2',
                   'strong',
@@ -72,6 +76,8 @@
                 @click="tologin(4)"
               ></div>
               <div
+                @mouseover="showEwm(1)"
+                @mouseout="showEwm(0)"
                 :class="[
                   'sh3',
                   'strong',
@@ -94,6 +100,8 @@
                 @click="tologin(3)"
               ></div>
               <div
+                @mouseover="showEwm(1)"
+                @mouseout="showEwm(0)"
                 :class="[
                   'sh4',
                   'strong',
@@ -116,6 +124,8 @@
                 @click="tologin(2)"
               ></div>
               <div
+                @mouseover="showEwm(1)"
+                @mouseout="showEwm(0)"
                 :class="[
                   'sh5',
                   'strong',
@@ -138,6 +148,8 @@
                 @click="tologin(1)"
               ></div>
               <div
+                @mouseover="showEwm(1)"
+                @mouseout="showEwm(0)"
                 :class="[
                   'sh6',
                   'strong',
@@ -161,7 +173,7 @@
               ></div>
             </div>
           </div>
-          <div class="sixItemBottom">
+          <div class="sixItemBottom" >
             <div class="sixItem flex flex-Updown">
               <div style="opacity: 0"></div>
               <span>No.of charger available</span>
@@ -177,6 +189,10 @@
             <div class="flex sixItem flex-Updown">
               <div style="background: rgb(244, 122, 47)"></div>
               <span>1 to 2</span>
+            </div>
+            <div class="flex sixItem flex-Updown">
+              <div style="background: #fff"></div>
+              <span>Off-line</span>
             </div>
           </div>
         </div>
@@ -199,6 +215,7 @@ export default {
   data() {
     return {
       navSeleted: 1,
+      isShowSixItems: false,
       navs: [
         {
           name: "Charger Network",
@@ -207,7 +224,7 @@ export default {
           id: 1,
         },
         {
-          name: "Charger Network",
+          name: "Individual Charger",
           img: require("../assets/index/overview/02.png"),
           seletImg: require("../assets/index/says/01.png"),
           id: 2,
@@ -226,7 +243,7 @@ export default {
       this.navSeleted = 2;
       this.navs = [
         {
-          name: "Charger Network",
+          name: "Individual Charger",
           img: require("../assets/index/overview/02.png"),
           seletImg: require("../assets/index/says/01.png"),
           id: 2,
@@ -235,27 +252,46 @@ export default {
     }
     // 查询六个地区下充电桩等信息
     this.sixDatas = (await findBYN({ userId: 1 })).extend;
-    // console.log(this.sixDatas);
+    console.log(this.sixDatas);
   },
   methods: {
     tologin(value) {
       // this.$router.push("login");
+    },
+    showEwm(value) {
+      // if (value === 1) {
+      //   this.isShowSixItems = true;
+      // } else {
+      //   this.isShowSixItems = false;
+      // }
     },
   },
 };
 </script>
 
 <style scoped>
+.overRight {
+  position: relative;
+}
 .sixItemBottom {
-  margin-top: 50px;
+  /* margin-top: 90px; */
   /* width: 100%; */
   /* display: inline-block; */
+  position: absolute;
+  top: 60%;
+  left: 50px;
+  width: 360px;
+  background: rgba(33, 69, 177, 0.5);
+  height: 220px;
+  border-radius: 10px;
+  transition: all 0.2s linear;
+  /* opacity: 0; */
 }
 .sixItem {
   width: 308px;
-  margin: 0 auto;
+  margin: 15px auto;
   /* margin: 0 auto; */
-  margin-bottom: 10px;
+  /* margin-bottom: 10px; */
 }
 .sixItem div {
   width: 25px;
@@ -268,34 +304,34 @@ export default {
 }
 .sixItem span {
   color: #fff;
-  font-size: 26px;
+  font-size: 22px;
 }
 .ortoptit {
   margin-top: 5px;
 }
 .sh6 {
-  top: 100px;
-  left: 634px;
+  top: 65px;
+  left: 774px;
 }
 .sh5 {
-  top: 315px;
-  left: 479px;
+  top: 340px;
+  left: 583px;
 }
 .sh4 {
-  top: 223px;
-  left: 397px;
+  top: 225px;
+  left: 495px;
 }
 .sh3 {
-  top: 223px;
-  left: 235px;
+  top: 220px;
+  left: 295px;
 }
 .sh2 {
-  top: 153px;
-  left: 70px;
+  top: 130px;
+  left: 90px;
 }
 .sh1 {
-  top: 40px;
-  left: 305px;
+  top: 60px;
+  left: 375px;
 }
 .greens {
   background: rgb(0, 175, 80) !important;
@@ -346,10 +382,10 @@ export default {
 .sixLogin {
   position: relative;
   z-index: 9999;
-  width: 60%;
-  height: 500px;
-  margin-left: 20%;
-  margin-top: 70px;
+  width: 73%;
+  height: 480px;
+  margin-left: 13.5%;
+  margin-top: 100px;
 }
 .tits {
   font-size: 24px;

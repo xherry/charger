@@ -4,7 +4,7 @@
       <p class="ortoptit">Electric Vehicle Charger</p>
       <div class="tables">
         <ul class="ultit">
-          <li><p>Ttpe No.</p></li>
+          <li><p>Type No.</p></li>
           <li><p>Charger Type</p></li>
           <li><p>Output Voltase</p></li>
           <li><p>No. of Phase</p></li>
@@ -86,7 +86,7 @@
         </template>
         <template v-else>
           <ul class="uldatas w100">
-            <li><p>暂无数据！</p></li>
+            <li><p>No Data！</p></li>
           </ul>
         </template>
       </div>
@@ -129,7 +129,7 @@ export default {
     // 修改
     updateCharge() {
       if (this.isUpdate === "") {
-        this.$message.warning("请选择修改项");
+        this.$message.warning("Please select the modification item");
         return;
       }
       this.$msgbox({
@@ -141,7 +141,7 @@ export default {
         beforeClose: (action, instance, done) => {
           if (action === "confirm") {
             instance.confirmButtonLoading = true;
-            instance.confirmButtonText = "执行中...";
+            instance.confirmButtonText = "waiting...";
             let value = this.chargerList[this.isUpdate];
             let data = {
               userId: localStorage.getItem("userId"),
@@ -160,7 +160,7 @@ export default {
                 instance.confirmButtonLoading = false;
                 this.isUpdate = "";
                 this.getChargeList();
-                this.$message.success("修改成功");
+                this.$message.success("Modify the success");
               }
             });
           } else {

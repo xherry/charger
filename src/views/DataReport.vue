@@ -31,17 +31,17 @@ export default {
       seletNavIndex: 1,
       leftNavs: [
         {
-          name: "Up-to-date Status",
+          name: "Data Record",
           id: 1,
           RouterPush: "UptodateStatus",
         },
         {
-          name: "Date Status",
+          name: "Data Serach",
           id: 2,
           RouterPush: "dateStatus",
         },
         {
-          name: "Date Status（Report）",
+          name: "Data Serach（Report）",
           id: 3,
           RouterPush: "dSReport",
         },

@@ -247,26 +247,26 @@ export default {
       let roleKey = JSON.parse(localStorage.getItem("roleKey"));
       // console.log(roleKey);
       this.$msgbox({
-        title: "提示",
-        message: "确认修改权限？",
+        title: "Prompt",
+        message: "Confirm permission to modify？",
         showCancelButton: true,
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
+        confirmButtonText: "confirm",
+        cancelButtonText: "cancel",
         beforeClose: (action, instance, done) => {
           if (action === "confirm") {
             instance.confirmButtonLoading = true;
-            instance.confirmButtonText = "执行中...";
+            instance.confirmButtonText = "waiting...";
             roleKeySOE(data).then((res) => {
               // console.log(res, "修改权限");
               if (res.code == 100) {
                 instance.confirmButtonLoading = false;
                 done();
-                this.$message.success("修改成功");
+                this.$message.success("Modify the success");
                 if (roleKey.userType === this.roleKeyList[this.roleKeyIndex].userType) {
                   setTimeout(() => {
-                    this.$confirm("当前账号权限已修改，是否重新登陆？", "提示", {
-                      confirmButtonText: "确定",
-                      cancelButtonText: "取消",
+                    this.$confirm("The current account permission has been modified. Do you want to log in again？", "Prompt", {
+                      confirmButtonText: "confirm",
+                      cancelButtonText: "cancel",
                       type: "warning",
                     })
                       .then(() => {

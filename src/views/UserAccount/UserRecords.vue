@@ -153,7 +153,7 @@ export default {
     },
     // 修改用户
     editUser() {
-      if (!this.uid) return this.$message.warning("请选择用户");
+      if (!this.uid) return this.$message.warning("Please select user");
       let uinfo = this.uinfo;
       delete uinfo["choose"];
       delete uinfo["users"];
@@ -165,16 +165,16 @@ export default {
       CDSaveOrUpdEntity(uinfos).then((res) => {
         // console.log(res);
         if(res.code==100){
-          this.$message.success("修改成功！");
+          this.$message.success("Modify the success！");
         }
       });
     },
     // 删除用户
     deleUser() {
-      if (!this.uid) return this.$message.warning("请选择用户");
-      this.$confirm("确定删除此用户？", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
+      if (!this.uid) return this.$message.warning("Please select user");
+      this.$confirm("Be sure to delete this user？", "Prompt", {
+        confirmButtonText: "confirm",
+        cancelButtonText: "cancel",
         type: "warning",
       }).then(() => {
         delEntity({
@@ -185,11 +185,11 @@ export default {
             // console.log("删除用户", res);
             if (res.code == 100) {
               this.getUserList();
-              this.$message.success("删除成功");
+              this.$message.success("Delete the success");
             }
           })
           .catch(() => {
-            this.$message.warning("已取消");
+            this.$message.warning("Has been cancelled");
           });
       });
     },

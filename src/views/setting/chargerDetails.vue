@@ -155,7 +155,7 @@ export default {
         // console.log("查询所有的车辆信息", res);
         if (res.code == 100) {
           if (res.extend.count > 6 && Math.ceil(res.extend.count / 6) < this.page) {
-            this.$message.warning("无更多数据！");
+            this.$message.warning("No more data！");
             return;
           }
           // console.log(Math.ceil(res.extend.count / 6));
@@ -182,12 +182,12 @@ export default {
         beforeClose: (action, instance, done) => {
           if (action === "confirm") {
             instance.confirmButtonLoading = true;
-            instance.confirmButtonText = "执行中...";
+            instance.confirmButtonText = "waiting...";
             EVSaveOrUpdEntity(data).then((res) => {
               if (res.code == 100) {
                 instance.confirmButtonLoading = false;
                 done();
-                this.$message.success("修改成功");
+                this.$message.success("Modify the success");
                 this.getCarDeatils(this.$route.query.id);
               }
             });
@@ -208,7 +208,7 @@ export default {
       this.isUpload = true;
       let oFile = document.querySelector("#file"); //获取input file节点
       if (oFile.files.length == 0) {
-        this.$message.warning("请选择图片！");
+        this.$message.warning("Please select the image！");
         return;
       }
       this.isUpload = true;
@@ -218,7 +218,7 @@ export default {
         .then((res) => {
           // console.log(res)
           if(res.code==0){
-            this.$message.success("上传成功！");
+            this.$message.success("Uploaded successfully！");
             this.isUpload = false;
             // console.log(res, "上传图片");
             this.upIcon = "el-icon-check";
@@ -229,7 +229,7 @@ export default {
         .catch(() => {
           this.upIcon = "el-icon-close";
           this.isUpload = false;
-          this.$message.warning("上传失败！");
+          this.$message.warning("Upload failed！");
         });
     },
     // 获取下拉框信息

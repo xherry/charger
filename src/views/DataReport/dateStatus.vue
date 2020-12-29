@@ -144,7 +144,7 @@
             </div>
             <div v-else>
               <ul class="uldatas w100">
-                <li><p>暂无数据！</p></li>
+                <li><p>No Data！</p></li>
               </ul>
             </div>
           </div>
@@ -186,7 +186,7 @@ export default {
           cid: "",
           children: [
             { centreId: 0, name: "Shatin Centre" },
-            { centreId: 1, name: "Hung HoM HQ" },
+            { centreId: 1, name: "Hung Hom HQ" },
             { centreId: 2, name: "Sham Shui Po Centre" },
             { centreId: 3, name: "Tsing Yi Centre" },
             { centreId: 4, name: "Yuen Long Centre" },
@@ -234,15 +234,15 @@ export default {
     getParams() {
       let searchs = this.searchs;
       try {
-        if (searchs[0].cid === "") throw "请选择中心！";
-        if (searchs[1].value === "") throw "请输入地址！";
-        if (searchs[2].value === "") throw "请输入充电桩类型！";
-        if (searchs[3].value === "") throw "请输入充电桩编号！";
+        if (searchs[0].cid === "") throw "Please select center！";
+        if (searchs[1].value === "") throw "Please enter the Location";
+        if (searchs[2].value === "") throw "Please enter the Charger Type";
+        if (searchs[3].value === "") throw "Please enter the Charger No.！";
         // if (searchs[4].value === "") throw "请输入车辆类型！";
         // if (searchs[5].value === "") throw "请输入车辆类型model！";
-        if (searchs[6].value === "") throw "请输入车牌号码！";
-        if (this.startTime === "") throw "请输入开始时间！";
-        if (this.endTime === "") throw "请输入结束时间！";
+        if (searchs[6].value === "") throw "Please select the Vehicle No.！";
+        if (this.startTime === "") throw "Please select  startTime";
+        if (this.endTime === "") throw "Please select  endTime";
       } catch (err) {
         this.$message.warning(err);
         return;

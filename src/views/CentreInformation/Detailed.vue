@@ -24,7 +24,7 @@
       </div>
       <div class="ct-item flex flex-Updown-between">
         <span>Location</span>
-        <input type="text" v-model="Location" placeholder="wherehere " />
+        <input type="text" v-model="Location" @blur="getValue" placeholder="Location " />
       </div>
     </div>
     <div class="overRights">
@@ -91,7 +91,7 @@
         </div>
         <!-- <div v-else>
           <ul class="uldatas w100">
-            <li><p>暂无数据！</p></li>
+            <li><p>No Data！</p></li>
           </ul>
         </div> -->
       </div>
@@ -141,6 +141,9 @@ export default {
     this.getCCECDetail();
   },
   methods: {
+    getValue() {
+      this.getCCECDetail();
+    },
     //
     sizeChange(value) {
       this.page = value;
@@ -157,10 +160,10 @@ export default {
     //
     getCCECDetail() {
       let datas =
-        this.ctypes.centreId && this.Location
+        this.ctypes.centreId !== "" || this.Location !== ""
           ? {
               centre: this.ctypes.centreId,
-              location: this.Location,
+              // location: this.Location,
             }
           : {};
       let data = {
@@ -175,7 +178,7 @@ export default {
       });
       findByDetails(data)
         .then((res) => {
-          // console.log("查询充电桩的实时数据", res);
+          console.log("查询充电桩的实时数据", res);
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();

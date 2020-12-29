@@ -122,12 +122,12 @@ export default {
     return {
       isShowSlete: false,
       ctypes: {
-        centreId: "0",
+        centreId: "",
         value: "",
       },
       centerType: [
         { centreId: 0, value: "Shatin Centre" },
-        { centreId: 1, value: "Hung HoM HQ" },
+        { centreId: 1, value: "Hung Hom HQ" },
         { centreId: 2, value: "Sham Shui Po Centre" },
         { centreId: 3, value: "Tsing Yi Centre" },
         { centreId: 4, value: "Yuen Long Centre" },
@@ -160,14 +160,20 @@ export default {
     // getValue
     getValue() {
       // let navList = this.navList;
-      try {
-        if (this.navList[0].value === "") throw "地区不能为空";
-        if (this.navList[1].value === "") throw "充电器编号不能为空";
-        if (this.navList[2].value === "") throw "车牌号不能为空";
-      } catch (err) {
-        this.$message.warning(err);
-        return;
+      if(this.navList[2].value === ""){
+        try {
+          if (this.ctypes.centreId==='') throw "Please select center";
+          if (this.navList[0].value === "") throw "The Location cannot be empty";
+          if (this.navList[1].value === "") throw "The Charger NO. cannot be left blank";
+          // if (this.navList[2].value === "") throw "The Vehicle No. cannot be empty";
+        } catch (err) {
+          this.$message.warning(err);
+          return;
+        }
       }
+      // let arr = this.navList.fliter(item=>item.value==='');
+      // if(arr.length==0){
+      // }
       this.getIndividualCharger();
     },
     //根据条件查询充电状态
@@ -193,7 +199,7 @@ export default {
           if (res.code == 100) {
             this.chargerInfo = res.extend.chargerInfo || {};
             if (!res.extend.chargerInfo) {
-              this.$message.warning("暂无数据！");
+              this.$message.warning("Temporarily no data！");
             }
           }
         })
@@ -208,6 +214,15 @@ export default {
       this.ctypes.centreId = prop.centreId;
       this.ctypes.value = prop.value;
       this.isShowSlete2 = false;
+      try {
+        // if (this.ctypes.centreId==='') throw "Please select center";
+        if (this.navList[0].value === "") throw "The Location cannot be empty";
+        if (this.navList[1].value === "") throw "The Charger NO. cannot be left blank";
+        // if (this.navList[2].value === "") throw "The Vehicle No. cannot be empty";
+      } catch (err) {
+        this.$message.warning(err);
+        return;
+      }
       this.getIndividualCharger();
     },
   },

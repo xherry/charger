@@ -129,7 +129,7 @@ export default {
       },
       centerType: [
         { centreId: 0, value: "Shatin Centre" },
-        { centreId: 1, value: "Hung HoM HQ" },
+        { centreId: 1, value: "Hung Hom HQ" },
         { centreId: 2, value: "Sham Shui Po Centre" },
         { centreId: 3, value: "Tsing Yi Centre" },
         { centreId: 4, value: "Yuen Long Centre" },
@@ -153,13 +153,16 @@ export default {
   methods: {
     //
     getValue() {
-      try {
-        if (this.navList[0].value === "") throw "地区不能为空";
-        if (this.navList[1].value === "") throw "充电器编号不能为空";
-        if (this.navList[2].value === "") throw "车牌号不能为空";
-      } catch (err) {
-        this.$message.warning(err);
-        return;
+      if(this.navList[2].value === ""){
+        try {
+           if (this.ctypes.centreId==='') throw "Please select center";
+          if (this.navList[0].value === "") throw "The Location cannot be empty";
+          if (this.navList[1].value === "") throw "The Charger NO. cannot be left blank";
+          // if (this.navList[2].value === "") throw "The Vehicle No. cannot be empty";
+        } catch (err) {
+          this.$message.warning(err);
+          return;
+        }
       }
       this.getIndividualCharger();
     },
@@ -177,7 +180,7 @@ export default {
         if (res.code == 100) {
           this.chargerInfo = res.extend.chargerInfo || {};
           if (!res.extend.chargerInfo) {
-            this.$message.warning("暂无数据！");
+            this.$message.warning("No data for the time being!");
           }
         }
       });
@@ -187,9 +190,9 @@ export default {
       this.ctypes.value = prop.value;
       this.isShowSlete2 = false;
       try {
-        if (this.navList[0].value === "") throw "地区不能为空";
-        if (this.navList[1].value === "") throw "充电器编号不能为空";
-        if (this.navList[2].value === "") throw "车牌号不能为空";
+        if (this.navList[0].value === "") throw "The Location cannot be empty";
+        if (this.navList[1].value === "") throw "The Charger NO. cannot be left blank";
+        // if (this.navList[2].value === "") throw "The Vehicle No. cannot be empty";
       } catch (err) {
         this.$message.warning(err);
         return;
@@ -199,12 +202,12 @@ export default {
     // 控制设备
     ControlEquipment(type) {
       if (this.chargerInfo.status == Disconnected || this.chargerInfo.status == OffLine) {
-        this.$message.warning("设备离线");
+        this.$message.warning("Equipment offline");
         return;
       }
       if (type == 1) {
         if (this.chargerInfo.status != "Disable") {
-          this.$message.warning("无法启用！");
+          this.$message.warning("Unable to enable！");
           return;
         }
       }
@@ -213,19 +216,19 @@ export default {
           this.chargerInfo.status != "InUse" ||
           this.chargerInfo.status != "WaitCharging"
         ) {
-          this.$message.warning("无法启用！");
+          this.$message.warning("Unable to enable！");
           return;
         }
       }
       if (type == 2) {
         if (this.chargerInfo.status != "Charging") {
-          this.$message.warning("无法启用！");
+          this.$message.warning("Unable to enable！");
           return;
         }
       }
       if (type == 4 || type == 5) {
         if (this.chargerInfo.status != "Disabled") {
-          this.$message.warning("无法启用！");
+          this.$message.warning("Unable to enable！");
           return;
         }
       }
@@ -238,7 +241,7 @@ export default {
       controlCharger(data).then((res) => {
         // console.log(res, "控制设备");
         if (res.code == 100) {
-          this.$message.success("发送命令成功！");
+          this.$message.success("Send command successfully！");
           this.getIndividualCharger();
         }
       });

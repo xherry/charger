@@ -1,5 +1,7 @@
 // import Vue from "vue";
 
+// import Vue from "vue";
+
 export const utype = (val) => {
     let userTypes = [
         { userType: 0, value: "Guest", level: 6 },
@@ -27,7 +29,7 @@ export const uLevel = (val) => {
 export const ctype = (val) => {
     let centerType = [
         { centreId: 0, value: "Shatin Centre" },
-        { centreId: 1, value: "Hung HoM HQ" },
+        { centreId: 1, value: "Hung Hom HQ" },
         { centreId: 2, value: "Sham Shui Po Centre" },
         { centreId: 3, value: "Tsing Yi Centre" },
         { centreId: 4, value: "Yuen Long Centre" },
@@ -37,6 +39,8 @@ export const ctype = (val) => {
     return name
 }
 
+
+
 Vue.filter("utype", utype);
 Vue.filter("ctype", ctype);
 Vue.filter("uLevel", uLevel);
@@ -45,4 +49,7 @@ Vue.filter("valNO", (val) => {
         return ""
     }
     return val;
+});
+Vue.filter("value2", (val) => {
+    return Number(val).toFixed(2);
 });

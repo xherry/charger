@@ -1,7 +1,7 @@
 // import axios from "axios";
 import Qs from "qs";
 export const base_url = "http://8.210.178.104";
-// import { Message } from 'element-ui';
+import { Message } from 'element-ui';
 
 axios.defaults.headers.post["Content-Type"] =
     "application/x-www-form-urlencoded";
@@ -73,6 +73,8 @@ export const findByDetails = (data) => $Post("/api/chargerInfo/findByDetails", d
 export const findByParamsAll = (data) => $Post("/api/chargerInfo/findByParamsAll", data);
 // 根据地区查询 充电桩的充电总时长等
 export const findByDataRecord = (data) => $Post("/api/chargerInfo/findByDataRecord", data);
+// 导出
+export const excelExp = (data) => $Post("/api/chargerInfo/excelExp", data)
 
 
 // 登陆部分

@@ -19,7 +19,7 @@
                 alt=""
               />
             </p>
-            <div class="seleterBody" :style="{ height: isShowSlete1 ? '200px' : '0px' }">
+            <div class="seleterBody" :style="{ height: isShowSlete1 ? '150px' : '0px' }">
               <div
                 class="button seleter_item"
                 v-for="(item, index) in userTypes"
@@ -52,7 +52,7 @@
                 alt=""
               />
             </p>
-            <div class="seleterBody" :style="{ height: isShowSlete2 ? '200px' : '0px' }">
+            <div class="seleterBody" :style="{ height: isShowSlete2 ? '150px' : '0px' }">
               <div
                 class="button seleter_item"
                 v-for="(item, index) in centerType"
@@ -96,7 +96,9 @@
           </div>
         </div>
         <div class="createright">
-          <p class="js">Creator cannot create a new user with access rights higher than his own level</p>
+          <p class="js">
+            Creator cannot create a new user with access rights higher than his own level
+          </p>
           <div class="cdltopitem cdltopitem2 mr40 flex flex-Updown-between">
             <span>User Type</span>
             <!--  @click="isShowSlete3 = !isShowSlete3" -->
@@ -195,12 +197,12 @@ export default {
         value: "",
       },
       userTypes: [
-        { userType: 0, value: "Guest" },
-        { userType: 1, value: "GeneralUser" },
-        { userType: 2, value: "Operator" },
-        { userType: 3, value: "SuperUser" },
-        { userType: 4, value: "Adminstrator" },
-        { userType: 5, value: "SystemManager" },
+        { userType: 0, value: "Guest", level: 6 },
+        { userType: 1, value: "GeneralUser", level: 5 },
+        { userType: 2, value: "Operator", level: 4 },
+        { userType: 3, value: "SuperUser", level: 3 },
+        { userType: 4, value: "Adminstrator", level: 2 },
+        { userType: 5, value: "SystemManager", level: 1 },
       ],
       ctypes: {
         centreId: "",
@@ -229,6 +231,11 @@ export default {
   },
   created() {
     this.roleKey = JSON.parse(localStorage.getItem("roleKey"));
+    let userType = this.roleKey.userType;
+    let level = this.userTypes.filter((item) => item.userType == userType)[0].level;
+    this.userTypes = this.userTypes.filter(
+      (item) => level <= item.level && item.level !== 6
+    );
     this.prmselete = [
       { name: "Check  Status", value: this.roleKey.checkStatus },
       { name: "Control  Own  Charger", value: this.roleKey.controlOwnCharger },
@@ -267,7 +274,7 @@ export default {
           });
           // console.log(res);
           if (res.code == 100) {
-            this.$message.success("创建成功");
+            this.$message.success("Creating a successful");
             for (let key in this.addUsers) {
               this.addUsers[key] = "";
             }

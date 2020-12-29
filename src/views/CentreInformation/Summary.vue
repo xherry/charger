@@ -81,13 +81,13 @@ export default {
       ],
       leftTable2: [
         { name: "Total No. of Charging", value: [] },
-        { name: "Total Charging Time【Hour】", value: [] },
-        { name: "Total Charging Energy【kWh】", value: [] },
+        { name: "Total Charging Time (Hour)", value: [] },
+        { name: "Total Charging Energy (kWh)", value: [] },
         { name: "Estimated Carbon Saving", value: [] },
       ],
       leftTable3: [
         { name: "Average Charging Time", value: [] },
-        { name: "Average Charging Energy【kWh】", value: [] },
+        { name: "Average Charging Energy (kWh)", value: [] },
       ],
       sixDatas: {},
     };
@@ -143,7 +143,7 @@ export default {
               item.totalchargingtime ? item.totalchargingtime : " "
             );
             this.leftTable2[2].value = objDatas.map((item) =>
-              item.totalchargingenergy ? item.totalchargingenergy : " "
+              item.totalchargingenergy ? Number(item.totalchargingenergy).toFixed(2) : " "
             );
             this.leftTable2[3].value = objDatas.map((item) =>
               item.estimatedcarbonsaving ? item.estimatedcarbonsaving : " "

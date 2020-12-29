@@ -69,7 +69,7 @@
           </template>
           <template v-else>
             <ul class="uldatas w100">
-              <li><p>暂无数据！</p></li>
+              <li><p>No Data！</p></li>
             </ul>
           </template>
           <div class="pagination">
@@ -129,7 +129,7 @@
           </template>
           <template v-else>
             <ul class="uldatas w100">
-              <li><p>暂无数据！</p></li>
+              <li><p>No Data！</p></li>
             </ul>
           </template>
           <div class="pagination">
@@ -186,7 +186,7 @@ export default {
     updateNumber() {
       let _this = this;
       if (this.isUpdate2 === "" && this.isUpdate1 === "") {
-        this.$message.warning("请选择修改项");
+        this.$message.warning("Please select the modification item");
         return;
       }
       this.$msgbox({
@@ -198,7 +198,7 @@ export default {
         beforeClose: (action, instance, done) => {
           if (action === "confirm") {
             instance.confirmButtonLoading = true;
-            instance.confirmButtonText = "执行中...";
+            instance.confirmButtonText = "waiting...";
             // console.log(this.isUpdate1, this.isUpdate2);
             if (this.isUpdate1 !== "") {
               let value = this.chargerNumberings[this.isUpdate1];
@@ -214,7 +214,7 @@ export default {
                 instance.confirmButtonLoading = false;
                 done();
                 if (res.code == 100) {
-                  this.$message.success("修改成功");
+                  this.$message.success("Modify the success");
                   this.isUpdate1 = "";
                   this.isUpdate2 = "";
                   this.getCNList();
@@ -238,7 +238,7 @@ export default {
                   instance.confirmButtonLoading = false;
                   done();
                   if (res.code == 100) {
-                    this.$message.success("修改成功");
+                    this.$message.success("Modify the success");
                     this.isUpdate1 = "";
                     this.isUpdate2 = "";
                     this.getCNFList();

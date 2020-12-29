@@ -5,10 +5,10 @@
       <div class="dm-left">
         <ul class="ultit">
           <li><p>Center</p></li>
-          <li><p>Department</p></li>
+          <!-- <li><p>Department</p></li> -->
           <li><p>Address</p></li>
           <li><p>Location ( Carpark / Floor )</p></li>
-          <li></li>
+          <!-- <li></li> -->
         </ul>
         <template v-if="centreDepartmentList.length != 0">
           <ul
@@ -49,7 +49,7 @@
                 </div>
               </div> -->
             </li>
-            <li>
+            <!-- <li>
               <p>
                 <input
                   :disabled="isUpdate1 != index"
@@ -58,7 +58,7 @@
                   v-if="item.department != null"
                 />
               </p>
-            </li>
+            </li> -->
             <li>
               <p>
                 <input
@@ -79,23 +79,23 @@
                 />
               </p>
             </li>
-            <li>
+            <!-- <li>
               <div>
                 <p class="button toManage">Charge Manage</p>
                 <p class="button toManage">EV Manage</p>
               </div>
-            </li>
+            </li> -->
           </ul>
         </template>
         <template v-else>
           <ul>
             <li>
-              <p>暂无数据！</p>
+              <p>No Data！</p>
             </li>
           </ul>
         </template>
       </div>
-      <!-- <div class="dm-right">
+      <div class="dm-right">
         <ul class="ultit">
           <li><p>Center</p></li>
           <li><p>Department</p></li>
@@ -146,11 +146,11 @@
         <template v-else>
           <ul>
             <li>
-              <p>暂无数据！</p>
+              <p>No Data！</p>
             </li>
           </ul>
-        </template> -->
-      <!-- </div> -->
+        </template>
+      </div>
     </div>
     <div class="pagination">
       <el-pagination
@@ -209,19 +209,19 @@ export default {
     // 修改
     updateCenter() {
       if (!this.isUpdate1 && !this.isUpdate2) {
-        this.$message.warning("请选择修改项");
+        this.$message.warning("Please select the modification item");
         return;
       }
       this.$msgbox({
-        title: "提示",
-        message: "确认修改？",
+        title: "prompt",
+        message: "Confirm the change？",
         showCancelButton: true,
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
+        confirmButtonText: "confirm",
+        cancelButtonText: "cancel",
         beforeClose: (action, instance, done) => {
           if (action === "confirm") {
             instance.confirmButtonLoading = true;
-            instance.confirmButtonText = "执行中...";
+            instance.confirmButtonText = "waiting...";
             roleKeySOE(data).then((res) => {
               // console.log(res, "修改权限");
               if (res.code == 100) {
@@ -250,7 +250,7 @@ export default {
                     this.isUpdate1 = "";
                     this.isUpdate2 = "";
                     this.getList();
-                    this.$message.success("修改成功");
+                    this.$message.success("Modify the success");
                   }
                 });
               } else {
@@ -345,7 +345,7 @@ export default {
   height:  300px !important;
 } */
 .dm-left {
-  width: 100%;
+  width: 830px;
   height: 680px;
   margin-right: 68px;
 }
