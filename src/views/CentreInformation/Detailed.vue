@@ -11,10 +11,10 @@
             alt=""
           />
         </div>
-        <div class="seleterBody" :style="{ height: isShowSlete ? '200px' : '0px' }">
+        <div class="seleterBody" :style="{ height: isShowSlete ? '250px' : '0px' }">
           <div
             class="button seleter_item"
-            v-for="(p, i) in centerType"
+            v-for="(p, i) in $store.state.centerType"
             :key="i"
             @click="seleteCenter(p)"
           >
@@ -31,8 +31,26 @@
       <p class="ortoptit">Detailed Centre Information</p>
       <div class="urtable">
         <ul class="ultit">
-          <li><p>Charger No.</p></li>
-          <li><p>Status</p></li>
+          <li @click="sorting(1)">
+            <div class="flex flex-Updown-between sorting">
+              <p>Charger No.</p>
+              <img
+                src="../../assets/index/top.png"
+                :style="{ transform: `rotate(${chargerNo === 1 ? '-180deg' : '0'})` }"
+                alt=""
+              />
+            </div>
+          </li>
+          <li @click="sorting(2)">
+            <div class="flex flex-Updown-between sorting">
+              <p>Status</p>
+              <img
+                src="../../assets/index/top.png"
+                :style="{ transform: `rotate(${status === 1 ? '-180deg' : '0'})` }"
+                alt=""
+              />
+            </div>
+          </li>
           <li><p>EV Type</p></li>
           <li><p>Vehicle No.</p></li>
           <li>
@@ -61,7 +79,7 @@
           </li>
         </ul>
         <!-- v-if="chargerInfoList.length != 0" -->
-        <div>
+        <div v-if="chargerInfoList.length != 0">
           <ul class="uldatas w100" v-for="(item, index) in chargerInfoList" :key="index">
             <li>
               <p>{{ item.chargerno | valNO }}</p>
@@ -76,24 +94,24 @@
               <p>{{ item.vehicleno | valNO }}</p>
             </li>
             <li>
-              <p>{{ item.chargingtime | valNO }}</p>
+              <p>{{ item.chargingtime | value2 }}</p>
             </li>
             <li>
-              <p>{{ item.chargingenergy | valNO }}</p>
+              <p>{{ item.chargingenergy | value2 }}</p>
             </li>
             <li>
               <p>{{ item.chargingvoltage | valNO }}</p>
             </li>
             <li>
-              <p>{{ item.chargingcurrent | valNO }}</p>
+              <p>{{ item.chargingcurrent | value2 }}</p>
             </li>
           </ul>
         </div>
-        <!-- <div v-else>
+        <div v-else>
           <ul class="uldatas w100">
             <li><p>No Data！</p></li>
           </ul>
-        </div> -->
+        </div>
       </div>
     </div>
     <div class="pagination">
@@ -103,8 +121,8 @@
         layout=" prev, pager, next, jumper, ->, total, slot"
         :total="count"
         :page-size="10"
+        hide-on-single-page
       >
-        <!-- hide-on-single-page -->
       </el-pagination>
     </div>
   </div>
@@ -134,6 +152,8 @@ export default {
       ],
       page: 1,
       count: 0,
+      chargerNo: 1,
+      status: 1,
     };
   },
   created() {},
@@ -141,7 +161,18 @@ export default {
     this.getCCECDetail();
   },
   methods: {
+    // 排序
+    sorting(type) {
+      if (type == 1) {
+        this.chargerNo = this.chargerNo === 1 ? 2 : 1;
+      }
+      if (type == 2) {
+        this.status = this.status === 1 ? 2 : 1;
+      }
+      this.getCCECDetail()
+    },
     getValue() {
+      this.page = 1;
       this.getCCECDetail();
     },
     //
@@ -152,9 +183,10 @@ export default {
     //
     seleteCenter(values) {
       this.ctypes = {
-        centreId: values.centreId,
+        centreId: values.cid,
         value: values.value,
       };
+      this.page = 1;
       this.getCCECDetail();
     },
     //
@@ -163,13 +195,15 @@ export default {
         this.ctypes.centreId !== "" || this.Location !== ""
           ? {
               centre: this.ctypes.centreId,
-              // location: this.Location,
+              location: this.Location,
             }
           : {};
       let data = {
         page: this.page,
         limit: 10,
         userId: localStorage.getItem("userId"),
+        chargerNo: this.chargerNo,
+        status: this.status,
         ...datas,
       };
       let loadingInstance = this.$loading({
@@ -178,7 +212,7 @@ export default {
       });
       findByDetails(data)
         .then((res) => {
-          console.log("查询充电桩的实时数据", res);
+          // console.log("查询充电桩的实时数据", res);
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
@@ -200,6 +234,15 @@ export default {
 </script>
 
 <style scoped>
+/* .sorting{
+  width: 100%;
+} */
+.sorting > img {
+  width: 20px;
+  height: 20px;
+  margin-left: 5px;
+  transition: all 0.1s linear;
+}
 .pagination {
   bottom: -80px;
 }

@@ -28,12 +28,12 @@ export const uLevel = (val) => {
 }
 export const ctype = (val) => {
     let centerType = [
-        { centreId: 0, value: "Shatin Centre" },
-        { centreId: 1, value: "Hung Hom HQ" },
-        { centreId: 2, value: "Sham Shui Po Centre" },
-        { centreId: 3, value: "Tsing Yi Centre" },
-        { centreId: 4, value: "Yuen Long Centre" },
-        { centreId: 5, value: "Shek Wu Hui Centre" },
+        { centreId: 0, value: "Shatin Centre", cid: 'CLP3301' },
+        { centreId: 1, value: "Hung Hom HQ", cid: 'CLP2101' },
+        { centreId: 2, value: "Sham Shui Po Centre", cid: 'CLP2201' },
+        { centreId: 3, value: "Tsing Yi Centre", cid: 'CLP3801' },
+        { centreId: 4, value: "Yuen Long Centre", cid: 'CLP3701' },
+        { centreId: 5, value: "Shek Wu Hui Centre", cid: 'CLP3101' },
     ];
     let name = centerType.filter(item => item.centreId == val)[0].value
     return name
@@ -51,5 +51,15 @@ Vue.filter("valNO", (val) => {
     return val;
 });
 Vue.filter("value2", (val) => {
-    return Number(val).toFixed(2);
+    if (val) {
+        if (val == 0) {
+            return 0;
+        }
+        if (val.includes('.')) {
+            return Number(val).toFixed(2);
+        }
+        return val;
+    } else {
+        return ""
+    }
 });

@@ -5,7 +5,7 @@
       class="button goback"
       @click="(isToDetail = false), (queryData = {})"
     >
-      返回
+      Back
     </button>
     <div class="cneterShow flex flex-Updown" v-if="isToDetail">
       <span>Center</span>
@@ -79,22 +79,13 @@
               <p>Charger No.</p>
             </li>
             <li>
-              <p>Status</p>
+              <p>Total Charging Time（Hour）</p>
             </li>
             <li>
-              <p>Charging Power（kW）</p>
+              <p>Total No. of Charging（Time）</p>
             </li>
             <li>
-              <p>Charging Time（Hour）</p>
-            </li>
-            <li>
-              <p>Charging Type</p>
-            </li>
-            <li>
-              <p>Vehicle No.</p>
-            </li>
-            <li>
-              <p>EV Type</p>
+              <p>Total Charging Energy（kWh）</p>
             </li>
           </ul>
           <div v-if="cdetails.length != 0">
@@ -108,22 +99,15 @@
                   <p>{{ item.chargerno }}</p>
                 </li>
                 <li>
-                  <p>{{ item.status }}</p>
+                  <p v-if="item.totalchargingtime">{{ item.totalchargingtime }}</p>
                 </li>
                 <li>
-                  <p>{{ item.ChargingPower }}</p>
+                  <p v-if="item.totalofcharging">{{ item.totalofcharging }}</p>
                 </li>
                 <li>
-                  <p>{{ item.ChargingTime }}</p>
-                </li>
-                <li>
-                  <p>{{ item.ChargingType }}</p>
-                </li>
-                <li>
-                  <p>{{ item.VehicleNo }}</p>
-                </li>
-                <li>
-                  <p>{{ "" }}</p>
+                  <p v-if="item.totalchargingenergy">
+                    {{ item.totalchargingenergy | val2 }}
+                  </p>
                 </li>
               </ul>
             </div>
@@ -249,7 +233,7 @@ export default {
         });
     },
     // 查询六个地区下充电桩等信息
-    getSixData() {
+    async getSixData() {
       let data = {
         userId: localStorage.getItem("userId"),
       };
@@ -300,7 +284,7 @@ export default {
 .cneterShow > div {
   width: 224px;
   height: 38px;
-  border: 1px solid #63d1ff;
+  border: 1px solid #205cbf;
   border-radius: 4px;
   background: transparent;
   padding: 0 17px 0 23px;

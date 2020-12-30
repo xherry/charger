@@ -14,7 +14,7 @@
         <div class="seleterBody" :style="{ height: isShowSlete ? '200px' : '0px' }">
           <div
             class="button seleter_item"
-            v-for="(item, index) in centerType"
+            v-for="(item, index) in $store.state.centerType"
             :key="index"
             @click="seleteCenter(item)"
           >
@@ -47,7 +47,7 @@
         <div class="cartword">
           <p class="diaName">Mileage after Charge（km）</p>
           <p class="diaValue">
-            {{ chargerInfo.mileagetravelled | valNO }}
+            {{ chargerInfo.mileagetravelled | value2 }}
             {{ chargerInfo.mileagetravelled ? "km" : "" }}
           </p>
         </div>
@@ -56,7 +56,7 @@
         <div class="cartword">
           <p class="diaName">Charging Time（Hour）</p>
           <p class="diaValue">
-            {{ chargerInfo.chargingtime | valNO }}
+            {{ chargerInfo.chargingtime | value2 }}
             {{ chargerInfo.chargingtime ? "min" : "" }}
           </p>
         </div>
@@ -65,7 +65,7 @@
         <div class="cartword">
           <p class="diaName">Charging Energy（kWh）</p>
           <p class="diaValue">
-            {{ chargerInfo.chargingenergy | valNO }}
+            {{ chargerInfo.chargingenergy | value2 }}
             {{ chargerInfo.chargingenergy ? "kwh" : "" }}
           </p>
         </div>
@@ -74,8 +74,8 @@
         <div class="cartword">
           <p class="diaName">Charging Voltage（V）</p>
           <p class="diaValue">
-            {{ chargerInfo.batterycapacity | valNO }}
-            {{ chargerInfo.batterycapacity ? "V" : "" }}
+            {{ chargerInfo.chargingvoltage }}
+            {{ chargerInfo.chargingvoltage ? "V" : "" }}
           </p>
         </div>
       </div>
@@ -83,7 +83,8 @@
         <div class="cartword">
           <p class="diaName">Battery Capacity（%）</p>
           <p class="diaValue">
-            {{ chargerInfo.vehicleno | valNO }} {{ chargerInfo.vehicleno ? "%" : "" }}
+            {{ chargerInfo.batterycapacity | value2 }}
+            {{ chargerInfo.batterycapacity ? "%" : "" }}
           </p>
         </div>
       </div>
@@ -91,7 +92,7 @@
         <div class="cartword">
           <p class="diaName">Charging Current（A）</p>
           <p class="diaValue">
-            {{ chargerInfo.chargingcurrent | valNO }}
+            {{ chargerInfo.chargingcurrent | value2 }}
             {{ chargerInfo.chargingcurrent ? "A" : "" }}
           </p>
         </div>
@@ -142,9 +143,11 @@ export default {
       ],
       chargerInfo: {},
       roleKey: {},
+      centers: [],
     };
   },
-  created() {
+  async created() {
+    // this.centers = await this.$store.dispatch("getCenters");
     this.roleKey = JSON.parse(localStorage.getItem("roleKey"));
   },
   mounted() {
@@ -153,9 +156,9 @@ export default {
   methods: {
     //
     getValue() {
-      if(this.navList[2].value === ""){
+      if (this.navList[2].value === "") {
         try {
-           if (this.ctypes.centreId==='') throw "Please select center";
+          if (this.ctypes.centreId === "") throw "Please select center";
           if (this.navList[0].value === "") throw "The Location cannot be empty";
           if (this.navList[1].value === "") throw "The Charger NO. cannot be left blank";
           // if (this.navList[2].value === "") throw "The Vehicle No. cannot be empty";
@@ -168,15 +171,26 @@ export default {
     },
     //根据条件查询充电状态
     getIndividualCharger() {
-      let data = {
-        userId: localStorage.getItem("userId"),
-        centre: this.ctypes.centreId,
-        location: this.navList[0].value,
-        chargerNo: this.navList[1].value,
-        vehicleNo: this.navList[2].value,
-      };
+      let data;
+      if (this.navList[2].value==='') {
+        data = {
+          userId: localStorage.getItem("userId"),
+          centre: this.ctypes.centreId,
+          location: this.navList[0].value,
+          chargerNo: this.navList[1].value,
+          vehicleNo: "null",
+        };
+      } else {
+        data = {
+          userId: localStorage.getItem("userId"),
+          centre: " ",
+          location: " ",
+          chargerNo: " ",
+          vehicleNo: this.navList[2].value,
+        };
+      }
       findBIC(data).then((res) => {
-        console.log("根据条件查询充电状态", res);
+        // console.log("根据条件查询充电状态", res);
         if (res.code == 100) {
           this.chargerInfo = res.extend.chargerInfo || {};
           if (!res.extend.chargerInfo) {
@@ -186,7 +200,7 @@ export default {
       });
     },
     seleteCenter(prop) {
-      this.ctypes.centreId = prop.centreId;
+      this.ctypes.centreId = prop.cid;
       this.ctypes.value = prop.value;
       this.isShowSlete2 = false;
       try {
@@ -201,7 +215,12 @@ export default {
     },
     // 控制设备
     ControlEquipment(type) {
-      if (this.chargerInfo.status == Disconnected || this.chargerInfo.status == OffLine) {
+      // console.log(this.chargerInfo);
+      if (Object.keys(this.chargerInfo).length == 0) {
+        this.$message.warning("There is no equipment！");
+        return;
+      }
+      if (this.chargerInfo.status == 'Disconnected' || this.chargerInfo.status == 'OffLine') {
         this.$message.warning("Equipment offline");
         return;
       }

@@ -55,6 +55,12 @@ export default {
       }
     });
   },
+  // 路由离开生命周期函数
+  beforeRouteLeave(to, from, next) {
+    // 即将跳转的路由地址
+    this.$store.commit("getChargerInfoData", {});
+    next();
+  },
 };
 </script>
 

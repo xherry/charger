@@ -178,7 +178,7 @@ export default {
     printOut(name) {
       this.$nextTick(() => {
         let strIsFalse = this.DataTypes.filter((item) => !item.Figure);
-        console.log(strIsFalse);
+        // console.log(strIsFalse);
         if (strIsFalse.length === this.DataTypes.length) {
           this.$message.warning("Please select at least one content！");
           return;
@@ -252,7 +252,7 @@ export default {
     },
     js_getDPI() {
       var arrDPI = new Array();
-      console.log(window.screen.deviceXDPI);
+      // console.log(window.screen.deviceXDPI);
       if (window.screen.deviceXDPI != undefined) {
         arrDPI[0] = window.screen.deviceXDPI;
         arrDPI[1] = window.screen.deviceYDPI;
@@ -505,7 +505,7 @@ export default {
       });
       findByParamsAll({ ...data, ...datas })
         .then((res) => {
-          console.log("条件筛选查询", res);
+          // console.log("条件筛选查询", res);
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();

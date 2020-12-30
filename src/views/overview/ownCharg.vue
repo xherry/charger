@@ -14,7 +14,7 @@
         <div class="seleterBody" :style="{ height: isShowSlete ? '200px' : '0px' }">
           <div
             class="button seleter_item"
-            v-for="(item, index) in centerType"
+            v-for="(item, index) in $store.state.centerType"
             :key="index"
             @click="seleteCenter(item)"
           >
@@ -47,7 +47,7 @@
         <div class="cartword">
           <p class="diaName">Mileage after Charge（km）</p>
           <p class="diaValue">
-            {{ chargerInfo.mileagetravelled | valNO }}
+            {{ chargerInfo.mileagetravelled | value2 }}
             {{ chargerInfo.mileagetravelled ? "km" : "" }}
           </p>
         </div>
@@ -56,7 +56,7 @@
         <div class="cartword">
           <p class="diaName">Charging Tinme（Hour）</p>
           <p class="diaValue">
-            {{ chargerInfo.chargingtime | valNO }}
+            {{ chargerInfo.chargingtime | value2 }}
             {{ chargerInfo.chargingtime ? "min" : "" }}
           </p>
         </div>
@@ -65,7 +65,7 @@
         <div class="cartword">
           <p class="diaName">Charging Energy（kWh）</p>
           <p class="diaValue">
-            {{ chargerInfo.chargingenergy | valNO }}
+            {{ chargerInfo.chargingenergy | value2 }}
             {{ chargerInfo.chargingenergy ? "kwh" : "" }}
           </p>
         </div>
@@ -74,8 +74,8 @@
         <div class="cartword">
           <p class="diaName">Charging Voltage（V）</p>
           <p class="diaValue">
-            {{ chargerInfo.batterycapacity | valNO }}
-            {{ chargerInfo.batterycapacity ? "V" : "" }}
+            {{ chargerInfo.chargingvoltage  }}
+            {{ chargerInfo.chargingvoltage ? "V" : "" }}
           </p>
         </div>
       </div>
@@ -83,7 +83,7 @@
         <div class="cartword">
           <p class="diaName">Battery Capacity（%）</p>
           <p class="diaValue">
-            {{ chargerInfo.vehicleno | valNO }} {{ chargerInfo.vehicleno ? "%" : "" }}
+            {{ chargerInfo.batterycapacity | value2 }} {{ chargerInfo.batterycapacity ? "%" : "" }}
           </p>
         </div>
       </div>
@@ -91,7 +91,7 @@
         <div class="cartword">
           <p class="diaName">Charging Current（A）</p>
           <p class="diaValue">
-            {{ chargerInfo.chargingcurrent | valNO }}
+            {{ chargerInfo.chargingcurrent | value2 }}
             {{ chargerInfo.chargingcurrent ? "A" : "" }}
           </p>
         </div>
@@ -151,7 +151,10 @@ export default {
         },
       ],
       chargerInfo: {},
+      centers:[]
     };
+  },
+  async created(){
   },
   mounted() {
     // this.getIndividualCharger();
@@ -183,7 +186,7 @@ export default {
         centre: this.ctypes.centreId,
         location: this.navList[0].value,
         chargerNo: this.navList[1].value,
-        vehicleNo: this.navList[2].value,
+        vehicleNo: this.ctypes.centreId&&this.navList[0].value&&this.navList[1].value?"null":this.navList[2].value,
       };
       let loadingInstance = this.$loading({
         text: "Loading...",
@@ -211,7 +214,7 @@ export default {
         });
     },
     seleteCenter(prop) {
-      this.ctypes.centreId = prop.centreId;
+      this.ctypes.centreId = prop.cid;
       this.ctypes.value = prop.value;
       this.isShowSlete2 = false;
       try {

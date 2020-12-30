@@ -162,6 +162,7 @@ export default {
           }
         }
       });
+      // this.$router.replace("index");
     },
     //
     toIndex() {
@@ -170,7 +171,7 @@ export default {
         return;
       }
       loginTwo({ ...this.userInfo, phoneCode: this.phoneCode }).then((res) => {
-        console.log(res);
+        // console.log(res);
         // if(res.code==100){
 
         // }else{

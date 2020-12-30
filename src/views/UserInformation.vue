@@ -11,23 +11,23 @@
             <p class="uf-tit">User Information</p>
             <div class="flex cdltopitem flex-Updown">
               <span>User Type</span>
-              <input type="text"  v-model="infos.UserType" class="blueInput" />
+              <input type="text" v-model="infos.UserType" class="blueInput" />
             </div>
             <div class="flex cdltopitem flex-Updown">
               <span>User ID</span>
-              <input type="text"  v-model="infos.UserID" class="blueInput" />
+              <input type="text" v-model="infos.UserID" class="blueInput" />
             </div>
             <div class="flex cdltopitem flex-Updown">
               <span>Password</span>
-              <input type="text"  v-model="infos.Password" class="blueInput" />
+              <input type="text" v-model="infos.Password" class="blueInput" />
             </div>
             <div class="flex cdltopitem flex-Updown">
               <span>Centre</span>
-              <input type="text"  v-model="infos.Centre" class="blueInput" />
+              <input type="text" v-model="infos.Centre" class="blueInput" />
             </div>
             <div class="flex cdltopitem flex-Updown">
               <span>Department</span>
-              <input type="text"  v-model="infos.Department" class="blueInput" />
+              <input type="text" v-model="infos.Department" class="blueInput" />
             </div>
           </div>
           <div class="uifright">
@@ -60,22 +60,45 @@
 </template>
 
 <script>
+import { utype, ctype } from "../common/common";
 export default {
   name: "UserInformation",
   data() {
     return {
-      infos:{
-        UserType:'',
-        UserID:'',
-        Password:'',
-        Centre:'',
-        Department:'',
-        Name:'',
-        StaffID:'',
-        Email:'',
-        MobilePhoneNo:''
-      }
+      infos: {
+        UserType: "",
+        UserID: "",
+        Password: "",
+        Centre: "",
+        Department: "",
+        Name: "",
+        StaffID: "",
+        Email: "",
+        MobilePhoneNo: "",
+      },
     };
+  },
+  created() {
+    this.getUserInfo();
+  },
+  methods: {
+    //
+    getUserInfo() {
+      let userInfo = this.$store.state.userInfo;
+      if (Object.keys(userInfo).length != 0) {
+        this.infos = {
+          UserType: utype(userInfo.userType),
+          UserID: userInfo.userId,
+          Password: userInfo.staffId,
+          Centre: ctype(userInfo.centreId),
+          Department: userInfo.department,
+          Name: userInfo.name,
+          StaffID: userInfo.staffId,
+          Email: userInfo.email,
+          MobilePhoneNo: userInfo.phone,
+        };
+      }
+    },
   },
 };
 </script>

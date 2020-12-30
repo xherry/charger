@@ -315,7 +315,7 @@ export default {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
           });
-          console.log(res, "获取权限列表");
+          // console.log(res, "获取权限列表");
           if (res.code == 100) {
             let dataList = res.extend.roleKeyList.reverse();
             this.oldRoleKeyList = dataList;

@@ -1,6 +1,6 @@
 // import axios from "axios";
 import Qs from "qs";
-export const base_url = "http://8.210.178.104";
+export const base_url = "https://www.clplms.com";
 import { Message } from 'element-ui';
 
 axios.defaults.headers.post["Content-Type"] =
@@ -20,7 +20,7 @@ export const $Post = (api, value) => {
         }).then(res => {
             resolve(res.data)
             if (res.data.code != 100) {
-                Message.warning(res.data.extend.msg || res.data.extend.error)
+                Message.warning(res.data.extend.error || "To deal with failure")
             }
         }).catch(err => {
             reject(err)
@@ -46,7 +46,10 @@ export const imageUpload = (formData) => {
             })
             .then((res) => {
                 console.log(res);
-                resolve(res.data)
+                resolve(res.data);
+                if (res.code != 0) {
+                    Message.warning(res.data.error || "To deal with failure")
+                }
             })
             .catch((err) => {
                 console.log(err);
@@ -122,9 +125,10 @@ export const EVFindById = (data) => $Post("/api/electricVehicle/findById", data)
 export const EVDelEntity = (data) => $Post("/api/electricVehicle/delEntity", data);
 // 添加或者修改 车辆信息
 export const EVSaveOrUpdEntity = (data) => $Post("/api/electricVehicle/saveOrUpdEntity", data);
-// 下拉框查询 车辆类型
+// 下拉框查询 车辆名称
 export const EVFindBySelect = (data) => $Post("/api/electricVehicle/findBySelect", data);
-
+// 下拉框查询 车辆类型
+export const EVFindBySelectTwo = (data) => $Post("/api/electricVehicle/findBySelectTwo", data);
 
 // 设置中Charger
 // 分页查询所有充电桩
@@ -156,6 +160,9 @@ export const ECNFindById = (data) => $Post("/api/evChargerNumbering/findById", d
 export const ECNDelEntity = (data) => $Post("/api/evChargerNumbering/delEntity", data);
 //添加或者修改电动车充电器 
 export const ECNSaveOrUpdEntity = (data) => $Post("/api/evChargerNumbering/saveOrUpdEntity", data);
+//  根据中心和层数 查询车类类别
+export const findByChargerType = (data) => $Post("/api/chargerNumbering/findByChargerType", data);
+
 
 // 设置中Vehicle
 // 分页查询车牌号码
@@ -166,3 +173,5 @@ export const VNFindById = (data) => $Post("/api/vehicleNumber/findById", data);
 export const VNDelEntity = (data) => $Post("/api/vehicleNumber/delEntity", data);
 // 添加或修改 车牌号码
 export const VNSaveOrUpdEntity = (data) => $Post("/api/vehicleNumber/saveOrUpdEntity", data);
+// 根据车辆类型查询车牌号
+export const findByModel = (data) => $Post("/api/vehicleNumber/findByModel", data);

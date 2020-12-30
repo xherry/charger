@@ -4,39 +4,135 @@
       <p class="ortoptit">Search Conditions</p>
       <div class="dsmain flex">
         <div class="dsmaincontent">
+          <!-- v-for="(item, index) in searchs"
+            :key="index" -->
           <div
-            v-for="(item, index) in searchs"
-            :key="index"
             class="dsmleftitem cdltopitem flex flex-Updown-between"
-            @click="
-              optionsId = item.id == 1 ? (optionsId === item.id ? '' : item.id) : ''
-            "
+            @click="optionsId = optionsId === searchs[0].id ? '' : searchs[0].id"
           >
-            <span>{{ item.name }}</span>
-            <p class="flex flex-Updown-between" v-if="item.children != 0">
-              <span>{{ item.value }}</span>
+            <span>{{ searchs[0].name }}</span>
+            <p class="flex flex-Updown-between">
+              <span>{{ searchs[0].value }}</span>
               <img
                 :style="{
-                  transform: `rotate(${optionsId === item.id ? '180' : '0'}deg)`,
+                  transform: `rotate(${optionsId === searchs[0].id ? '180' : '0'}deg)`,
                 }"
                 src="../../assets/index/setting/10.png"
                 alt=""
               />
             </p>
-            <input type="text" v-model="item.value" v-else />
             <div
               class="seleterBody"
-              :style="{ height: optionsId === item.id ? '200px' : '0px' }"
+              :style="{ height: optionsId === searchs[0].id ? '200px' : '0px' }"
             >
               <div
                 class="button seleter_item"
-                v-for="(p, i) in item.children"
+                v-for="(p, i) in searchs[0].children"
                 :key="i + 'ss'"
                 @click="seleteCenter(p)"
               >
-                {{ p.name }}
+                {{ p.value }}
               </div>
             </div>
+          </div>
+          <div class="dsmleftitem cdltopitem flex flex-Updown-between">
+            <span>{{ searchs[1].name }}</span>
+            <input type="text" @input="getChargerType" v-model="searchs[1].value" />
+          </div>
+          <div
+            class="dsmleftitem cdltopitem flex flex-Updown-between"
+            @click="openSelete(1)"
+          >
+            <span>{{ searchs[2].name }}</span>
+            <p class="flex flex-Updown-between">
+              <span>{{ searchs[2].value }}</span>
+              <img
+                :style="{
+                  transform: `rotate(${optionsId === searchs[2].id ? '180' : '0'}deg)`,
+                }"
+                src="../../assets/index/setting/10.png"
+                alt=""
+              />
+            </p>
+            <div
+              class="seleterBody"
+              :style="{ height: optionsId === searchs[2].id ? '200px' : '0px' }"
+            >
+              <div
+                class="button seleter_item"
+                v-for="(p, i) in ChargerType"
+                :key="i + 'ss'"
+                @click="seletes(p, 1)"
+              >
+                {{ p.chargerType }}
+              </div>
+            </div>
+          </div>
+          <div class="dsmleftitem cdltopitem flex flex-Updown-between">
+            <span>{{ searchs[3].name }}</span>
+            <input type="text" v-model="searchs[3].value" />
+          </div>
+          <div
+            class="dsmleftitem cdltopitem flex flex-Updown-between"
+            @click="optionsId = optionsId === searchs[4].id ? '' : searchs[4].id"
+          >
+            <span>{{ searchs[4].name }}</span>
+            <p class="flex flex-Updown-between">
+              <span>{{ searchs[4].value }}</span>
+              <img
+                :style="{
+                  transform: `rotate(${optionsId === searchs[4].id ? '180' : '0'}deg)`,
+                }"
+                src="../../assets/index/setting/10.png"
+                alt=""
+              />
+            </p>
+            <div
+              class="seleterBody"
+              :style="{ height: optionsId === searchs[4].id ? '200px' : '0px' }"
+            >
+              <div
+                class="button seleter_item"
+                v-for="(p, i) in BySelectTwo"
+                :key="i + 'ss'"
+                @click="seletes(p, 3)"
+              >
+                {{ p }}
+              </div>
+            </div>
+          </div>
+          <div
+            class="dsmleftitem cdltopitem flex flex-Updown-between"
+            @click="optionsId = optionsId === searchs[5].id ? '' : searchs[5].id"
+          >
+            <span>{{ searchs[5].name }}</span>
+            <p class="flex flex-Updown-between">
+              <span>{{ searchs[5].value }}</span>
+              <img
+                :style="{
+                  transform: `rotate(${optionsId === searchs[5].id ? '180' : '0'}deg)`,
+                }"
+                src="../../assets/index/setting/10.png"
+                alt=""
+              />
+            </p>
+            <div
+              class="seleterBody"
+              :style="{ height: optionsId === searchs[5].id ? '200px' : '0px' }"
+            >
+              <div
+                class="button seleter_item"
+                v-for="(p, i) in Model"
+                :key="i + 'ss'"
+                @click="seletes(p, 4)"
+              >
+                {{ p }}
+              </div>
+            </div>
+          </div>
+          <div class="dsmleftitem cdltopitem flex flex-Updown-between">
+            <span>{{ searchs[6].name }}</span>
+            <input type="text" v-model="searchs[6].value" />
           </div>
           <div class="dsmleftitem cdltopitem flex flex-Updown-between">
             <span>Start From</span>
@@ -169,7 +265,17 @@
 </template>
 
 <script>
-import { findByParamsAll } from "../../common/api";
+// EVFindBySelect 下拉框查询 车辆名称
+// EVFindBySelectTwo 下拉框查询 车辆类型
+// findByChargerType 根据中心和层数 查询车类类别
+// findByModel 根据车辆类型查询车牌号
+import {
+  findByParamsAll,
+  EVFindBySelect,
+  EVFindBySelectTwo,
+  findByChargerType,
+  findByModel,
+} from "../../common/api";
 export default {
   name: "dateStatus",
   data() {
@@ -179,23 +285,28 @@ export default {
       isShowSlete: false,
       optionsId: "",
       count: 0,
+      BySelect: [], //车辆名称
+      BySelectTwo: [], //车辆类型
+      ChargerType: [], //查询车类类别
+      Model: [], //根据车辆类型查询车牌号
       searchs: [
         {
           name: "Centre",
           value: "",
           cid: "",
+          centreId: "",
           children: [
-            { centreId: 0, name: "Shatin Centre" },
-            { centreId: 1, name: "Hung Hom HQ" },
-            { centreId: 2, name: "Sham Shui Po Centre" },
-            { centreId: 3, name: "Tsing Yi Centre" },
-            { centreId: 4, name: "Yuen Long Centre" },
-            { centreId: 5, name: "Shek Wu Hui Centre" },
+            { centreId: 0, value: "Shatin Centre", cid: "CLP3301" },
+            { centreId: 1, value: "Hung Hom HQ", cid: "CLP2101" },
+            { centreId: 2, cid: "", value: "Sham Shui Po Centre", cid: "CLP2201" },
+            { centreId: 3, value: "Tsing Yi Centre", cid: "CLP3801" },
+            { centreId: 4, value: "Yuen Long Centre", cid: "CLP3701" },
+            { centreId: 5, value: "Shek Wu Hui Centre", cid: "CLP3101" },
           ],
           id: 1,
         },
         { name: "Location", value: "", children: [], id: 2 },
-        { name: "Charger Type", value: "", children: [], id: 3 },
+        { name: "Charger Type", cid: "", value: "", children: [], id: 3 },
         { name: "Charger No.", value: "", children: [], id: 4 },
         { name: "Manufacturer", value: "", children: [], id: 5 },
         { name: "Model", value: "", children: [], id: 6 },
@@ -210,9 +321,103 @@ export default {
   },
   created() {
     this.DataTypes = this.$store.state.DataTypes;
+    this.getBySelect();
   },
   mounted() {},
   methods: {
+    openSelete(type) {
+      if (type == 1) {
+        if (
+          this.searchs[0].centreId === "" &&
+          this.searchs[1].value === "" &&
+          this.optionsId !== this.searchs[2].id
+        ) {
+          this.$message.warning(
+            "Please select the center and fill in the location first"
+          );
+          // return;
+        }
+        this.optionsId = this.optionsId === this.searchs[2].id ? "" : this.searchs[2].id;
+      }
+    },
+    // 选择
+    seletes(value, i) {
+      if (i == 1) {
+        this.searchs[2].value = value.chargerType;
+        this.searchs[2].cid = value.id;
+      }
+      if (i == 3) {
+        this.searchs[4].value = value;
+      }
+      if (i == 4) {
+        this.searchs[5].value = value;
+      }
+    },
+    // 车辆名称EVFindBySelect
+    async getBySelect() {
+      let result = await EVFindBySelect({ userId: localStorage.getItem("userId") });
+      // console.log("车辆名称EVFindBySelect", result);
+      if (result.code == 100) {
+        // this.BySelect = result.extend.electricVehicleList;
+        result.extend.electricVehicleList.forEach((item) => {
+          if (item.evManufacturer) {
+            this.getBySelectTwo(item.evManufacturer);
+          }
+          if (item.evModel) {
+            this.getModel(item.evModel);
+          }
+        });
+      }
+    },
+    // 车辆类型EVFindBySelectTwo
+    async getBySelectTwo(value) {
+      let data = {
+        manufacturer: value,
+        userId: localStorage.getItem("userId"),
+      };
+      let result = await EVFindBySelectTwo(data);
+      // console.log("车辆类型EVFindBySelectTwo", result);
+      if (result.code == 100) {
+        this.BySelectTwo = result.extend.vehicleNumberList.map((item) => {
+          if (item.evManufacturer) {
+            return item.evManufacturer;
+          }
+        });
+      }
+    },
+    // findByChargerType 根据中心和层数 查询车类类别
+    async getChargerType() {
+      if (this.searchs[0].centreId === "" && this.searchs[1].value === "") {
+        this.$message.warning("Please select the center and fill in the location first");
+        return;
+      }
+      let data = {
+        userId: localStorage.getItem("userId"),
+        centreId: this.searchs[0].centreId,
+        location: this.searchs[1].value,
+      };
+      let result = await findByChargerType(data);
+      // console.log("查询车类类别", result);
+      if (result.code == 100) {
+        this.ChargerType = result.extend.chargerNumberingList;
+      }
+    },
+    // // findByModel 根据车辆类型查询车牌号
+    async getModel(value) {
+      let data = {
+        userId: localStorage.getItem("userId"),
+        evModel: value,
+      };
+      let result = await findByModel(data);
+      // console.log("根据车辆类型查询车牌号", result);
+      if (result.code == 100) {
+        this.Model = result.extend.vehicleNumberList.map((item) => {
+          if (item.evModel) {
+            return item.evModel;
+          }
+        });
+      }
+    },
     //展示表格
     showTable(index) {
       this.DataTypes[index].choose = !this.DataTypes[index].choose;
@@ -225,36 +430,44 @@ export default {
     },
     //
     seleteCenter(value) {
-      this.searchs[0].value = value.name;
-      this.searchs[0].cid = value.centreId;
+      this.searchs[0].value = value.value;
+      this.searchs[0].centreId = value.centreId;
+      this.searchs[0].cid = value.cid;
+      if (this.searchs[1].value !== "") {
+        this.getChargerType();
+      }
+      // if(!this.searchs[0].cid&&!this.searchs[1].value){
+      //   this.$message.warning("Please select the center and fill in the location first")
+      //   return
+      // }
       // this.getParams();
     },
 
     //条件筛选查询
     getParams() {
       let searchs = this.searchs;
-      try {
-        if (searchs[0].cid === "") throw "Please select center！";
-        if (searchs[1].value === "") throw "Please enter the Location";
-        if (searchs[2].value === "") throw "Please enter the Charger Type";
-        if (searchs[3].value === "") throw "Please enter the Charger No.！";
-        // if (searchs[4].value === "") throw "请输入车辆类型！";
-        // if (searchs[5].value === "") throw "请输入车辆类型model！";
-        if (searchs[6].value === "") throw "Please select the Vehicle No.！";
-        if (this.startTime === "") throw "Please select  startTime";
-        if (this.endTime === "") throw "Please select  endTime";
-      } catch (err) {
-        this.$message.warning(err);
-        return;
-      }
+      // try {
+      //   if (searchs[0].cid === "") throw "Please select center！";
+      //   if (searchs[1].value === "") throw "Please enter the Location";
+      //   if (searchs[2].value === "") throw "Please enter the Charger Type";
+      //   // if (searchs[3].value === "") throw "Please enter the Charger No.！";
+      //   // // if (searchs[4].value === "") throw "请输入车辆类型！";
+      //   // // if (searchs[5].value === "") throw "请输入车辆类型model！";
+      //   // if (searchs[6].value === "") throw "Please select the Vehicle No.！";
+      //   if (this.startTime === "") throw "Please select  startTime";
+      //   if (this.endTime === "") throw "Please select  endTime";
+      // } catch (err) {
+      //   this.$message.warning(err);
+      //   return;
+      // }
       let data = {
         centre: this.searchs[0].cid,
         location: this.searchs[1].value,
-        chargerType: this.searchs[2].value,
+        chargerType: this.searchs[2].cid,
         chargerNo: this.searchs[3].value,
         manufacturer: this.searchs[4].value,
         model: this.searchs[5].value,
-        vehicleNo: this.searchs[6].value,
+        vehicleNo: this.searchs[6].value || "null",
         startDate: this.startTime,
         endDate: this.endTime,
       };
@@ -266,7 +479,7 @@ export default {
       this.$store.commit("getChargerInfoData", data);
       findByParamsAll({ ...data, ...datas })
         .then((res) => {
-          console.log("条件筛选查询", res);
+          // console.log("条件筛选查询", res);
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();

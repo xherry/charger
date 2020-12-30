@@ -14,7 +14,7 @@
         <div class="seleterBody" :style="{ height: isShowSlete ? '200px' : '0px' }">
           <div
             class="button seleter_item"
-            v-for="(item, index) in centerType"
+            v-for="(item, index) in $store.state.centerType"
             :key="index"
             @click="seleteCenter(item)"
           >
@@ -32,7 +32,16 @@
       <p class="ortoptit">Control Centre EV Charger</p>
       <div class="urtable">
         <ul class="ultit">
-          <li><p>Charger No.</p></li>
+          <li @click="sorting">
+            <div class="flex flex-Updown-between sorting">
+              <p>Charger No.</p>
+              <img
+                src="../../assets/index/top.png"
+                :style="{ transform: `rotate(${chargerNo === 1 ? '-180deg' : '0'})` }"
+                alt=""
+              />
+            </div>
+          </li>
           <li><p>Enable</p></li>
           <li><p>Disable</p></li>
         </ul>
@@ -81,7 +90,7 @@
 </template>
 
 <script>
-import { findByDetails, controlCharger } from "../../common/api";
+import { findByDetails, controlCharger, findByChargerType } from "../../common/api";
 export default {
   name: "Centre",
   data() {
@@ -103,6 +112,7 @@ export default {
       Location: "",
       count: 0,
       page: 1,
+      chargerNo: 1,
     };
   },
   created() {},
@@ -110,6 +120,10 @@ export default {
     this.getNowData();
   },
   methods: {
+    sorting(){
+      this.chargerNo = this.chargerNo===1?2:1;
+      this.getNowData()
+    },
     // 操作开关
     setStatus(type, status, chargerno, centre) {
       let data = {
@@ -153,7 +167,7 @@ export default {
     },
     // 选择中心
     seleteCenter(prop) {
-      this.ctypes.centreId = prop.centreId;
+      this.ctypes.centreId = prop.cid;
       this.ctypes.value = prop.value;
     },
     //查询
@@ -161,10 +175,14 @@ export default {
       this.page = 1;
       this.getNowData();
     },
+    // 查询数据
+    findByChargerType() {
+      let data = {};
+    },
     // 查询充电桩的实时数据
     getNowData() {
       let datas =
-        this.ctypes.centreId !== "" && this.Location !== ""
+        this.ctypes.centreId !== "" || this.Location !== ""
           ? {
               centre: this.ctypes.centreId,
               location: this.Location,
@@ -174,6 +192,8 @@ export default {
         page: this.page,
         limit: 10,
         userId: localStorage.getItem("userId"),
+        chargerNo: this.chargerNo,
+        status: 1,
         ...datas,
       };
       let loadingInstance = this.$loading({
@@ -182,7 +202,7 @@ export default {
       });
       findByDetails(data)
         .then((res) => {
-          console.log(res, "查询充电桩的实时数据");
+          // console.log(res, "查询充电桩的实时数据");
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
@@ -204,6 +224,12 @@ export default {
 </script>
 
 <style scoped>
+.sorting > img {
+  width: 20px;
+  height: 20px;
+  margin-left: 5px;
+  transition: all 0.1s linear;
+}
 .pagination {
   bottom: -80px;
 }
@@ -233,7 +259,7 @@ export default {
 }
 .seleter,
 .ct-item input {
-  width: 224px;
+  width: 250px;
   height: 38px;
   padding: 0 24px 0 15px;
   margin-left: 20px;
@@ -251,6 +277,9 @@ export default {
   width: 14px;
   height: 8px;
   transition: all 0.2s linear;
+}
+.seleterBody {
+  width: 250px;
 }
 
 .ct-item {
