@@ -224,6 +224,12 @@ ul > li {
 .UpdateCancel {
   line-height: 38px;
 }
+li img{
+  position: absolute;
+  right: 10px;
+  /* top: 50%;
+  transform: translateY(-50%); */
+}
 .UpdateCancels,
 .UpdateCancel {
   width: 236px;

@@ -7,10 +7,10 @@ axios.defaults.headers.post["Content-Type"] =
     "application/x-www-form-urlencoded";
 //超时时间10秒
 // axios.defaults.timeout = 10000;
-export const $Post = (api, value) => {
+export const $Post = (api, value, isApi) => {
     return new Promise((resolve, reject) => {
         axios({
-            url: base_url + api,
+            url: isApi ? "api" + api : base_url + api,
             method: 'post',
             transformRequest: [function(data) { //在请求之前对data传参进行格式转换
                 data = Qs.stringify(data)
@@ -77,7 +77,7 @@ export const findByParamsAll = (data) => $Post("/api/chargerInfo/findByParamsAll
 // 根据地区查询 充电桩的充电总时长等
 export const findByDataRecord = (data) => $Post("/api/chargerInfo/findByDataRecord", data);
 // 导出
-export const excelExp = (data) => $Post("/api/chargerInfo/excelExp", data)
+export const excelExp = (data) => $Post("/api/chargerInfo/excelExp", data, true)
 
 
 // 登陆部分

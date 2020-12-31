@@ -96,8 +96,8 @@
           </div>
         </div>
         <p class="Update flex flex-Updown">
-          <span class="button" @click="printOut('Report')">Generate PDF</span>
-          <span class="button">Download</span>
+          <span class="button" @click="Generate">Generate PDF</span>
+          <span class="button" @click="Download">Download</span>
         </p>
       </div>
     </div>
@@ -557,6 +557,78 @@ export default {
             loadingInstance.close();
           });
         });
+    },
+    // 文件流导出
+    filesExcelExp(Generate, Download) {
+      let datas = { userIds: localStorage.getItem("userId"), page: 1, limit: 100 };
+      let data = this.$store.state.chargerInfoData;
+      let DataTypes = this.DataTypes;
+      let titles = "";
+      if (DataTypes[0].Table) {
+        titles += "chargingvoltag,";
+      }
+      if (DataTypes[1].Table) {
+        titles += "chargingcurrent,";
+      }
+      if (DataTypes[2].Table) {
+        titles += "chargingpower,";
+      }
+      if (DataTypes[3].Table) {
+        titles += "chargingenergy,";
+      }
+      if (DataTypes[4].Table) {
+        titles += "chargingtime,";
+      }
+      if (DataTypes[5].Table) {
+        titles += "soc,";
+      }
+      if (DataTypes[6].Table) {
+        titles += "mileagetravelled,";
+      }
+      if (titles === "") {
+        return;
+      } else {
+        titles = titles.slice(0, -1);
+      }
+      axios({
+        url: "api/api/chargerInfo/excelExp",
+        method: "POST",
+        responseType: "arraybuffer", //一定要设置响应类型，否则页面会是空白pdf
+        params: { ...datas, ...data, title: titles },
+      }).then((res) => {
+        // console.log(res.data);
+        if (Generate) {
+          const binaryData = [];
+          binaryData.push(res.data);
+          //获取blob链接
+          let pdfUrl = window.URL.createObjectURL(
+            new Blob(binaryData, { type: "application/pdf" })
+          );
+          window.open(pdfUrl);
+        }
+        if (Download) {
+          //type类型可以设置为文本类型，这里是pdf类型
+          let pdfUrl = window.URL.createObjectURL(
+            new Blob([res.data], { type: `application/pdf` })
+          );
+          const fname = `report`; // 下载文件的名字
+          const link = document.createElement("a");
+          link.href = this.pdfUrl;
+          link.setAttribute("download", fname);
+          document.body.appendChild(link);
+          link.click();
+        }
+      });
+    },
+    //下载
+    Download() {
+      this.filesExcelExp(false, true);
+      this.printOut("Report");
+    },
+    // 预览
+    Generate() {
+      this.printOut("Report");
+      this.filesExcelExp(true, false);
     },
   },
 };

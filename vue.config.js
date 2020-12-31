@@ -43,6 +43,20 @@ module.exports = {
             })
             .end()
     },
+    devServer: {
+        open: false, // 是否打开浏览器;
+        hotOnly: true, // 是否热更新;
+        proxy: {
+            '/api': {
+                target: 'https://www.clplms.com', //设置你调用的接口域名和端口号.别忘了加http
+                changeOrigin: true, //允许跨域
+                ws: true,
+                pathRewrite: {
+                    '^/api': ''
+                }
+            }
+        },
+    },
     configureWebpack: config => {
             if (process.env.NODE_ENV === 'production') {
                 return {
