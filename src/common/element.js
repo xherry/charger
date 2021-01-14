@@ -6,9 +6,10 @@ import "element-ui/lib/theme-chalk/index.css";
 //设置语言
 locale.use(lang)
 
-import { Message, MessageBox, Pagination, DatePicker, Loading } from 'element-ui';
+import { Message, MessageBox, Pagination, DatePicker, Loading, InfiniteScroll } from 'element-ui';
 import elTableInfiniteScroll from 'element-ui';
 
+Vue.use(InfiniteScroll);
 Vue.use(elTableInfiniteScroll);
 Vue.use(Pagination);
 Vue.use(DatePicker);

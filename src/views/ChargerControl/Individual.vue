@@ -99,18 +99,97 @@
       </div>
       <div class="buttons7 flex flex-Updown-between">
         <div class="flex flex-Updown" v-show="roleKey.controlOtherChargers == 0">
-          <div class="blues button" @click="ControlEquipment(1)">Enable</div>
-          <div class="greens button" @click="ControlEquipment(0)">Disable</div>
+          <div
+            :class="[
+              !chargerInfo.status ||
+              chargerInfo.status == 'Disconnected' ||
+              chargerInfo.status == 'OffLine' ||
+              chargerInfo.status == 'Disable'
+                ? 'garys'
+                : 'blues',
+              'button',
+            ]"
+            @click="ControlEquipment(1)"
+          >
+            Enable
+          </div>
+          <div
+            :class="[
+              !chargerInfo.status ||
+              chargerInfo.status == 'Disconnected' ||
+              chargerInfo.status == 'OffLine' ||
+              chargerInfo.status != 'Disable'
+                ? 'garys'
+                : 'greens',
+              'button',
+            ]"
+            @click="ControlEquipment(0)"
+          >
+            Disable
+          </div>
         </div>
         <div></div>
         <div class="flex flex-Updown" v-show="roleKey.controlOwnCharger == 0">
-          <div class="blues button" @click="ControlEquipment(3)">Start</div>
-          <div class="greens button" @click="ControlEquipment(2)">Stop</div>
+          <div
+            :class="[
+              !chargerInfo.status ||
+              chargerInfo.status == 'Disconnected' ||
+              chargerInfo.status == 'OffLine' ||
+              chargerInfo.status != 'InUse' ||
+              chargerInfo.status != 'WaitCharging'
+                ? 'garys'
+                : 'blues',
+              'button',
+            ]"
+            @click="ControlEquipment(3)"
+          >
+            Start
+          </div>
+          <div
+            :class="[
+              !chargerInfo.status ||
+              chargerInfo.status == 'Disconnected' ||
+              chargerInfo.status == 'OffLine' ||
+              chargerInfo.status != 'Charging'
+                ? 'garys'
+                : 'greens',
+              'button',
+            ]"
+            @click="ControlEquipment(2)"
+          >
+            Stop
+          </div>
         </div>
         <div></div>
         <div class="flex flex-Updown" v-show="roleKey.controlOtherChargers == 0">
-          <div class="blues button" @click="ControlEquipment(4)">LMS</div>
-          <div class="greens button" @click="ControlEquipment(5)">Full</div>
+          <div
+            :class="[
+              !chargerInfo.status ||
+              chargerInfo.status == 'Disconnected' ||
+              chargerInfo.status == 'OffLine' ||
+              chargerInfo.status != 'Disabled'
+                ? 'garys'
+                : 'blues',
+              'button',
+            ]"
+            @click="ControlEquipment(4)"
+          >
+            LMS
+          </div>
+          <div
+            :class="[
+              !chargerInfo.status ||
+              chargerInfo.status == 'Disconnected' ||
+              chargerInfo.status == 'OffLine' ||
+              chargerInfo.status != 'Disabled'
+                ? 'garys'
+                : 'greens',
+              'button',
+            ]"
+            @click="ControlEquipment(5)"
+          >
+            Full
+          </div>
         </div>
       </div>
     </div>
@@ -172,7 +251,7 @@ export default {
     //根据条件查询充电状态
     getIndividualCharger() {
       let data;
-      if (this.navList[2].value==='') {
+      if (this.navList[2].value === "") {
         data = {
           userId: localStorage.getItem("userId"),
           centre: this.ctypes.centreId,
@@ -220,7 +299,10 @@ export default {
         this.$message.warning("There is no equipment！");
         return;
       }
-      if (this.chargerInfo.status == 'Disconnected' || this.chargerInfo.status == 'OffLine') {
+      if (
+        this.chargerInfo.status == "Disconnected" ||
+        this.chargerInfo.status == "OffLine"
+      ) {
         this.$message.warning("Equipment offline");
         return;
       }
@@ -276,6 +358,7 @@ export default {
 .p15 {
   padding: 0 15px 0 15px;
 }
+.garys,
 .blues,
 .greens {
   width: 160px;
@@ -283,6 +366,11 @@ export default {
   color: #ffffff;
   font-size: 16px;
   line-height: 44px;
+  margin-left: 10px;
+}
+.garys {
+  background: url("../../assets/index/says/006.png") no-repeat;
+  background-size: 100% 100%;
 }
 .blues {
   background: url("../../assets/index/says/04.png") no-repeat;

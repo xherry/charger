@@ -598,7 +598,7 @@ export default {
       }).then((res) => {
         // console.log(res.data);
         if (Generate) {
-          const binaryData = [];
+          let binaryData = [];
           binaryData.push(res.data);
           //获取blob链接
           let pdfUrl = window.URL.createObjectURL(
@@ -622,8 +622,8 @@ export default {
     },
     //下载
     Download() {
-      this.filesExcelExp(false, true);
       this.printOut("Report");
+      this.filesExcelExp(false, true);
     },
     // 预览
     Generate() {

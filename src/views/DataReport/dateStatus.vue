@@ -37,7 +37,7 @@
           </div>
           <div class="dsmleftitem cdltopitem flex flex-Updown-between">
             <span>{{ searchs[1].name }}</span>
-            <input type="text" @input="getChargerType" v-model="searchs[1].value" />
+            <input type="text" @blur="getLocation" v-model="searchs[1].value" />
           </div>
           <div
             class="dsmleftitem cdltopitem flex flex-Updown-between"
@@ -203,40 +203,42 @@
             <!-- -->
             <div v-if="chargerInfoList.length != 0">
               <!-- , updateId === index ? 'bshow' : '' -->
-              <ul
-                :class="['uldatas', 'w100']"
-                v-for="(item, index) in chargerInfoList"
-                :key="index + 's'"
-              >
-                <!-- @click="updateId = index" -->
-                <li>
-                  <p>{{ startTime }}</p>
-                </li>
-                <li>
-                  <p>{{ endTime }}</p>
-                </li>
-                <li v-if="DataTypes[0].choose">
-                  <p>{{ item.chargingVoltage }}</p>
-                </li>
-                <li v-if="DataTypes[1].choose">
-                  <p>{{ item.chargingCurrent }}</p>
-                </li>
-                <li v-if="DataTypes[2].choose">
-                  <p>{{ item.chargingPower }}</p>
-                </li>
-                <li v-if="DataTypes[3].choose">
-                  <p>{{ item.chargingEnergy }}</p>
-                </li>
-                <li v-if="DataTypes[4].choose">
-                  <p>{{ item.chargingTime }}</p>
-                </li>
-                <li v-if="DataTypes[5].choose">
-                  <p>{{ item.socBeforeCharging }}</p>
-                </li>
-                <li v-if="DataTypes[6].choose">
-                  <p>{{ item.mileageTravelled }}</p>
-                </li>
-              </ul>
+              <div class="loadMore" v-infinite-scroll="loadMore">
+                <ul
+                  :class="['uldatas', 'w100']"
+                  v-for="(item, index) in chargerInfoList"
+                  :key="index + 's'"
+                >
+                  <!-- @click="updateId = index" -->
+                  <li>
+                    <p>{{ startTime }}</p>
+                  </li>
+                  <li>
+                    <p>{{ endTime }}</p>
+                  </li>
+                  <li v-if="DataTypes[0].choose">
+                    <p>{{ item.chargingVoltage }}</p>
+                  </li>
+                  <li v-if="DataTypes[1].choose">
+                    <p>{{ item.chargingCurrent }}</p>
+                  </li>
+                  <li v-if="DataTypes[2].choose">
+                    <p>{{ item.chargingPower }}</p>
+                  </li>
+                  <li v-if="DataTypes[3].choose">
+                    <p>{{ item.chargingEnergy }}</p>
+                  </li>
+                  <li v-if="DataTypes[4].choose">
+                    <p>{{ item.chargingTime }}</p>
+                  </li>
+                  <li v-if="DataTypes[5].choose">
+                    <p>{{ item.socBeforeCharging }}</p>
+                  </li>
+                  <li v-if="DataTypes[6].choose">
+                    <p>{{ item.mileageTravelled }}</p>
+                  </li>
+                </ul>
+              </div>
             </div>
             <div v-else>
               <ul class="uldatas w100">
@@ -244,7 +246,7 @@
               </ul>
             </div>
           </div>
-          <div class="pagination">
+          <!-- <div class="pagination">
             <el-pagination
               @current-change="sizeChange"
               background
@@ -254,7 +256,7 @@
               hide-on-single-page
             >
             </el-pagination>
-          </div>
+          </div> -->
         </div>
         <p class="Update">
           <span class="button" @click="getParams">Update</span>
@@ -325,17 +327,18 @@ export default {
   },
   mounted() {},
   methods: {
+    loadMore() {
+      if (this.page > Math.ceil(this.count / 10))
+        return this.$message.warning("No more data!");
+      this.page += 1;
+      this.getParams();
+    },
     openSelete(type) {
       if (type == 1) {
-        if (
-          this.searchs[0].centreId === "" &&
-          this.searchs[1].value === "" &&
-          this.optionsId !== this.searchs[2].id
-        ) {
+        if (this.searchs[0].centreId === "" || this.searchs[1].value === "") {
           this.$message.warning(
             "Please select the center and fill in the location first"
           );
-          // return;
         }
         this.optionsId = this.optionsId === this.searchs[2].id ? "" : this.searchs[2].id;
       }
@@ -385,12 +388,13 @@ export default {
         });
       }
     },
+    getLocation() {
+      if (this.searchs[0].centreId !== "" && this.searchs[1].value !== "") {
+        this.getChargerType();
+      }
+    },
     // findByChargerType 根据中心和层数 查询车类类别
     async getChargerType() {
-      if (this.searchs[0].centreId === "" && this.searchs[1].value === "") {
-        this.$message.warning("Please select the center and fill in the location first");
-        return;
-      }
       let data = {
         userId: localStorage.getItem("userId"),
         centreId: this.searchs[0].centreId,
@@ -422,11 +426,6 @@ export default {
     showTable(index) {
       this.DataTypes[index].choose = !this.DataTypes[index].choose;
       this.$store.commit("showTableUl", this.DataTypes);
-    },
-    //
-    sizeChange(value) {
-      this.page = value;
-      this.getParams();
     },
     //
     seleteCenter(value) {
@@ -485,7 +484,10 @@ export default {
             loadingInstance.close();
           });
           if (res.code == 100) {
-            this.chargerInfoList = res.extend.chargerInfoList;
+            this.chargerInfoList = [
+              ...this.chargerInfoList,
+              ...res.extend.chargerInfoList,
+            ];
             this.count = res.extend.count;
           }
         })
@@ -501,8 +503,16 @@ export default {
 </script>
 
 <style scoped>
+.urtable {
+  overflow: hidden;
+}
+.loadMore {
+  /* background: red; */
+  max-height: 580px !important;
+  overflow-y: scroll;
+}
 .seleteDate {
-  width: 180px;
+  width: 190px;
   height: 31px;
   position: absolute;
   top: 0;
@@ -592,7 +602,7 @@ ul > li {
   margin-top: 20px;
 }
 .seleterBody {
-  width: 180px;
+  width: 190px;
 }
 .dsmleftitem {
   width: 300px;
@@ -607,24 +617,24 @@ ul > li {
 }
 .cdltopitem input,
 .cdltopitem p {
-  width: 180px;
+  width: 190px;
   height: 31px;
   border: 1px solid #63d1ff;
   border-radius: 4px;
   background: transparent;
-  padding: 0 15px;
+  padding: 0 10px;
   box-sizing: border-box;
   color: #63d1ff;
-  font-size: 14px;
+  font-size: 12px;
 }
 .cdltopitem input {
   outline: 0;
 }
 .cdltopitem > span {
   color: #ffffff;
-  font-size: 14px;
+  font-size: 12px;
   display: inline-block;
-  margin-right: 16px;
+  margin-right: 5px;
 }
 .cdltopitem {
   margin-top: 15px;

@@ -46,27 +46,33 @@
           <li><p>Disable</p></li>
         </ul>
         <div v-if="chargerInfoList.length != 0">
-          <ul class="uldatas w100" v-for="(item, index) in chargerInfoList" :key="index">
-            <li>
-              <p>{{ item.chargerno }}</p>
-            </li>
-            <li @click="setStatus(1, item.status, item.chargerno, item.centre)">
-              <img
-                v-if="item.status != 'Disabled'"
-                src="../../assets/index/useraccount/04.png"
-                alt=""
-              />
-              <img v-else src="../../assets/index/useraccount/03.png" alt="" />
-            </li>
-            <li @click="setStatus(0, item.status, item.chargerno, item.centre)">
-              <img
-                v-if="item.status == 'Disable'"
-                src="../../assets/index/useraccount/04.png"
-                alt=""
-              />
-              <img v-else src="../../assets/index/useraccount/03.png" alt="" />
-            </li>
-          </ul>
+          <div class="loadMore" v-infinite-scroll="loadMore">
+            <ul
+              class="uldatas w100"
+              v-for="(item, index) in chargerInfoList"
+              :key="index"
+            >
+              <li>
+                <p>{{ item.chargerno }}</p>
+              </li>
+              <li @click="setStatus(1, item.status, item.chargerno, item.centre, index)">
+                <img
+                  v-if="item.status != 'Disable'"
+                  src="../../assets/index/useraccount/04.png"
+                  alt=""
+                />
+                <img v-else src="../../assets/index/useraccount/03.png" alt="" />
+              </li>
+              <li @click="setStatus(0, item.status, item.chargerno, item.centre, index)">
+                <img
+                  v-if="item.status == 'Disable'"
+                  src="../../assets/index/useraccount/04.png"
+                  alt=""
+                />
+                <img v-else src="../../assets/index/useraccount/03.png" alt="" />
+              </li>
+            </ul>
+          </div>
         </div>
         <div v-else>
           <ul class="uldatas w100">
@@ -75,7 +81,7 @@
         </div>
       </div>
     </div>
-    <div class="pagination">
+    <!-- <div class="pagination">
       <el-pagination
         @current-change="sizeChange"
         background
@@ -85,7 +91,7 @@
         :page-size="10"
       >
       </el-pagination>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -120,12 +126,18 @@ export default {
     this.getNowData();
   },
   methods: {
-    sorting(){
-      this.chargerNo = this.chargerNo===1?2:1;
-      this.getNowData()
+    loadMore() {
+      if (this.page > Math.ceil(this.count / 10))
+        return this.$message.warning("No more data!");
+      this.page += 1;
+      this.getNowData();
+    },
+    sorting() {
+      this.chargerNo = this.chargerNo === 1 ? 2 : 1;
+      this.getNowData();
     },
     // 操作开关
-    setStatus(type, status, chargerno, centre) {
+    setStatus(type, status, chargerno, centre, index) {
       let data = {
         userIds: localStorage.getItem("userId"),
         type: type,
@@ -152,18 +164,11 @@ export default {
         // console.log(res, "操作开关");
         if (res.code == 100) {
           this.$message.success("Send command successfully！");
-          this.getNowData();
+          // this.getNowData();
+          this.chargerInfoList[index].status = status == "Disable" ? "Enable" : "Disable";
+          this.$forceUpdate();
         }
       });
-    },
-    //
-    sizeChange(value) {
-      this.page = value;
-      this.getNowData();
-      // this.chargerInfoList = JSON.parse(JSON.stringify(this.oldDatas)).splice(
-      //   (value - 1) * 10 ,
-      //   10
-      // );
     },
     // 选择中心
     seleteCenter(prop) {
@@ -208,7 +213,10 @@ export default {
             loadingInstance.close();
           });
           if (res.code == 100) {
-            this.chargerInfoList = res.extend.chargerInfoList;
+            this.chargerInfoList = [
+              ...this.chargerInfoList,
+              ...res.extend.chargerInfoList,
+            ];
             this.count = res.extend.count;
           }
         })
@@ -224,6 +232,18 @@ export default {
 </script>
 
 <style scoped>
+.urtable {
+  overflow: hidden;
+}
+.loadMore {
+  /* background: red; */
+  height: 550px;
+  overflow-y: scroll;
+}
+.uldatas > li img {
+  left: 50%;
+  transform: translateX(-50%);
+}
 .sorting > img {
   width: 20px;
   height: 20px;

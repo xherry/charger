@@ -10,7 +10,7 @@
         ]"
         v-for="item in navs"
         :key="item.id"
-        @click="navSeleted = item.id"
+        @click="(navSeleted = item.id), (loginInfos = {})"
       >
         <span>{{ item.name }}</span>
         <img
@@ -27,7 +27,7 @@
             {{ navSeleted == 1 ? "Charger Network" : "Individual Charger" }}
           </p>
           <div class="sixLogin">
-            <img src="../assets/index/0005.png" class="childAll" alt="" />
+            <img src="../assets/index/0004.png" class="childAll" alt="" />
             <div class="childAll stronghold">
               <div
                 @mouseover="showEwm(1)"
@@ -68,7 +68,7 @@
                       : ''
                     : '',
                 ]"
-                @click="tologin(5)"
+                @click="tologin('CLP3101')"
               ></div>
               <div
                 @mouseover="showEwm(1)"
@@ -109,7 +109,7 @@
                       : ''
                     : '',
                 ]"
-                @click="tologin(4)"
+                @click="tologin('CLP3701')"
               ></div>
               <div
                 @mouseover="showEwm(1)"
@@ -150,7 +150,7 @@
                       : ''
                     : '',
                 ]"
-                @click="tologin(3)"
+                @click="tologin('CLP3801')"
               ></div>
               <div
                 @mouseover="showEwm(1)"
@@ -191,7 +191,7 @@
                       : ''
                     : '',
                 ]"
-                @click="tologin(2)"
+                @click="tologin('CLP2201')"
               ></div>
               <div
                 @mouseover="showEwm(1)"
@@ -232,7 +232,7 @@
                       : ''
                     : '',
                 ]"
-                @click="tologin(1)"
+                @click="tologin('CLP2101')"
               ></div>
               <div
                 @mouseover="showEwm(1)"
@@ -269,7 +269,7 @@
                       : ''
                     : '',
                 ]"
-                @click="tologin(0)"
+                @click="tologin('CLP3301')"
               ></div>
             </div>
           </div>
@@ -303,7 +303,7 @@
       </div>
     </div>
     <div v-else>
-      <own-charg></own-charg>
+      <own-charg :loginInfos="loginInfos"></own-charg>
     </div>
   </div>
 </template>
@@ -335,6 +335,7 @@ export default {
         },
       ],
       sixDatas: {},
+      loginInfos: {},
     };
   },
   mounted() {
@@ -342,6 +343,12 @@ export default {
     // this.getSixData();
   },
   async created() {
+    this.loginInfos = this.$route.query.loginInfos || {};
+    console.log(this.loginInfos);
+    if (this.$route.query.navSeleted) {
+      this.navSeleted = this.$route.query.navSeleted;
+    }
+
     let loginType = localStorage.getItem("loginType");
     if (loginType == "1") {
       this.navSeleted = 2;
@@ -367,9 +374,9 @@ export default {
         this.$store.commit("changeShowBottom", false);
         return;
       }
-      this.$router.push("CentreInformation/Detailed");
+      this.$router.push({ path: "CentreInformation/Detailed", query: { cid: value } });
     },
-    showEwm(value) {
+    showEwm() {
       // if (value === 1) {
       //   this.isShowSixItems = true;
       // } else {
@@ -393,11 +400,11 @@ export default {
   /* height: 220px; */
   border-radius: 10px;
   transition: all 0.2s linear;
-  padding: 15px 30px;
+  padding: 10px 20px 20px;
 }
 .sixItem {
   /* width: 308px; */
-  margin: 15px auto;
+  margin: 10px auto 0;
   /* margin: 0 auto; */
   /* margin-bottom: 10px; */
 }
@@ -409,37 +416,37 @@ export default {
 }
 .sixItem:first-child span {
   text-decoration: underline;
-  letter-spacing: 2px;
 }
 .sixItem span {
   color: #fff;
-  font-size: 22px;
+  font-size: 20px;
+  /* letter-spacing: 2px; */
 }
 .ortoptit {
   margin-top: 5px;
 }
 .sh6 {
-  top: 65px;
+  top: 60px;
   left: 774px;
 }
 .sh5 {
-  top: 340px;
+  top: 305px;
   left: 583px;
 }
 .sh4 {
-  top: 225px;
+  top: 200px;
   left: 495px;
 }
 .sh3 {
-  top: 220px;
+  top: 200px;
   left: 295px;
 }
 .sh2 {
-  top: 130px;
+  top: 120px;
   left: 90px;
 }
 .sh1 {
-  top: 60px;
+  top: 50px;
   left: 375px;
 }
 .greens {
@@ -497,8 +504,8 @@ export default {
   position: relative;
   z-index: 9999;
   width: 73%;
-  height: 480px;
-  margin-left: 13.5%;
+  height: 600px;
+  margin-left: 20.5%;
   margin-top: 100px;
 }
 .tits {

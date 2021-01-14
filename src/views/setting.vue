@@ -101,7 +101,7 @@ export default {
   },
   created() {
     this.leftNavs.forEach((item) => {
-      if (item.RouterPush === window.location.href.split("#")[1].split("/")[2]) {
+      if(window.location.href.includes(item.RouterPush)){
         this.seletNavIndex = item.id;
       }
     });

@@ -90,8 +90,8 @@ export default {
       isVisitors: true,
       iscode: false,
       userInfo: {
-        userId: "123456",
-        password: "123456",
+        userId: "Win", //123456
+        password: "123456", //123456
         chargerNumber: "",
         vehicleNumber: "",
       },
@@ -154,12 +154,19 @@ export default {
           localStorage.setItem("roleKey", JSON.stringify(res.extend.roleKey));
           this.$store.commit("getUserInfo", res.extend);
           //  this.$router.replace("index");
-          if (res.extend.roleKey.smsPasscode == 0) {
-            this.iscode = true;
-          } else {
-            this.$router.replace("index");
-            this.$message.success("Log in successfully！");
+          // if (res.extend.roleKey.smsPasscode == 0) {
+          //   this.iscode = true;
+          // } else {
+          //   }
+          if(this.userInfo.chargerNumber!==''){
+            let loginInfos = this.$store.state.loginInfos;
+            loginInfos.cno = this.userInfo.chargerNumber;
+            loginInfos.location = "G";
+            this.$router.replace({name:"overview",query:{navSeleted:2,loginInfos}});
+          }else{
+            this.$router.replace("index")
           }
+          this.$message.success("Log in successfully！");
         }
       });
       // this.$router.replace("index");

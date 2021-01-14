@@ -30,19 +30,19 @@ export default {
     return {
       seletNavIndex: 1,
       leftNavs: [
-        {
-          name: "Creat  User  Type",
-          id: 1,
-          RouterPush: "Creatusertype",
-        },
+        // {
+        //   name: "Creat  User  Type",
+        //   id: 1,
+        //   RouterPush: "Creatusertype",
+        // },
         {
           name: "Create  User",
-          id: 2,
+          id: 1,
           RouterPush: "Createuser",
         },
         {
           name: "User  Records",
-          id: 3,
+          id: 2,
           RouterPush: "UserRecords",
         },
       ],
@@ -50,7 +50,7 @@ export default {
   },
   created() {
     this.leftNavs.forEach((item) => {
-      if (item.RouterPush === window.location.href.split("#")[1].split("/")[2]) {
+       if(window.location.href.includes(item.RouterPush)){
         this.seletNavIndex = item.id;
       }
     });

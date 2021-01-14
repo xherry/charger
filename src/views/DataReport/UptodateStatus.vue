@@ -88,28 +88,31 @@
               <p>Total Charging Energy（kWh）</p>
             </li>
           </ul>
+          <!--  -->
           <div v-if="cdetails.length != 0">
-            <div class="udetails">
-              <ul
-                class="ustablemain"
-                v-for="(item, index) in cdetails"
-                :key="index + 'k'"
-              >
-                <li>
-                  <p>{{ item.chargerno }}</p>
-                </li>
-                <li>
-                  <p v-if="item.totalchargingtime">{{ item.totalchargingtime }}</p>
-                </li>
-                <li>
-                  <p v-if="item.totalofcharging">{{ item.totalofcharging }}</p>
-                </li>
-                <li>
-                  <p v-if="item.totalchargingenergy">
-                    {{ item.totalchargingenergy | val2 }}
-                  </p>
-                </li>
-              </ul>
+            <div class="loadMore" v-infinite-scroll="loadMore">
+              <div class="udetails">
+                <ul
+                  class="ustablemain"
+                  v-for="(item, index) in cdetails"
+                  :key="index + 'k'"
+                >
+                  <li>
+                    <p>{{ item.chargerno }}</p>
+                  </li>
+                  <li>
+                    <p v-if="item.totalchargingtime">{{ item.totalchargingtime }}</p>
+                  </li>
+                  <li>
+                    <p v-if="item.totalofcharging">{{ item.totalofcharging }}</p>
+                  </li>
+                  <li>
+                    <p v-if="item.totalchargingenergy">
+                      {{ item.totalchargingenergy | val2 }}
+                    </p>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
           <div v-else>
@@ -122,7 +125,7 @@
         </div>
       </div>
     </div>
-    <div class="pagination">
+    <!-- <div class="pagination">
       <el-pagination
         @current-change="sizeChange"
         background
@@ -132,7 +135,7 @@
         hide-on-single-page
       >
       </el-pagination>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -148,12 +151,12 @@ export default {
       page: 1,
       centreId: "",
       centerType: [
-        { centreId: 0, name: "Hung Hom", value: null },
-        { centreId: 1, name: "Shatin", value: null },
-        { centreId: 2, name: "Sham Shui Po", value: null },
-        { centreId: 3, name: "Shek Wu Hui", value: null },
-        { centreId: 4, name: "Tsing Yi", value: null },
-        { centreId: 5, name: "Yuen Long", value: null },
+        { centreId: 1, name: "Hung Hom", value: null, cid: "CLP2101" },
+        { centreId: 0, name: "Shatin", value: null, cid: "CLP3301" },
+        { centreId: 2, name: "Sham Shui Po", value: null, cid: "CLP2201" },
+        { centreId: 5, name: "Shek Wu Hui", value: null, cid: "CLP3101" },
+        { centreId: 3, name: "Tsing Yi", value: null, cid: "CLP3801" },
+        { centreId: 4, name: "Yuen Long", value: null, cid: "CLP3701" },
       ],
       cdetails: [],
       queryData: {},
@@ -172,25 +175,27 @@ export default {
     },
   },
   methods: {
+    loadMore() {
+      if (this.page > Math.ceil(this.count / 15))
+        return this.$message.warning("No more data!");
+      this.page += 1;
+      this.findData();
+    },
     seleteCenter(p) {
-      // this.centreId = p.centreId;
       this.ctypes.centreId = p.centreId;
       this.ctypes.value = p.name;
       this.queryData.centre = p.centreId;
       this.findData();
     },
-    sizeChange(value) {
-      this.page = value;
-      this.findData();
-    },
     //  根据地区查询 充电桩的充电总时长等
     seeDetails(value) {
-      // console.log(value);
+      console.log(value);
       if (!value.value) {
         this.$message.warning("No more data！");
         return;
       }
       this.queryData = value;
+      this.ctypes.value = value.name;
       this.isToDetail = true;
       this.findData();
     },
@@ -201,7 +206,7 @@ export default {
         userId: localStorage.getItem("userId"),
         centre: value.value.centre,
         location: value.value.location,
-        limit: 10,
+        limit: 15,
         page: this.page,
       };
       let loadingInstance = this.$loading({
@@ -216,12 +221,7 @@ export default {
             loadingInstance.close();
           });
           if (res.code == 100) {
-            // this.oldDatas = res.extend.chargerInfoList;
-            this.cdetails = res.extend.chargerInfoList || [];
-            //  JSON.parse(JSON.stringify(res.extend.chargerInfoList)).splice(
-            //   0,
-            //   10
-            // );
+            this.cdetails = [...this.cdetails, ...res.extend.chargerInfoList];
             this.count = res.extend.count;
           }
         })
@@ -251,12 +251,27 @@ export default {
           if (res.code == 100) {
             let values = res.extend;
             this.centerType = [
-              { centreId: 0, name: "Hung Hom", value: values.hh },
-              { centreId: 1, name: "Shatin", value: values.s },
-              { centreId: 2, name: "Sham Shui Po", value: values.ssp },
-              { centreId: 3, name: "Shek Wu Hui", value: values.swh },
-              { centreId: 4, name: "Tsing Yi", value: values.ty },
-              { centreId: 5, name: "Yuen Long", value: values.yl },
+              { centreId: 1, name: "Hung Hom", value: values.hh || null, cid: "CLP2101" },
+              { centreId: 0, name: "Shatin", value: values.s || null, cid: "CLP3301" },
+              {
+                centreId: 2,
+                name: "Sham Shui Po",
+                value: values.ssp || null,
+                cid: "CLP2201",
+              },
+              {
+                centreId: 5,
+                name: "Shek Wu Hui",
+                value: values.swh || null,
+                cid: "CLP3101",
+              },
+              { centreId: 3, name: "Tsing Yi", value: values.ty || null, cid: "CLP3801" },
+              {
+                centreId: 4,
+                name: "Yuen Long",
+                value: values.yl || null,
+                cid: "CLP3701",
+              },
             ];
           }
         })
@@ -272,6 +287,14 @@ export default {
 </script>
 
 <style scoped>
+.urtable {
+  overflow: hidden;
+}
+.loadMore {
+  /* background: red; */
+  max-height: 580px !important;
+  overflow-y: scroll;
+}
 .cneterShow {
   position: absolute;
   right: 60px;

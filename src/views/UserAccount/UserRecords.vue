@@ -13,97 +13,120 @@
           <li><p>E-mail</p></li>
           <li><p>Mobile No.</p></li>
         </ul>
-        <ul class="uldatas w100" v-for="(item, index) in pcUserList" :key="index">
-          <!-- <li><p>ssssss</p></li> -->
-          <li class="flex flex-Updown ssss">
-            <div
-              class="seletes"
+        <div
+          class="loadMore"
+          v-infinite-scroll="loadMore"
+          infinite-scroll-immediate="false"
+        >
+          <ul class="uldatas w100" v-for="(item, index) in pcUserList" :key="index">
+            <!-- <li><p>ssssss</p></li> -->
+            <li class="flex flex-Updown ssss">
+              <div class="seletes" @click="seleteUID(item)">
+                <img
+                  v-if="uid != item.id"
+                  class="childAll"
+                  src="../../assets/index/useraccount/03.png"
+                  alt=""
+                />
+                <img
+                  v-else
+                  class="childAll"
+                  src="../../assets/index/useraccount/04.png"
+                  alt=""
+                />
+              </div>
+              <p>
+                <input type="text" :disabled="uid !== item.id" v-model="item.userId" />
+              </p>
+            </li>
+            <li>
+              <p>
+                <input type="text" :disabled="uid !== item.id" v-model="item.staffId" />
+              </p>
+            </li>
+            <li>
+              <p><input type="text" :disabled="uid !== item.id" v-model="item.name" /></p>
+            </li>
+            <li
               @click="
-                (uinfo = uid === item.id ? {} : item),
-                  (uid = uid === item.id ? '' : item.id)
+                isUserType = uid !== item.id ? '' : isUserType === item.id ? '' : item.id
               "
             >
+              <p>{{ item.userType | utype }}</p>
               <img
-                v-if="uid != item.id"
-                class="childAll"
-                src="../../assets/index/useraccount/03.png"
+                class="seleters imgSelete"
+                :style="{
+                  transform: `rotate(${isUserType === item.id ? '180' : '0'}deg)`,
+                }"
+                src="../../assets/index/setting/10.png"
                 alt=""
               />
+              <div
+                class="sleterMain"
+                :style="{ height: isUserType === item.id ? '200px' : '0px' }"
+              >
+                <div
+                  class="button seleter_item"
+                  v-for="(p, i) in $store.state.userTypes"
+                  :key="i"
+                  @click="item.userType = p.userType"
+                >
+                  {{ p.value }}
+                </div>
+              </div>
+            </li>
+            <li
+              @click="
+                isCenterType =
+                  uid !== item.id ? '' : isCenterType === item.id ? '' : item.id
+              "
+            >
+              <p>{{ item.centreId | ctype }}</p>
               <img
-                v-else
-                class="childAll"
-                src="../../assets/index/useraccount/04.png"
+                class="seleters imgSelete"
+                :style="{
+                  transform: `rotate(${isCenterType === item.id ? '180' : '0'}deg)`,
+                }"
+                src="../../assets/index/setting/10.png"
                 alt=""
               />
-            </div>
-            <p><input type="text" v-model="item.userId" /></p>
-          </li>
-          <li>
-            <p><input type="text" v-model="item.staffId" /></p>
-          </li>
-          <li>
-            <p><input type="text" v-model="item.name" /></p>
-          </li>
-          <li @click="isUserType = isUserType === item.id ? '' : item.id">
-            <p>{{ item.userType | utype }}</p>
-            <img
-              class="seleters imgSelete"
-              :style="{
-                transform: `rotate(${isUserType === item.id ? '180' : '0'}deg)`,
-              }"
-              src="../../assets/index/setting/10.png"
-              alt=""
-            />
-            <div
-              class="sleterMain"
-              :style="{ height: isUserType === item.id ? '200px' : '0px' }"
-            >
               <div
-                class="button seleter_item"
-                v-for="(p, i) in $store.state.userTypes"
-                :key="i"
-                @click="item.userType = p.userType"
+                class="sleterMain"
+                :style="{ height: isCenterType === item.id ? '200px' : '0px' }"
               >
-                {{ p.value }}
+                <div
+                  class="button seleter_item"
+                  v-for="(p, i) in $store.state.centerType"
+                  :key="i"
+                  @click="item.centreId = p.centreId"
+                >
+                  {{ p.value }}
+                </div>
               </div>
-            </div>
-          </li>
-          <li @click="isCenterType = isCenterType === item.id ? '' : item.id">
-            <p>{{ item.centreId | ctype }}</p>
-            <img
-              class="seleters imgSelete"
-              :style="{
-                transform: `rotate(${isCenterType === item.id ? '180' : '0'}deg)`,
-              }"
-              src="../../assets/index/setting/10.png"
-              alt=""
-            />
-            <div
-              class="sleterMain"
-              :style="{ height: isCenterType === item.id ? '200px' : '0px' }"
-            >
-              <div
-                class="button seleter_item"
-                v-for="(p, i) in $store.state.centerType"
-                :key="i"
-                @click="item.centreId = p.centreId"
-              >
-                {{ p.value }}
-              </div>
-            </div>
-          </li>
-          <li>
-            <p><input type="text" v-model="item.department" /></p>
-          </li>
-          <li>
-            <p><input type="text" v-model="item.email" /></p>
-          </li>
-          <li>
-            <p><input type="text" v-model="item.phone" /></p>
-          </li>
-        </ul>
+            </li>
+            <li>
+              <p>
+                <input
+                  type="text"
+                  :disabled="uid !== item.id"
+                  v-model="item.department"
+                />
+              </p>
+            </li>
+            <li>
+              <p>
+                <input type="text" :disabled="uid !== item.id" v-model="item.email" />
+              </p>
+            </li>
+            <li>
+              <p>
+                <input type="text" :disabled="uid !== item.id" v-model="item.phone" />
+              </p>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="pagination">
+      <!-- <div class="pagination">
         <el-pagination
           @current-change="sizeChange"
           background
@@ -113,7 +136,7 @@
           :page-size="9"
         >
         </el-pagination>
-      </div>
+      </div> -->
     </div>
     <div class="flex flex-center">
       <div class="button UpdateCancel" style="margin-right: 144px" @click="editUser">
@@ -147,27 +170,50 @@ export default {
   },
   filters: {},
   methods: {
-    sizeChange(value) {
-      this.page = value;
+    seleteUID(value) {
+      this.uinfo = this.uid === value.id ? {} : value;
+      this.uid = this.uid === value.id ? "" : value.id;
+    },
+    //
+    loadMore() {
+      if (this.page > Math.ceil(this.count / 15))
+        return this.$message.warning("No more data!");
+      this.page += 1;
       this.getUserList();
     },
     // 修改用户
     editUser() {
       if (!this.uid) return this.$message.warning("Please select user");
       let uinfo = this.uinfo;
+      console.log(uinfo)
       delete uinfo["choose"];
       delete uinfo["users"];
-      delete uinfo["centrs"];
+      // delete uinfo["centrs"];
       delete uinfo["createTime"];
       let uinfos = { userIds: uinfo.id, ...uinfo };
       delete uinfos["id"];
-      // console.log(uinfos);
-      CDSaveOrUpdEntity(uinfos).then((res) => {
-        // console.log(res);
-        if(res.code==100){
-          this.$message.success("Modify the success！");
-        }
+      console.log(uinfos);
+      let loadingInstance = this.$loading({
+        text: "Loading...",
+        background: "rgba(0,0,0,.5)",
       });
+      CDSaveOrUpdEntity(uinfos)
+        .then((res) => {
+          // console.log(res);
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+          if (res.code == 100) {
+            this.$message.success("Modify the success！");
+          }
+        })
+        .catch((err) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+        });
     },
     // 删除用户
     deleUser() {
@@ -183,6 +229,7 @@ export default {
         })
           .then((res) => {
             // console.log("删除用户", res);
+
             if (res.code == 100) {
               this.getUserList();
               this.$message.success("Delete the success");
@@ -198,7 +245,7 @@ export default {
       let data = {
         userIds: localStorage.getItem("userId"), //this.$store.state.userId,
         page: this.page,
-        limit: 9,
+        limit: 15,
       };
       let loadingInstance = this.$loading({
         text: "Loading...",
@@ -206,7 +253,7 @@ export default {
       });
       pcUserFindByAll(data)
         .then((res) => {
-          // console.log("获取用户列表", res);
+          console.log("获取用户列表", res);
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
@@ -217,7 +264,7 @@ export default {
               item.users = utype(item.userType);
               item.choose = false;
             });
-            this.pcUserList = JSON.parse(JSON.stringify(res.extend.pcUserList));
+            this.pcUserList = [...this.pcUserList, ...res.extend.pcUserList];
             this.count = res.extend.count;
           }
         })
@@ -233,6 +280,14 @@ export default {
 </script>
 
 <style scoped>
+.urtable {
+  overflow: hidden;
+}
+.loadMore {
+  /* background: #ff000040; */
+  height: 580px;
+  overflow-y: scroll;
+}
 li > p > input {
   color: #63d1ff;
 }
@@ -245,9 +300,13 @@ li > p > input {
 .userselete {
   width: 100%;
 }
-.seletes {
-  width: 25px;
-  height: 25px;
+.seletes > img {
+  position: static;
+  width: 25px !important;
+  height: 25px !important;
+}
+li P {
+  font-size: 14px;
 }
 .overRights {
   height: 747px;

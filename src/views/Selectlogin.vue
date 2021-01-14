@@ -9,9 +9,10 @@
         </div>
       </div>
       <div class="overRight">
+        <p class="toAdmin button" @click="toAdmin">Admin Login</p>
         <p class="ortoptit">Charger Network</p>
         <div class="sixLogin">
-          <img src="../assets/index/0005.png" class="childAll" alt="" />
+          <img src="../assets/index/0004.png" class="childAll" alt="" />
           <div class="childAll stronghold">
             <div
               @mouseover="showEwm(1)"
@@ -52,7 +53,7 @@
                     : ''
                   : '',
               ]"
-              @click="tologin(5)"
+              @click="tologin('CLP3101')"
             ></div>
             <div
               @mouseover="showEwm(1)"
@@ -93,7 +94,7 @@
                     : ''
                   : '',
               ]"
-              @click="tologin(4)"
+              @click="tologin('CLP3701')"
             ></div>
             <div
               @mouseover="showEwm(1)"
@@ -134,7 +135,7 @@
                     : ''
                   : '',
               ]"
-              @click="tologin(3)"
+              @click="tologin('CLP3801')"
             ></div>
             <div
               @mouseover="showEwm(1)"
@@ -175,7 +176,7 @@
                     : ''
                   : '',
               ]"
-              @click="tologin(2)"
+              @click="tologin('CLP2201')"
             ></div>
             <div
               @mouseover="showEwm(1)"
@@ -216,7 +217,7 @@
                     : ''
                   : '',
               ]"
-              @click="tologin(1)"
+              @click="tologin('CLP2101')"
             ></div>
             <div
               @mouseover="showEwm(1)"
@@ -253,7 +254,7 @@
                     : ''
                   : '',
               ]"
-              @click="tologin(0)"
+              @click="tologin('CLP3301')"
             ></div>
           </div>
         </div>
@@ -311,7 +312,16 @@ export default {
       //   this.isShowSixItems = false;
       // }
     },
+    toAdmin() {
+      window.location.href = "https://www.clplms.com/pc";
+    },
     tologin(value) {
+      let obj = {
+        cid: value,
+        location: "",
+        cno: "",
+      };
+      this.$store.commit("setLoginInfos", obj);
       this.$router.push("login");
     },
   },
@@ -319,6 +329,18 @@ export default {
 </script>
 
 <style scoped>
+.toAdmin {
+  padding: 10px 20px;
+  color: #ffffff;
+  font-size: 20px;
+  position: absolute;
+  right: 40px;
+  top: 40px;
+  background: rgba(33, 69, 177, 0.7);
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 1px 1px 2px #ffffff60;
+}
 .overRight {
   position: relative;
 }
@@ -331,11 +353,11 @@ export default {
   /* height: 220px; */
   border-radius: 10px;
   transition: all 0.2s linear;
-  padding: 15px 30px;
+  padding: 10px 20px 20px;
 }
 .sixItem {
   /* width: 308px; */
-  margin: 15px auto;
+  margin: 10px auto 0;
   /* margin: 0 auto; */
   /* margin-bottom: 10px; */
 }
@@ -350,34 +372,34 @@ export default {
 }
 .sixItem span {
   color: #fff;
-  font-size: 22px;
-  letter-spacing: 2px;
+  font-size: 20px;
+  /* letter-spacing: 2px; */
 }
 .ortoptit {
   margin-top: 5px;
 }
 .sh6 {
-  top: 65px;
+  top: 60px;
   left: 774px;
 }
 .sh5 {
-  top: 340px;
+  top: 305px;
   left: 583px;
 }
 .sh4 {
-  top: 225px;
+  top: 200px;
   left: 495px;
 }
 .sh3 {
-  top: 220px;
+  top: 200px;
   left: 295px;
 }
 .sh2 {
-  top: 130px;
+  top: 120px;
   left: 90px;
 }
 .sh1 {
-  top: 60px;
+  top: 50px;
   left: 375px;
 }
 .greens {
@@ -435,8 +457,8 @@ export default {
   position: relative;
   z-index: 9999;
   width: 73%;
-  height: 480px;
-  margin-left: 13.5%;
+  height: 600px;
+  margin-left: 20.5%;
   margin-top: 100px;
 }
 </style>

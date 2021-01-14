@@ -18,15 +18,16 @@
       </div>
     </div>
     <div class="indexRight">
-      <img class="childAll pa" :src="middleBg" v-show="!showLoading" alt="">
+      <img class="childAll pa" :src="middleBg" v-show="!showLoading" alt="" />
       <img src="../assets/icon.png" class="plogo" alt="" />
       <div class="childAll allNavs">
-        <div class="flex flex-center nav1 w100 navItems">
+        <div class="flex nav1 w100 navItems flex-Updown-between">
           <div :class="['navs-item']" @click="routerPush('overview')">
             <img :class="['navsimg', 'bs']" src="../assets/index/01.png" alt="" />
             <p>Overview</p>
           </div>
-          <div class="navs-item" @click="routerPush('CentreInformation')">
+          <div  class="navs-item" v-if="roleKey.viewGeneralData == 1"></div>
+          <div v-else class="navs-item" @click="routerPush('CentreInformation')">
             <img
               :class="['navsimg', loginType == 1 ? '' : 'bs']"
               src="../assets/index/03.png"
@@ -35,8 +36,13 @@
             <p>Centre Information</p>
           </div>
         </div>
-        <div class="flex flex-center nav2 w100 navItems">
-          <div class="navs-item" @click="routerPush('ChargerControl')">
+        
+        <div  class="flex flex-Updown-between nav2 w100 navItems">
+          <div
+          class="navs-item"
+            v-if="roleKey.controlOtherChargers == 1 && roleKey.controlOwnCharger == 1"
+          ></div>
+          <div v-else class="navs-item" @click="routerPush('ChargerControl')">
             <img
               :class="['navsimg', loginType != '1' ? 'bs' : '']"
               src="../assets/index/02.png"
@@ -44,7 +50,8 @@
             />
             <p>Charger Control</p>
           </div>
-          <div class="navs-item" @click="routerPush('UserAccount')">
+          <div class="navs-item" v-if="roleKey.createAccount == 1"></div>
+          <div v-else class="navs-item" @click="routerPush('UserAccount')">
             <img
               :class="['navsimg', loginType != '1' ? 'bs' : '']"
               src="../assets/index/04.png"
@@ -54,7 +61,8 @@
           </div>
         </div>
         <div class="flex flex-center nav3 w100 navItems">
-          <div class="navs-item" @click="routerPush('DataReport')">
+          <div  class="navs-item" v-if="roleKey.dataReport == 1"></div>
+          <div v-else class="navs-item" @click="routerPush('DataReport')">
             <img
               :class="['navsimg', loginType != '1' ? 'bs' : '']"
               src="../assets/index/05.png"
@@ -62,14 +70,14 @@
             />
             <p>Data Report</p>
           </div>
-          <div class="navs-item" @click="routerPush('setting')">
+          <!-- <div class="navs-item"  @click="routerPush('setting')">
             <img
               :class="['navsimg', loginType != '1' ? 'bs' : '']"
               src="../assets/index/06.png"
               alt=""
             />
             <p>System Settings</p>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -92,11 +100,14 @@ export default {
         { key: "Mobile：", name: "" },
       ],
       loginType: "",
-      middleBg:require  ("../assets/index/middlebg.png"),
-      showLoading:true
+      middleBg: require("../assets/index/middlebg.png"),
+      showLoading: true,
+      roleKey: {},
     };
   },
   created() {
+    this.roleKey = JSON.parse(localStorage.getItem("roleKey"));
+    // console.log(this.roleKey);
     this.loginType = localStorage.getItem("loginType");
     this.getUserInfo();
   },
@@ -116,7 +127,7 @@ export default {
         // 以服务的方式调用的 Loading 需要异步关闭
         loadingInstance.close();
       });
-      this.showLoading  = false
+      this.showLoading = false;
     };
   },
   methods: {
@@ -160,16 +171,20 @@ export default {
   position: relative;
   z-index: 99999;
 }
-.nav3 .navs-item:nth-child(2) {
+/* .nav3{
+  padding: 0 ;
+} */
+/* .nav3 .navs-item:nth-child(2) {
   margin-left: 266px;
-}
+} */
 .nav2 {
   margin-top: 20px;
+  /* padding: 0  */
 }
-.nav2 .navs-item:nth-child(2) {
+/* .nav2 .navs-item:nth-child(2) {
   margin-left: 750px;
-}
-.allNavs{
+} */
+.allNavs {
   position: absolute;
   top: 0;
   left: 0;
@@ -183,10 +198,11 @@ export default {
 }
 .nav1 {
   margin-top: 100px;
+  padding: 0 380px 0 600px !important;
 }
-.nav1 .navs-item:nth-child(2) {
+/* .nav1 .navs-item:nth-child(2) {
   margin-left: 550px;
-}
+} */
 .navs-item {
   text-align: center;
 }
@@ -214,7 +230,7 @@ export default {
   left: 32px;
   z-index: 10;
 }
-.pa{
+.pa {
   position: absolute;
   z-index: 0;
 }

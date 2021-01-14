@@ -48,7 +48,12 @@ export default new Vuex.Store({
             // startDate: "",
             // endDate: ""
         },
-        centers: []
+        centers: [],
+        loginInfos: {
+            cid: "",
+            location: '',
+            cno: ''
+        }
     },
     mutations: {
         changeShowBottom(state, value) {
@@ -72,6 +77,9 @@ export default new Vuex.Store({
         getChargerInfoData(state, value) {
             state.chargerInfoData = value;
         },
+        setLoginInfos(state, value) {
+            state.loginInfos = value;
+        }
     },
     actions: {
 

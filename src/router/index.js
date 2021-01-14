@@ -23,7 +23,7 @@ const routes = [{
         {
             path: 'login',
             name: 'login',
-            meta: { keepAlive: true },
+            // meta: { keepAlive: true },
             // route level code-splitting
             // this generates a separate chunk (about.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
@@ -94,7 +94,7 @@ const routes = [{
             name: 'UserAccount',
             component: () =>
                 import ( /* webpackChunkName: "about" */ '../views/UserAccount.vue'),
-            redirect: { name: 'Creatusertype' }, // 跳转到下一级第一个
+            redirect: { name: 'Createuser' }, // 跳转到下一级第一个
             children: [{
                     path: 'Createuser',
                     name: 'Createuser',

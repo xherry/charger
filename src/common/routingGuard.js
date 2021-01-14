@@ -12,7 +12,7 @@ router.beforeEach((to, from, next) => {
         store.commit('changeShowBottom', true)
     }
     let roleKey = JSON.parse(localStorage.getItem("roleKey"));
-    // 
+    // console.log(roleKey)
     if (to.name === 'login') {
         localStorage.setItem('loginType', '0');
     }

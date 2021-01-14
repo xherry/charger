@@ -51,8 +51,16 @@
                 </p>
               </li>
               <li @click="isShowSlete2 = isShowSlete2 === index ? '' : index">
-                <p v-if="item.chargerType != null">{{ item.chargerType }}</p>
-                <img
+                <p>
+                  <!-- {{ item.chargerType }} -->
+                  <input
+                    type="text"
+                    :disabled="isUpdate1 != index"
+                    v-model="item.chargerType"
+                    v-if="item.chargerType != null"
+                  />
+                </p>
+                <!-- <img
                   class="seleters"
                   :style="{
                     transform: `rotate(${isShowSlete2 === index ? '180' : '0'}deg)`,
@@ -63,7 +71,7 @@
                 <div
                   class="sleterMain"
                   :style="{ height: isShowSlete2 === index ? '120px' : '0px' }"
-                ></div>
+                ></div> -->
               </li>
             </ul>
           </template>
@@ -104,6 +112,7 @@
                     :disabled="isUpdate2 != index"
                     type="text"
                     v-model="item.preflx"
+                    v-if="item.preflx"
                   />
                 </p>
               </li>
@@ -113,6 +122,7 @@
                     :disabled="isUpdate2 != index"
                     type="text"
                     v-model="item.numberStarting"
+                    v-if="item.numberStarting"
                   />
                 </p>
               </li>
@@ -122,6 +132,7 @@
                     :disabled="isUpdate2 != index"
                     type="text"
                     v-model="item.preview"
+                    v-if="item.preview"
                   />
                 </p>
               </li>

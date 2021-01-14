@@ -22,10 +22,10 @@
           </div>
         </div>
       </div>
-      <div class="ct-item flex flex-Updown-between">
+      <!-- <div class="ct-item flex flex-Updown-between">
         <span>Location</span>
         <input type="text" v-model="Location" @blur="getValue" placeholder="Location " />
-      </div>
+      </div> -->
     </div>
     <div class="overRights">
       <p class="ortoptit">Detailed Centre Information</p>
@@ -80,32 +80,38 @@
         </ul>
         <!-- v-if="chargerInfoList.length != 0" -->
         <div v-if="chargerInfoList.length != 0">
-          <ul class="uldatas w100" v-for="(item, index) in chargerInfoList" :key="index">
-            <li>
-              <p>{{ item.chargerno | valNO }}</p>
-            </li>
-            <li>
-              <p>{{ item.status | valNO }}</p>
-            </li>
-            <li>
-              <p>{{ item.chargertype | valNO }}</p>
-            </li>
-            <li>
-              <p>{{ item.vehicleno | valNO }}</p>
-            </li>
-            <li>
-              <p>{{ item.chargingtime | value2 }}</p>
-            </li>
-            <li>
-              <p>{{ item.chargingenergy | value2 }}</p>
-            </li>
-            <li>
-              <p>{{ item.chargingvoltage | valNO }}</p>
-            </li>
-            <li>
-              <p>{{ item.chargingcurrent | value2 }}</p>
-            </li>
-          </ul>
+          <div class="loadMore" v-infinite-scroll="loadMore">
+            <ul
+              class="uldatas w100"
+              v-for="(item, index) in chargerInfoList"
+              :key="index"
+            >
+              <li>
+                <p>{{ item.chargerno | valNO }}</p>
+              </li>
+              <li>
+                <p>{{ item.status | valNO }}</p>
+              </li>
+              <li>
+                <p>{{ item.chargertype | valNO }}</p>
+              </li>
+              <li>
+                <p>{{ item.vehicleno | valNO }}</p>
+              </li>
+              <li>
+                <p>{{ item.chargingtime | value2 }}</p>
+              </li>
+              <li>
+                <p>{{ item.chargingenergy | value2 }}</p>
+              </li>
+              <li>
+                <p>{{ item.chargingvoltage | val3 }}</p>
+              </li>
+              <li>
+                <p>{{ item.chargingcurrent | value2 }}</p>
+              </li>
+            </ul>
+          </div>
         </div>
         <div v-else>
           <ul class="uldatas w100">
@@ -114,7 +120,7 @@
         </div>
       </div>
     </div>
-    <div class="pagination">
+    <!-- <div class="pagination">
       <el-pagination
         @current-change="sizeChange"
         background
@@ -124,7 +130,7 @@
         hide-on-single-page
       >
       </el-pagination>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -142,14 +148,6 @@ export default {
         centreId: "",
         value: "",
       },
-      centerType: [
-        { centreId: 0, value: "Shatin Centre" },
-        { centreId: 1, value: "Hung HoM HQ" },
-        { centreId: 2, value: "Sham Shui Po Centre" },
-        { centreId: 3, value: "Tsing Yi Centre" },
-        { centreId: 4, value: "Yuen Long Centre" },
-        { centreId: 5, value: "Shek Wu Hui Centre" },
-      ],
       page: 1,
       count: 0,
       chargerNo: 1,
@@ -158,9 +156,31 @@ export default {
   },
   created() {},
   mounted() {
+    if (this.$route.query.cid) {
+      this.ctypes.value = this.$store.state.centerType.filter(
+        (item) => item.cid == this.$route.query.cid
+      )[0].value;
+      this.ctypes.centreId = this.$route.query.cid;
+    }
     this.getCCECDetail();
   },
+  filters: {
+    val3(val) {
+      if (val) {
+        let vz = val.split("Φ");
+        return vz[0] +'Φ'+parseFloat(vz[1]).toFixed(2);
+      } else {
+        return "";
+      }
+    },
+  },
   methods: {
+    loadMore() {
+      if (this.page > Math.ceil(this.count / 10))
+        return this.$message.warning("No more data!");
+      this.page += 1;
+      this.getCCECDetail();
+    },
     // 排序
     sorting(type) {
       if (type == 1) {
@@ -169,17 +189,17 @@ export default {
       if (type == 2) {
         this.status = this.status === 1 ? 2 : 1;
       }
-      this.getCCECDetail()
+      this.getCCECDetail();
     },
     getValue() {
       this.page = 1;
       this.getCCECDetail();
     },
     //
-    sizeChange(value) {
-      this.page = value;
-      this.getCCECDetail();
-    },
+    // sizeChange(value) {
+    //   this.page = value;
+    //   this.getCCECDetail();
+    // },
     //
     seleteCenter(values) {
       this.ctypes = {
@@ -204,6 +224,7 @@ export default {
         userId: localStorage.getItem("userId"),
         chargerNo: this.chargerNo,
         status: this.status,
+        orderByChargerNo: 6,
         ...datas,
       };
       let loadingInstance = this.$loading({
@@ -212,13 +233,16 @@ export default {
       });
       findByDetails(data)
         .then((res) => {
-          // console.log("查询充电桩的实时数据", res);
+          console.log("查询充电桩的实时数据", res);
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
           });
           if (res.code == 100) {
-            this.chargerInfoList = res.extend.chargerInfoList;
+            this.chargerInfoList = [
+              ...this.chargerInfoList,
+              ...res.extend.chargerInfoList,
+            ];
             this.count = res.extend.count;
           }
         })
@@ -234,6 +258,14 @@ export default {
 </script>
 
 <style scoped>
+.urtable {
+  overflow: hidden;
+}
+.loadMore {
+  /* background: red; */
+  height: 550px;
+  overflow-y: scroll;
+}
 /* .sorting{
   width: 100%;
 } */

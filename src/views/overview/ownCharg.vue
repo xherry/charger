@@ -14,7 +14,7 @@
         <div class="seleterBody" :style="{ height: isShowSlete ? '200px' : '0px' }">
           <div
             class="button seleter_item"
-            v-for="(item, index) in $store.state.centerType"
+            v-for="(item, index) in centerType"
             :key="index"
             @click="seleteCenter(item)"
           >
@@ -74,7 +74,7 @@
         <div class="cartword">
           <p class="diaName">Charging Voltage（V）</p>
           <p class="diaValue">
-            {{ chargerInfo.chargingvoltage  }}
+            {{ chargerInfo.chargingvoltage }}
             {{ chargerInfo.chargingvoltage ? "V" : "" }}
           </p>
         </div>
@@ -83,7 +83,8 @@
         <div class="cartword">
           <p class="diaName">Battery Capacity（%）</p>
           <p class="diaValue">
-            {{ chargerInfo.batterycapacity | value2 }} {{ chargerInfo.batterycapacity ? "%" : "" }}
+            {{ chargerInfo.batterycapacity | value2 }}
+            {{ chargerInfo.batterycapacity ? "%" : "" }}
           </p>
         </div>
       </div>
@@ -125,14 +126,7 @@ export default {
         centreId: "",
         value: "",
       },
-      centerType: [
-        { centreId: 0, value: "Shatin Centre" },
-        { centreId: 1, value: "Hung Hom HQ" },
-        { centreId: 2, value: "Sham Shui Po Centre" },
-        { centreId: 3, value: "Tsing Yi Centre" },
-        { centreId: 4, value: "Yuen Long Centre" },
-        { centreId: 5, value: "Shek Wu Hui Centre" },
-      ],
+      centerType: [],
       navList: [
         {
           name: "Location",
@@ -151,21 +145,36 @@ export default {
         },
       ],
       chargerInfo: {},
-      centers:[]
+      centers: [],
     };
   },
-  async created(){
+  props: {
+    loginInfos: {
+      type: Object,
+      default: {},
+    },
+  },
+  async created() {
+    this.centerType = this.$store.state.centerType;
+    // if()
   },
   mounted() {
     // this.getIndividualCharger();
+    if (Object.keys(this.loginInfos).length != 0) {
+      this.ctypes.value = this.$store.state.centerType.filter((item) => item.cid === this.loginInfos.cid)[0].value;
+      this.ctypes.centreId = this.loginInfos.cid;
+      this.navList[0].value = this.loginInfos.location;
+      this.navList[1].value = this.loginInfos.cno;
+      this.getIndividualCharger();
+    }
   },
   methods: {
     // getValue
     getValue() {
       // let navList = this.navList;
-      if(this.navList[2].value === ""){
+      if (this.navList[2].value === "") {
         try {
-          if (this.ctypes.centreId==='') throw "Please select center";
+          if (this.ctypes.centreId === "") throw "Please select center";
           if (this.navList[0].value === "") throw "The Location cannot be empty";
           if (this.navList[1].value === "") throw "The Charger NO. cannot be left blank";
           // if (this.navList[2].value === "") throw "The Vehicle No. cannot be empty";
@@ -183,10 +192,10 @@ export default {
     getIndividualCharger() {
       let data = {
         userId: localStorage.getItem("userId"),
-        centre: this.ctypes.centreId,
-        location: this.navList[0].value,
-        chargerNo: this.navList[1].value,
-        vehicleNo: this.ctypes.centreId&&this.navList[0].value&&this.navList[1].value?"null":this.navList[2].value,
+        centre: this.navList[2].value ? "" : this.ctypes.centreId,
+        location: this.navList[2].value ? "" : this.navList[0].value,
+        chargerNo: this.navList[2].value ? "" : this.navList[1].value,
+        vehicleNo: this.navList[2].value ? this.navList[2].value : "null",
       };
       let loadingInstance = this.$loading({
         text: "Loading...",
@@ -194,7 +203,7 @@ export default {
       });
       findBIC(data)
         .then((res) => {
-          // console.log("根据条件查询充电状态", res);
+          console.log("根据条件查询充电状态", res);
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
