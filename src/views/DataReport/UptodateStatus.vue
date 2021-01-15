@@ -90,7 +90,7 @@
           </ul>
           <!--  -->
           <div v-if="cdetails.length != 0">
-            <div class="loadMore" v-infinite-scroll="loadMore">
+            <div class="loadMore box" v-infinite-scroll="loadMore">
               <div class="udetails">
                 <ul
                   class="ustablemain"

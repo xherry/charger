@@ -68,7 +68,7 @@
                       : ''
                     : '',
                 ]"
-                @click="tologin('CLP3101')"
+                @click="tologin('CLP3101', sixDatas.swh)"
               ></div>
               <div
                 @mouseover="showEwm(1)"
@@ -109,7 +109,7 @@
                       : ''
                     : '',
                 ]"
-                @click="tologin('CLP3701')"
+                @click="tologin('CLP3701', sixDatas.yl)"
               ></div>
               <div
                 @mouseover="showEwm(1)"
@@ -150,7 +150,7 @@
                       : ''
                     : '',
                 ]"
-                @click="tologin('CLP3801')"
+                @click="tologin('CLP3801', sixDatas.ty)"
               ></div>
               <div
                 @mouseover="showEwm(1)"
@@ -191,7 +191,7 @@
                       : ''
                     : '',
                 ]"
-                @click="tologin('CLP2201')"
+                @click="tologin('CLP2201', sixDatas.ssp)"
               ></div>
               <div
                 @mouseover="showEwm(1)"
@@ -232,7 +232,7 @@
                       : ''
                     : '',
                 ]"
-                @click="tologin('CLP2101')"
+                @click="tologin('CLP2101', sixDatas.hh)"
               ></div>
               <div
                 @mouseover="showEwm(1)"
@@ -269,7 +269,7 @@
                       : ''
                     : '',
                 ]"
-                @click="tologin('CLP3301')"
+                @click="tologin('CLP3301', sixDatas.s)"
               ></div>
             </div>
           </div>
@@ -366,12 +366,16 @@ export default {
     // console.log(this.sixDatas);
   },
   methods: {
-    tologin(value) {
+    tologin(value, data) {
+      if (!data) {
+        this.$message.warning("Temporarily no data！");
+        return;
+      }
       // this.$router.push("login");
       let roleKey = JSON.parse(localStorage.getItem("roleKey"));
       if (roleKey.controlOtherChargers == 1 && roleKey.controlOwnCharger == 1) {
-        this.$message.warning("暂无权限！");
-        this.$store.commit("changeShowBottom", false);
+        this.$message.warning("No permissions！");
+        this.$store.commit("changeShowBottom", true);
         return;
       }
       this.$router.push({ path: "CentreInformation/Detailed", query: { cid: value } });

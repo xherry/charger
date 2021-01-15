@@ -203,7 +203,7 @@
             <!-- -->
             <div v-if="chargerInfoList.length != 0">
               <!-- , updateId === index ? 'bshow' : '' -->
-              <div class="loadMore" v-infinite-scroll="loadMore">
+              <div class="loadMore box" v-infinite-scroll="loadMore">
                 <ul
                   :class="['uldatas', 'w100']"
                   v-for="(item, index) in chargerInfoList"

@@ -30,6 +30,7 @@ export default {
   height: 100%;
   color: #ffffff;
 }
+
 .bgs {
   /* background: url("./assets/index/bg01.png") no-repeat;
   background-size: 100% 100%; */

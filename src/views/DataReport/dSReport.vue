@@ -591,7 +591,7 @@ export default {
         titles = titles.slice(0, -1);
       }
       axios({
-        url: "api/api/chargerInfo/excelExp",
+        url: this.$base_url + "/api/chargerInfo/excelExp",
         method: "POST",
         responseType: "arraybuffer", //一定要设置响应类型，否则页面会是空白pdf
         params: { ...datas, ...data, title: titles },

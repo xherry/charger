@@ -295,6 +295,10 @@ export default {
       sendSms({
         account: this.addUsers.phone,
       }).then((res) => {
+        if (res.code == 100) {
+          this.$message.success("Captcha code has been sent");
+          // this.addUsers.code = res.extend.code;
+        }
         // console.log(res);
       });
     },

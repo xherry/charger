@@ -1,5 +1,6 @@
 <template>
   <div class="indexMain flex">
+    <div class="logout" @click="logout">Log Out</div>
     <div class="indexLeft" @click="$router.push('UserInformation')">
       <div class="userName">
         <p>Welcome</p>
@@ -26,7 +27,7 @@
             <img :class="['navsimg', 'bs']" src="../assets/index/01.png" alt="" />
             <p>Overview</p>
           </div>
-          <div  class="navs-item" v-if="roleKey.viewGeneralData == 1"></div>
+          <div class="navs-item" v-if="roleKey.viewGeneralData == 1"></div>
           <div v-else class="navs-item" @click="routerPush('CentreInformation')">
             <img
               :class="['navsimg', loginType == 1 ? '' : 'bs']"
@@ -36,10 +37,10 @@
             <p>Centre Information</p>
           </div>
         </div>
-        
-        <div  class="flex flex-Updown-between nav2 w100 navItems">
+
+        <div class="flex flex-Updown-between nav2 w100 navItems">
           <div
-          class="navs-item"
+            class="navs-item"
             v-if="roleKey.controlOtherChargers == 1 && roleKey.controlOwnCharger == 1"
           ></div>
           <div v-else class="navs-item" @click="routerPush('ChargerControl')">
@@ -61,7 +62,7 @@
           </div>
         </div>
         <div class="flex flex-center nav3 w100 navItems">
-          <div  class="navs-item" v-if="roleKey.dataReport == 1"></div>
+          <div class="navs-item" v-if="roleKey.dataReport == 1"></div>
           <div v-else class="navs-item" @click="routerPush('DataReport')">
             <img
               :class="['navsimg', loginType != '1' ? 'bs' : '']"
@@ -102,12 +103,22 @@ export default {
       loginType: "",
       middleBg: require("../assets/index/middlebg.png"),
       showLoading: true,
-      roleKey: {},
+      roleKey: {
+        checkStatus: 1,
+        configureSystem: 1,
+        controlOtherChargers: 1,
+        controlOwnCharger: 1,
+        createAccount: 1,
+        dataReport: 1,
+        smsPasscode: 1,
+        userIdPassword: 1,
+        viewGeneralData: 1,
+      },
     };
   },
   created() {
     this.roleKey = JSON.parse(localStorage.getItem("roleKey"));
-    // console.log(this.roleKey);
+    console.log(this.roleKey);
     this.loginType = localStorage.getItem("loginType");
     this.getUserInfo();
   },
@@ -131,6 +142,21 @@ export default {
     };
   },
   methods: {
+    logout() {
+      this.$confirm("Are you sure to log out?", "Prompt", {
+        confirmButtonText: "confirm",
+        cancelButtonText: "cancel",
+        type: "warning",
+      })
+        .then(() => {
+          localStorage.clear();
+          this.$message.success("Log out successfully");
+          this.$router.replace("Selectlogin");
+        })
+        .catch(() => {
+          this.$message("Has been cancelled");
+        });
+    },
     // 路由跳转
     routerPush(routerName) {
       let loginType = this.loginType;
@@ -160,6 +186,26 @@ export default {
 </script>
 
 <style scoped>
+.logout {
+  background: #0b2f5e;
+  font-size: 18px;
+  padding: 8px 15px;
+  border-radius: 5px;
+  box-shadow: 0px 1px 3px 0px #236cca;
+  position: absolute;
+  z-index: 999999999;
+  right: 80px;
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  top: 120px;
+}
+.logout:active {
+  background: #09203f;
+}
 .plogo {
   width: 280px;
   height: 65px;

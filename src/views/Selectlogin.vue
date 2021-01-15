@@ -9,7 +9,7 @@
         </div>
       </div>
       <div class="overRight">
-        <p class="toAdmin button" @click="toAdmin">Admin Login</p>
+       
         <p class="ortoptit">Charger Network</p>
         <div class="sixLogin">
           <img src="../assets/index/0004.png" class="childAll" alt="" />
@@ -53,7 +53,7 @@
                     : ''
                   : '',
               ]"
-              @click="tologin('CLP3101')"
+              @click="tologin('CLP3101', sixDatas.swh)"
             ></div>
             <div
               @mouseover="showEwm(1)"
@@ -94,7 +94,7 @@
                     : ''
                   : '',
               ]"
-              @click="tologin('CLP3701')"
+              @click="tologin('CLP3701', sixDatas.yl)"
             ></div>
             <div
               @mouseover="showEwm(1)"
@@ -135,7 +135,7 @@
                     : ''
                   : '',
               ]"
-              @click="tologin('CLP3801')"
+              @click="tologin('CLP3801', sixDatas.ty)"
             ></div>
             <div
               @mouseover="showEwm(1)"
@@ -176,7 +176,7 @@
                     : ''
                   : '',
               ]"
-              @click="tologin('CLP2201')"
+              @click="tologin('CLP2201', sixDatas.ssp)"
             ></div>
             <div
               @mouseover="showEwm(1)"
@@ -217,7 +217,7 @@
                     : ''
                   : '',
               ]"
-              @click="tologin('CLP2101')"
+              @click="tologin('CLP2101', sixDatas.hh)"
             ></div>
             <div
               @mouseover="showEwm(1)"
@@ -254,7 +254,7 @@
                     : ''
                   : '',
               ]"
-              @click="tologin('CLP3301')"
+              @click="tologin('CLP3301', sixDatas.s)"
             ></div>
           </div>
         </div>
@@ -312,10 +312,11 @@ export default {
       //   this.isShowSixItems = false;
       // }
     },
-    toAdmin() {
-      window.location.href = "https://www.clplms.com/pc";
-    },
-    tologin(value) {
+    tologin(value, data) {
+      if (!data) {
+        this.$message.warning("Temporarily no data！");
+        return;
+      }
       let obj = {
         cid: value,
         location: "",
@@ -329,18 +330,7 @@ export default {
 </script>
 
 <style scoped>
-.toAdmin {
-  padding: 10px 20px;
-  color: #ffffff;
-  font-size: 20px;
-  position: absolute;
-  right: 40px;
-  top: 40px;
-  background: rgba(33, 69, 177, 0.7);
-  border-radius: 6px;
-  cursor: pointer;
-  box-shadow: 1px 1px 2px #ffffff60;
-}
+
 .overRight {
   position: relative;
 }

@@ -5,7 +5,7 @@ module.exports = {
             "vuex": Vuex,
             "axios": axios,
             "echarts": echarts,
-            "element-ui/lib/umd/locale/en": lang,
+            // "element-ui/lib/umd/locale/en": lang,
             // 'element-ui': ElementUI,
             // "jspdf": jspdf
         },

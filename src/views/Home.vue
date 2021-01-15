@@ -50,10 +50,15 @@ export default {
       this.showLoading = false;
     };
   },
+  methods: {
+   
+  },
 };
 </script>
 
 <style scoped>
+
+
 .ps {
   position: absolute;
   z-index: 0;

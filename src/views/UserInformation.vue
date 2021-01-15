@@ -52,15 +52,16 @@
         </div>
       </div>
       <div class="flex flex-Updown">
-        <div class="button operation">Update</div>
-        <div class="button operation">Cancel</div>
+        <div class="button operation" @click="editUser">Update</div>
+        <div class="button operation" @click="cancelEdit">Cancel</div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { utype, ctype } from "../common/common";
+import { utype, ctype, } from "../common/common";
+import { addOrUpdEntity } from "../common/api";
 export default {
   name: "UserInformation",
   data() {
@@ -98,6 +99,37 @@ export default {
           MobilePhoneNo: userInfo.phone,
         };
       }
+    },
+    cancelEdit(){
+
+    },
+      // 修改用户
+    editUser() {
+      let infos = this.$store.state.userInfo;
+      delete infos["createTime"];
+      delete infos["id"];
+      let uinfos = { userIds: localStorage.getItem("userId"), ...infos };
+      let loadingInstance = this.$loading({
+        text: "Loading...",
+        background: "rgba(0,0,0,.5)",
+      });
+      addOrUpdEntity(uinfos)
+        .then((res) => {
+          // console.log(res);
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+          if (res.code == 100) {
+            this.$message.success("Modify the success！");
+          }
+        })
+        .catch((err) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+        });
     },
   },
 };

@@ -22,10 +22,10 @@
           </div>
         </div>
       </div>
-      <!-- <div class="ct-item flex flex-Updown-between">
+      <div class="ct-item flex flex-Updown-between">
         <span>Location</span>
         <input type="text" v-model="Location" @blur="getValue" placeholder="Location " />
-      </div> -->
+      </div>
     </div>
     <div class="overRights">
       <p class="ortoptit">Detailed Centre Information</p>
@@ -80,7 +80,7 @@
         </ul>
         <!-- v-if="chargerInfoList.length != 0" -->
         <div v-if="chargerInfoList.length != 0">
-          <div class="loadMore" v-infinite-scroll="loadMore">
+          <div class="loadMore box" v-infinite-scroll="loadMore">
             <ul
               class="uldatas w100"
               v-for="(item, index) in chargerInfoList"
@@ -150,7 +150,7 @@ export default {
       },
       page: 1,
       count: 0,
-      chargerNo: 1,
+      chargerNo: 6,
       status: 1,
     };
   },
@@ -161,6 +161,7 @@ export default {
         (item) => item.cid == this.$route.query.cid
       )[0].value;
       this.ctypes.centreId = this.$route.query.cid;
+      this.Location = "G";
     }
     this.getCCECDetail();
   },
@@ -168,7 +169,7 @@ export default {
     val3(val) {
       if (val) {
         let vz = val.split("Φ");
-        return vz[0] +'Φ'+parseFloat(vz[1]).toFixed(2);
+        return vz[0] + "Φ" + parseFloat(vz[1]).toFixed(2);
       } else {
         return "";
       }
@@ -224,7 +225,7 @@ export default {
         userId: localStorage.getItem("userId"),
         chargerNo: this.chargerNo,
         status: this.status,
-        orderByChargerNo: 6,
+        // orderByChargerNo: 6,
         ...datas,
       };
       let loadingInstance = this.$loading({

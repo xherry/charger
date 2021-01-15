@@ -1,5 +1,6 @@
 <template>
   <div class="loginBox">
+    <p class="toAdmin button" @click="toAdmin">Admin Login</p>
     <div class="login-img">
       <img class="childAll" :src="loginImg" v-if="!showLoading" alt="" />
       <img src="../../assets/icon.png" class="plogo" alt="" />
@@ -55,7 +56,7 @@
         </div> -->
       </div>
       <div id="inputCode" v-else>
-        <div class="codeValue" style="margin-bottom: 0">
+        <!-- <div class="codeValue" style="margin-bottom: 0">
           <input
             type="text"
             class="childAll"
@@ -63,8 +64,8 @@
             placeholder="Mobile Phone"
           />
           <p class="button" @click="sendCode">send</p>
-        </div>
-        <div class="codeValue" style="margin-top: 10px">
+        </div> -->
+        <div class="codeValue">
           <input
             type="text"
             class="childAll"
@@ -90,8 +91,8 @@ export default {
       isVisitors: true,
       iscode: false,
       userInfo: {
-        userId: "Win", //123456
-        password: "123456", //123456
+        userId: "", //888888
+        password: "", //888888
         chargerNumber: "",
         vehicleNumber: "",
       },
@@ -121,6 +122,9 @@ export default {
     };
   },
   methods: {
+    toAdmin() {
+      window.location.href = "https://www.clplms.com/pc";
+    },
     // 游客登录
     visitorLogin() {
       localStorage.clear();
@@ -132,13 +136,15 @@ export default {
       sendSms({
         account: this.phone,
       }).then((res) => {
-        console.log(res, "发送验证码");
+        // console.log(res, "发送验证码");
+        if (res.code == 100) {
+          // this.phoneCode = res.extend.code;
+          this.$message.success("Captcha code has been sent");
+        }
       });
     },
-    toLogin() {
+    toLogin() {  
       if (this.userInfo.userId === "" && this.userInfo.password === "") {
-        //  chargerNumber: "",
-        // vehicleNumber: "",
         if (this.userInfo.chargerNumber !== "" || this.userInfo.vehicleNumber !== "") {
           this.visitorLogin();
           return;
@@ -150,26 +156,33 @@ export default {
       Login(this.userInfo).then((res) => {
         console.log(res);
         if (res.code == 100) {
-          localStorage.setItem("userId", res.extend.pcUser.id);
-          localStorage.setItem("roleKey", JSON.stringify(res.extend.roleKey));
-          this.$store.commit("getUserInfo", res.extend);
-          //  this.$router.replace("index");
-          // if (res.extend.roleKey.smsPasscode == 0) {
-          //   this.iscode = true;
-          // } else {
-          //   }
-          if(this.userInfo.chargerNumber!==''){
-            let loginInfos = this.$store.state.loginInfos;
-            loginInfos.cno = this.userInfo.chargerNumber;
-            loginInfos.location = "G";
-            this.$router.replace({name:"overview",query:{navSeleted:2,loginInfos}});
-          }else{
-            this.$router.replace("index")
+          if (res.extend.smsCode) {
+            this.phone = res.extend.phone;
+            this.sendCode();
+            this.iscode = true;
+          } else {
+            localStorage.setItem("userId", res.extend.pcUser.id);
+            localStorage.setItem("roleKey", JSON.stringify(res.extend.roleKey));
+            this.$store.commit("getUserInfo", res.extend);
+            if (this.userInfo.chargerNumber !== "") {
+              let loginInfos = this.$store.state.loginInfos;
+              loginInfos.cno = this.userInfo.chargerNumber;
+              loginInfos.location = "G";
+              setTimeout(() => {
+                this.$router.replace({
+                  name: "overview",
+                  query: { navSeleted: 2, loginInfos },
+                });
+              }, 600);
+            } else {
+              setTimeout(() => {
+                this.$router.replace("index");
+              }, 600);
+            }
+            this.$message.success("Log in successfully！");
           }
-          this.$message.success("Log in successfully！");
         }
       });
-      // this.$router.replace("index");
     },
     //
     toIndex() {
@@ -177,15 +190,31 @@ export default {
         this.$message.warning("Please enter the security code");
         return;
       }
-      loginTwo({ ...this.userInfo, phoneCode: this.phoneCode }).then((res) => {
+      loginTwo({ ...this.userInfo, code: this.phoneCode }).then((res) => {
         // console.log(res);
-        // if(res.code==100){
-
-        // }else{
-        //   localStorage.clear();
-        // }
-        this.$router.replace("index");
-        localStorage.setItem("loginType", "0");
+        if (res.code == 100) {
+          localStorage.setItem("userId", res.extend.pcUser.id);
+          localStorage.setItem("roleKey", JSON.stringify(res.extend.roleKey));
+          this.$store.commit("getUserInfo", res.extend);
+          if (this.userInfo.chargerNumber !== "") {
+            let loginInfos = this.$store.state.loginInfos;
+            loginInfos.cno = this.userInfo.chargerNumber;
+            loginInfos.location = "G";
+            setTimeout(() => {
+              this.$router.replace({
+                name: "overview",
+                query: { navSeleted: 2, loginInfos },
+              });
+            }, 600);
+          } else {
+            setTimeout(() => {
+              this.$router.replace("index");
+            }, 600);
+          }
+          this.$message.success("Log in successfully！");
+        } else {
+          this.iscode = false;
+        }
       });
     },
   },
@@ -193,6 +222,18 @@ export default {
 </script>
 
 <style scoped>
+.toAdmin {
+  padding: 10px 20px;
+  color: #ffffff;
+  font-size: 18px;
+  position: absolute;
+  right: 60px;
+  top: 20px;
+  background: rgba(33, 69, 177, 0.7);
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 1px 1px 2px #ffffff60;
+}
 .clg {
   /* width: 100%;
   text-align: right;
@@ -239,7 +280,7 @@ export default {
   position: relative;
   margin: 0 auto;
   margin-bottom: 30px;
-  margin-top: 220px;
+  margin-top: 250px;
 }
 .codeValue input {
   padding: 0 40px;

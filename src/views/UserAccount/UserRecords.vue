@@ -14,7 +14,7 @@
           <li><p>Mobile No.</p></li>
         </ul>
         <div
-          class="loadMore"
+          class="loadMore box"
           v-infinite-scroll="loadMore"
           infinite-scroll-immediate="false"
         >
@@ -81,7 +81,7 @@
                   uid !== item.id ? '' : isCenterType === item.id ? '' : item.id
               "
             >
-              <p>{{ item.centreId | ctype }}</p>
+              <p v-if="item.centreId">{{ item.centreId | ctype }}</p>
               <img
                 class="seleters imgSelete"
                 :style="{
@@ -148,8 +148,14 @@
 </template>
 
 <script>
-import { pcUserFindByAll, delEntity, CDSaveOrUpdEntity } from "../../common/api";
-import { utype, ctype } from "../../common/common";
+import {
+  pcUserFindByAll,
+  delEntity,
+  CDSaveOrUpdEntity,
+  addOrUpdEntity,
+  sendSms,
+} from "../../common/api";
+// import { utype, ctype } from "../../common/common";
 export default {
   name: "UserRecords",
   data() {
@@ -185,19 +191,17 @@ export default {
     editUser() {
       if (!this.uid) return this.$message.warning("Please select user");
       let uinfo = this.uinfo;
-      console.log(uinfo)
+      console.log(uinfo);
       delete uinfo["choose"];
-      delete uinfo["users"];
-      // delete uinfo["centrs"];
       delete uinfo["createTime"];
-      let uinfos = { userIds: uinfo.id, ...uinfo };
+      let uinfos = { userIds: localStorage.getItem("userId"), ...uinfo };
       delete uinfos["id"];
       console.log(uinfos);
       let loadingInstance = this.$loading({
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
-      CDSaveOrUpdEntity(uinfos)
+      addOrUpdEntity(uinfos)
         .then((res) => {
           // console.log(res);
           this.$nextTick(() => {
@@ -260,8 +264,6 @@ export default {
           });
           if (res.code == 100) {
             res.extend.pcUserList.forEach((item) => {
-              item.centrs = ctype(item.centreId);
-              item.users = utype(item.userType);
               item.choose = false;
             });
             this.pcUserList = [...this.pcUserList, ...res.extend.pcUserList];

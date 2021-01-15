@@ -46,7 +46,7 @@
           <li><p>Disable</p></li>
         </ul>
         <div v-if="chargerInfoList.length != 0">
-          <div class="loadMore" v-infinite-scroll="loadMore">
+          <div class="loadMore box" v-infinite-scroll="loadMore">
             <ul
               class="uldatas w100"
               v-for="(item, index) in chargerInfoList"
@@ -118,7 +118,7 @@ export default {
       Location: "",
       count: 0,
       page: 1,
-      chargerNo: 1,
+      chargerNo: 6,
     };
   },
   created() {},
