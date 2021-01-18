@@ -11,12 +11,12 @@ export default new Vuex.Store({
         IsShowBottom: false,
         userId: '',
         userTypes: [
-            { userType: 0, value: "Guest" },
-            { userType: 1, value: "GeneralUser" },
-            { userType: 2, value: "Operator" },
-            { userType: 3, value: "AuperUser" },
-            { userType: 4, value: "Adminstrator" },
-            { userType: 5, value: "SystemManager" },
+            { userType: 0, value: "Guest", level: 6 },
+            { userType: 1, value: "GeneralUser", level: 5 },
+            { userType: 2, value: "Operator", level: 4 },
+            { userType: 3, value: "SuperUser", level: 3 },
+            { userType: 4, value: "Adminstrator", level: 2 },
+            { userType: 5, value: "SystemManager", level: 1 },
         ],
         centerType: [
             { centreId: 0, value: "Shatin Centre", cid: 'CLP3301' },

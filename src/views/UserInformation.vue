@@ -11,7 +11,31 @@
             <p class="uf-tit">User Information</p>
             <div class="flex cdltopitem flex-Updown">
               <span>User Type</span>
-              <input type="text" v-model="infos.UserType" class="blueInput" />
+              <!-- <input type="text" v-model="infos.UserType" class="blueInput" /> -->
+              <p
+                class="flex blueInput flex-Updown-between"
+                @click="isShowSlete1 = !isShowSlete1"
+              >
+                <span>{{ infos.UserType | utype }}</span>
+                <img
+                  :style="{ transform: `rotate(${isShowSlete1 ? '180' : '0'}deg)` }"
+                  src="../assets/index/setting/10.png"
+                  alt=""
+                />
+              </p>
+              <div
+                class="seleterBody"
+                :style="{ height: isShowSlete1 ? '150px' : '0px' }"
+              >
+                <div
+                  class="button seleter_item"
+                  v-for="(item, index) in userTypes"
+                  :key="index"
+                  @click="(infos.UserType = item.userType), (isShowSlete1 = false)"
+                >
+                  {{ item.value }}
+                </div>
+              </div>
             </div>
             <div class="flex cdltopitem flex-Updown">
               <span>User ID</span>
@@ -23,7 +47,31 @@
             </div>
             <div class="flex cdltopitem flex-Updown">
               <span>Centre</span>
-              <input type="text" v-model="infos.Centre" class="blueInput" />
+              <!-- <input type="text" v-model="infos.Centre" class="blueInput" /> -->
+              <p
+                class="flex blueInput flex-Updown-between"
+                @click="isShowSlete2 = !isShowSlete2"
+              >
+                <span>{{ infos.Centre | ctype }}</span>
+                <img
+                  :style="{ transform: `rotate(${isShowSlete2 ? '180' : '0'}deg)` }"
+                  src="../assets/index/setting/10.png"
+                  alt=""
+                />
+              </p>
+              <div
+                class="seleterBody"
+                :style="{ height: isShowSlete2 ? '150px' : '0px' }"
+              >
+                <div
+                  class="button seleter_item"
+                  v-for="(item, index) in this.$store.state.centerType"
+                  :key="index"
+                  @click="(infos.Centre = item.centreId), (isShowSlete2 = false)"
+                >
+                  {{ item.value }}
+                </div>
+              </div>
             </div>
             <div class="flex cdltopitem flex-Updown">
               <span>Department</span>
@@ -60,12 +108,14 @@
 </template>
 
 <script>
-import { utype, ctype, } from "../common/common";
+import { utype, ctype } from "../common/common";
 import { addOrUpdEntity } from "../common/api";
 export default {
   name: "UserInformation",
   data() {
     return {
+      isShowSlete1: false,
+      isShowSlete2: false,
       infos: {
         UserType: "",
         UserID: "",
@@ -77,9 +127,29 @@ export default {
         Email: "",
         MobilePhoneNo: "",
       },
+      userTypes: [
+        { userType: 0, value: "Guest", level: 6 },
+        { userType: 1, value: "GeneralUser", level: 5 },
+        { userType: 2, value: "Operator", level: 4 },
+        { userType: 3, value: "SuperUser", level: 3 },
+        { userType: 4, value: "Adminstrator", level: 2 },
+        { userType: 5, value: "SystemManager", level: 1 },
+      ],
+      ctypes: {
+        centreId: "",
+        value: "",
+      },
+      oldInfos: {},
     };
   },
   created() {
+    let userType = this.$store.state.userInfo.userType;
+    let level = this.$store.state.userTypes.filter((item) => item.userType == userType)[0]
+      .level;
+    console.log(level);
+    this.userTypes = this.userTypes.filter(
+      (item) => level <= item.level && item.level !== 6
+    );
     this.getUserInfo();
   },
   methods: {
@@ -88,22 +158,23 @@ export default {
       let userInfo = this.$store.state.userInfo;
       if (Object.keys(userInfo).length != 0) {
         this.infos = {
-          UserType: utype(userInfo.userType),
+          UserType: userInfo.userType,
           UserID: userInfo.userId,
           Password: userInfo.staffId,
-          Centre: ctype(userInfo.centreId),
+          Centre: userInfo.centreId,
           Department: userInfo.department,
           Name: userInfo.name,
           StaffID: userInfo.staffId,
           Email: userInfo.email,
           MobilePhoneNo: userInfo.phone,
         };
+        this.oldInfos = { ...this.infos };
       }
     },
-    cancelEdit(){
-
+    cancelEdit() {
+      this.infos = { ...this.oldInfos };
     },
-      // 修改用户
+    // 修改用户
     editUser() {
       let infos = this.$store.state.userInfo;
       delete infos["createTime"];
@@ -145,6 +216,14 @@ export default {
 .uf-tit {
   font-size: 18px;
   margin-bottom: 49px;
+}
+.blueInput img {
+  width: 20px;
+  height: 12px;
+  transition: all linear 0.2s;
+}
+.seleterBody {
+  width: 365px;
 }
 .cdltopitem {
   margin-top: 34px;

@@ -22,10 +22,10 @@
           </div>
         </div>
       </div>
-      <div class="ct-item flex flex-Updown-between">
+      <!-- <div class="ct-item flex flex-Updown-between">
         <span>Location</span>
         <input type="text" v-model="Location" @blur="getValue" placeholder="Location " />
-      </div>
+      </div> -->
     </div>
     <div class="overRights">
       <p class="ortoptit">Detailed Centre Information</p>
@@ -212,11 +212,12 @@ export default {
     },
     //
     getCCECDetail() {
+      //  || this.Location !== ""
       let datas =
-        this.ctypes.centreId !== "" || this.Location !== ""
+        this.ctypes.centreId !== ""
           ? {
               centre: this.ctypes.centreId,
-              location: this.Location,
+              // location: this.Location,
             }
           : {};
       let data = {

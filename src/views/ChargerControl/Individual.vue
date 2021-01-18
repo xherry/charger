@@ -216,7 +216,7 @@ export default {
         { centreId: 5, value: "Shek Wu Hui Centre" },
       ],
       navList: [
-        { name: "Location", value: "" },
+        // { name: "Location", value: "" },
         { name: "Charger NO.", value: "" },
         { name: "Vehicle No.", value: "" },
       ],
@@ -235,11 +235,11 @@ export default {
   methods: {
     //
     getValue() {
-      if (this.navList[2].value === "") {
+      if (this.navList[1].value === "") {
         try {
           if (this.ctypes.centreId === "") throw "Please select center";
-          if (this.navList[0].value === "") throw "The Location cannot be empty";
-          if (this.navList[1].value === "") throw "The Charger NO. cannot be left blank";
+          // if (this.navList[0].value === "") throw "The Location cannot be empty";
+          if (this.navList[0].value === "") throw "The Charger NO. cannot be left blank";
           // if (this.navList[2].value === "") throw "The Vehicle No. cannot be empty";
         } catch (err) {
           this.$message.warning(err);
@@ -251,12 +251,12 @@ export default {
     //根据条件查询充电状态
     getIndividualCharger() {
       let data;
-      if (this.navList[2].value === "") {
+      if (this.navList[1].value === "") {
         data = {
           userId: localStorage.getItem("userId"),
           centre: this.ctypes.centreId,
-          location: this.navList[0].value,
-          chargerNo: this.navList[1].value,
+          // location: this.navList[0].value,
+          chargerNo: this.navList[0].value,
           vehicleNo: "null",
         };
       } else {
@@ -265,7 +265,7 @@ export default {
           centre: " ",
           location: " ",
           chargerNo: " ",
-          vehicleNo: this.navList[2].value,
+          vehicleNo: this.navList[1].value,
         };
       }
       findBIC(data).then((res) => {
@@ -283,8 +283,8 @@ export default {
       this.ctypes.value = prop.value;
       this.isShowSlete2 = false;
       try {
-        if (this.navList[0].value === "") throw "The Location cannot be empty";
-        if (this.navList[1].value === "") throw "The Charger NO. cannot be left blank";
+        // if (this.navList[0].value === "") throw "The Location cannot be empty";
+        if (this.navList[0].value === "") throw "The Charger NO. cannot be left blank";
         // if (this.navList[2].value === "") throw "The Vehicle No. cannot be empty";
       } catch (err) {
         this.$message.warning(err);

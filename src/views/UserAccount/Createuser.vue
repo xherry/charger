@@ -201,8 +201,8 @@ export default {
         { userType: 1, value: "GeneralUser", level: 5 },
         { userType: 2, value: "Operator", level: 4 },
         { userType: 3, value: "SuperUser", level: 3 },
-        { userType: 4, value: "Adminstrator", level: 2 },
-        { userType: 5, value: "SystemManager", level: 1 },
+        // { userType: 4, value: "Adminstrator", level: 2 },
+        // { userType: 5, value: "SystemManager", level: 1 },
       ],
       ctypes: {
         centreId: "",
@@ -232,7 +232,10 @@ export default {
   created() {
     this.roleKey = JSON.parse(localStorage.getItem("roleKey"));
     let userType = this.roleKey.userType;
-    let level = this.userTypes.filter((item) => item.userType == userType)[0].level;
+    console.log(userType)
+    let level = this.$store.state.userTypes.filter((item) => item.userType == userType)[0]
+      .level;
+      console.log(level)
     this.userTypes = this.userTypes.filter(
       (item) => level <= item.level && item.level !== 6
     );

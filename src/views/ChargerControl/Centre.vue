@@ -22,10 +22,10 @@
           </div>
         </div>
       </div>
-      <div class="ct-item flex flex-Updown-between">
+      <!-- <div class="ct-item flex flex-Updown-between">
         <span>Location</span>
         <input type="text" v-model="Location" placeholder="Location" />
-      </div>
+      </div> -->
       <div class="Confirm button" @click="demandData">Confirm</div>
     </div>
     <div class="overRights">
@@ -186,11 +186,12 @@ export default {
     },
     // 查询充电桩的实时数据
     getNowData() {
+      //  || this.Location !== ""
       let datas =
-        this.ctypes.centreId !== "" || this.Location !== ""
+        this.ctypes.centreId !== ""
           ? {
               centre: this.ctypes.centreId,
-              location: this.Location,
+              // location: this.Location,
             }
           : {};
       let data = {

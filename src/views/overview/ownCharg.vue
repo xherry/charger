@@ -128,11 +128,11 @@ export default {
       },
       centerType: [],
       navList: [
-        {
-          name: "Location",
-          value: "",
-          id: 1,
-        },
+        // {
+        //   name: "Location",
+        //   value: "",
+        //   id: 1,
+        // },
         {
           name: "Charger NO.",
           value: "",
@@ -172,11 +172,11 @@ export default {
     // getValue
     getValue() {
       // let navList = this.navList;
-      if (this.navList[2].value === "") {
+      if (this.navList[1].value === "") {
         try {
           if (this.ctypes.centreId === "") throw "Please select center";
-          if (this.navList[0].value === "") throw "The Location cannot be empty";
-          if (this.navList[1].value === "") throw "The Charger NO. cannot be left blank";
+          // if (this.navList[0].value === "") throw "The Location cannot be empty";
+          if (this.navList[0].value === "") throw "The Charger NO. cannot be left blank";
           // if (this.navList[2].value === "") throw "The Vehicle No. cannot be empty";
         } catch (err) {
           this.$message.warning(err);
@@ -192,10 +192,10 @@ export default {
     getIndividualCharger() {
       let data = {
         userId: localStorage.getItem("userId"),
-        centre: this.navList[2].value ? "" : this.ctypes.centreId,
-        location: this.navList[2].value ? "" : this.navList[0].value,
-        chargerNo: this.navList[2].value ? "" : this.navList[1].value,
-        vehicleNo: this.navList[2].value ? this.navList[2].value : "null",
+        centre: this.navList[1].value ? "" : this.ctypes.centreId,
+        // location: this.navList[1].value ? "" : this.navList[0].value,
+        chargerNo: this.navList[1].value ? "" : this.navList[0].value,
+        vehicleNo: this.navList[1].value ? this.navList[1].value : "null",
       };
       let loadingInstance = this.$loading({
         text: "Loading...",
@@ -228,8 +228,8 @@ export default {
       this.isShowSlete2 = false;
       try {
         // if (this.ctypes.centreId==='') throw "Please select center";
-        if (this.navList[0].value === "") throw "The Location cannot be empty";
-        if (this.navList[1].value === "") throw "The Charger NO. cannot be left blank";
+        // if (this.navList[0].value === "") throw "The Location cannot be empty";
+        if (this.navList[0].value === "") throw "The Charger NO. cannot be left blank";
         // if (this.navList[2].value === "") throw "The Vehicle No. cannot be empty";
       } catch (err) {
         this.$message.warning(err);

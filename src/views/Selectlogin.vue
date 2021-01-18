@@ -301,6 +301,7 @@ export default {
     };
   },
   async created() {
+    console.log(window.localStorage)
     this.sixDatas = (await findBYN({ userId: 1 })).extend;
     // console.log(this.sixDatas);
   },

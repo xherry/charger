@@ -27,7 +27,7 @@
             {{ navSeleted == 1 ? "Charger Network" : "Individual Charger" }}
           </p>
           <div class="sixLogin">
-            <img src="../assets/index/0004.png" class="childAll" alt="" />
+            <img :src="middleBg" class="childAll" v-show="!showLoading" alt="" />
             <div class="childAll stronghold">
               <div
                 @mouseover="showEwm(1)"
@@ -336,15 +336,12 @@ export default {
       ],
       sixDatas: {},
       loginInfos: {},
+      middleBg: require("../assets/index/0004.png"),
+      showLoading: true,
     };
-  },
-  mounted() {
-    // this.intWord();
-    // this.getSixData();
   },
   async created() {
     this.loginInfos = this.$route.query.loginInfos || {};
-    console.log(this.loginInfos);
     if (this.$route.query.navSeleted) {
       this.navSeleted = this.$route.query.navSeleted;
     }
@@ -364,6 +361,25 @@ export default {
     // 查询六个地区下充电桩等信息
     this.sixDatas = (await findBYN({ userId: 1 })).extend;
     // console.log(this.sixDatas);
+  },
+  mounted() {
+    let bgImg = new Image();
+    bgImg.src = this.middleBg; // 获取背景图片的url
+    let loadingInstance = this.$loading({
+      text: "Loading...",
+      background: "rgba(0,0,0,.5)",
+    });
+    bgImg.onerror = () => {
+      console.log("img onerror");
+    };
+    bgImg.onload = () => {
+      // 等背景图片加载成功后 去除loading
+      this.$nextTick(() => {
+        // 以服务的方式调用的 Loading 需要异步关闭
+        loadingInstance.close();
+      });
+      this.showLoading = false;
+    };
   },
   methods: {
     tologin(value, data) {

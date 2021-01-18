@@ -43,7 +43,7 @@
               <p>Total Charging Time（Hour）</p>
             </li>
             <li>
-              <p>Total No. of Charging（Time）</p>
+              <p>Total No. of Charging（Times）</p>
             </li>
             <li>
               <p>Total Charging Energy（kWh）</p>
@@ -82,7 +82,7 @@
               <p>Total Charging Time（Hour）</p>
             </li>
             <li>
-              <p>Total No. of Charging（Time）</p>
+              <p>Total No. of Charging（Times）</p>
             </li>
             <li>
               <p>Total Charging Energy（kWh）</p>
@@ -101,14 +101,14 @@
                     <p>{{ item.chargerno }}</p>
                   </li>
                   <li>
-                    <p v-if="item.totalchargingtime">{{ item.totalchargingtime }}</p>
+                    <p v-if="item.chargingtime">{{ item.chargingtime }}</p>
                   </li>
                   <li>
                     <p v-if="item.totalofcharging">{{ item.totalofcharging }}</p>
                   </li>
                   <li>
-                    <p v-if="item.totalchargingenergy">
-                      {{ item.totalchargingenergy | val2 }}
+                    <p v-if="item.chargingenergy">
+                      {{ item.chargingenergy | val2 }}
                     </p>
                   </li>
                 </ul>
@@ -205,7 +205,7 @@ export default {
       let data = {
         userId: localStorage.getItem("userId"),
         centre: value.value.centre,
-        location: value.value.location,
+        // location: value.value.location||"G",
         limit: 15,
         page: this.page,
       };
@@ -215,7 +215,7 @@ export default {
       });
       findByDataRecord(data)
         .then((res) => {
-          // console.log(res, " 根据地区查询 充电桩的充电总时长等");
+          console.log(res, " 根据地区查询 充电桩的充电总时长等");
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
@@ -374,6 +374,9 @@ export default {
 .overRights {
   margin-top: 53px;
   height: 810px;
+}
+.ustabletit{
+  padding-right: 12px;
 }
 .ustable {
   width: 1406px;

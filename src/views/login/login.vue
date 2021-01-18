@@ -136,7 +136,7 @@ export default {
       sendSms({
         account: this.phone,
       }).then((res) => {
-        // console.log(res, "发送验证码");
+        console.log(res, "发送验证码");
         if (res.code == 100) {
           // this.phoneCode = res.extend.code;
           this.$message.success("Captcha code has been sent");
@@ -191,7 +191,7 @@ export default {
         return;
       }
       loginTwo({ ...this.userInfo, code: this.phoneCode }).then((res) => {
-        // console.log(res);
+        console.log(res);
         if (res.code == 100) {
           localStorage.setItem("userId", res.extend.pcUser.id);
           localStorage.setItem("roleKey", JSON.stringify(res.extend.roleKey));
