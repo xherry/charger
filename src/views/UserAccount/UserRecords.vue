@@ -16,9 +16,15 @@
         <div
           class="loadMore box"
           v-infinite-scroll="loadMore"
+          ref="loadMore"
           infinite-scroll-immediate="false"
         >
-          <ul class="uldatas w100" v-for="(item, index) in pcUserList" :key="index">
+          <ul
+            class="uldatas w100"
+            :ref="'seleteMan' + index"
+            v-for="(item, index) in pcUserList"
+            :key="index"
+          >
             <!-- <li><p>ssssss</p></li> -->
             <li class="flex flex-Updown ssss">
               <div class="seletes" @click="seleteUID(item)">
@@ -47,11 +53,7 @@
             <li>
               <p><input type="text" :disabled="uid !== item.id" v-model="item.name" /></p>
             </li>
-            <li
-              @click="
-                isUserType = uid !== item.id ? '' : isUserType === item.id ? '' : item.id
-              "
-            >
+            <li @click="setTypes(item.id, 1, index)">
               <p>{{ item.userType | utype }}</p>
               <img
                 class="seleters imgSelete"
@@ -63,6 +65,8 @@
               />
               <div
                 class="sleterMain"
+                :ref="'usleterMain' + index"
+                :id="'usleterMain' + index"
                 :style="{ height: isUserType === item.id ? '200px' : '0px' }"
               >
                 <div
@@ -75,12 +79,7 @@
                 </div>
               </div>
             </li>
-            <li
-              @click="
-                isCenterType =
-                  uid !== item.id ? '' : isCenterType === item.id ? '' : item.id
-              "
-            >
+            <li @click="setTypes(item.id, 2)">
               <p v-if="item.centreId">{{ item.centreId | ctype }}</p>
               <img
                 class="seleters imgSelete"
@@ -92,6 +91,8 @@
               />
               <div
                 class="sleterMain"
+                :ref="'csleterMain' + index"
+                :id="'csleterMain' + index"
                 :style="{ height: isCenterType === item.id ? '200px' : '0px' }"
               >
                 <div
@@ -176,14 +177,21 @@ export default {
   },
   filters: {},
   methods: {
+    setTypes(id, type, index) {
+      if (type == 1) {
+        this.isUserType = this.uid !== id ? "" : this.isUserType === id ? "" : id;
+      }
+      if (type == 2) {
+        this.isCenterType = this.uid !== id ? "" : this.isCenterType === id ? "" : id;
+      }
+    },
     seleteUID(value) {
       this.uinfo = this.uid === value.id ? {} : value;
       this.uid = this.uid === value.id ? "" : value.id;
     },
     //
     loadMore() {
-      if (this.page > Math.ceil(this.count / 15))
-        return this.$message.warning("No more data!");
+      if (this.page >= Math.ceil(this.count / 15)) return;
       this.page += 1;
       this.getUserList();
     },
@@ -194,7 +202,7 @@ export default {
       console.log(uinfo);
       delete uinfo["choose"];
       delete uinfo["createTime"];
-      let uinfos = { userIds: localStorage.getItem("userId"), ...uinfo };
+      let uinfos = { userIds: uinfo.id, ...uinfo };
       delete uinfos["id"];
       console.log(uinfos);
       let loadingInstance = this.$loading({
@@ -210,6 +218,7 @@ export default {
           });
           if (res.code == 100) {
             this.$message.success("Modify the success！");
+            this.uid = "";
           }
         })
         .catch((err) => {
@@ -263,6 +272,9 @@ export default {
             loadingInstance.close();
           });
           if (res.code == 100) {
+            if (res.extend.pcUserList.length == 0) {
+              return this.$message.warning("No more data!");
+            }
             res.extend.pcUserList.forEach((item) => {
               item.choose = false;
             });
@@ -299,6 +311,7 @@ li > p > input {
   /* overflow-x: hidden; */
   /* overflow-y: auto; */
 }
+
 .userselete {
   width: 100%;
 }

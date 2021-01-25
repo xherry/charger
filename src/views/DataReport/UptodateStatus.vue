@@ -35,7 +35,7 @@
       <!-- 数据 -->
       <div v-if="!isToDetail">
         <div class="ustable">
-          <ul class="ustabletit">
+          <ul class="ustabletit" style="padding-right:0">
             <li>
               <p>Centre</p>
             </li>

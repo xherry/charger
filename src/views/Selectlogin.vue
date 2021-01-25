@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="overview flex rz mt50">
+    <div class="overview flex rz mt50" style="width: 100%">
       <div class="overLeft">
         <p>Overview</p>
         <div class="ol-item1 flex flex-Updown-between">
@@ -9,8 +9,8 @@
         </div>
       </div>
       <div class="overRight">
-       
-        <p class="ortoptit">Charger Network</p>
+        <p class="toAdmin button" @click="toAdmin">Admin Login</p>
+        <!-- <p class="ortoptit">Charger Network</p> -->
         <div class="sixLogin">
           <img src="../assets/index/0004.png" class="childAll" alt="" />
           <div class="childAll stronghold">
@@ -284,6 +284,11 @@
             <span>Off-line</span>
           </div>
         </div>
+        <div class="annotation">
+          <span>Tips: Click the center</span>
+          <div></div>
+          <span>to login and view more details</span>
+        </div>
       </div>
     </div>
   </div>
@@ -301,11 +306,13 @@ export default {
     };
   },
   async created() {
-    console.log(window.localStorage)
     this.sixDatas = (await findBYN({ userId: 1 })).extend;
     // console.log(this.sixDatas);
   },
   methods: {
+    toAdmin() {
+      window.location.href = "https://www.clplms.com/pc";
+    },
     showEwm(value) {
       // if (value === 1) {
       //   this.isShowSixItems = true;
@@ -331,14 +338,33 @@ export default {
 </script>
 
 <style scoped>
-
+.overLeft {
+  opacity: 0;
+}
+.overview {
+  /* justify-content: center; */
+}
+.toAdmin {
+  padding: 10px 20px;
+  color: #ffffff;
+  font-size: 18px;
+  position: absolute;
+  right: 60px;
+  top: 50px;
+  background: rgba(33, 69, 177, 0.7);
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 1px 1px 2px #ffffff60;
+}
 .overRight {
   position: relative;
+  background: url("../assets/index/login/07.png") no-repeat;
+  background-size: 100% 100%;
 }
 .sixItemBottom {
   position: absolute;
-  top: 60%;
-  left: 50px;
+  top: 65%;
+  left: -300px;
   /* width: 380px; */
   background: rgba(33, 69, 177, 0.2);
   /* height: 220px; */
@@ -412,10 +438,10 @@ export default {
 .strong {
   width: 25px;
   height: 25px;
-  position: absolute;
   border-radius: 50%;
   box-shadow: 0 0 5px 0 #fff;
   background: #fff;
+  position: absolute;
   z-index: 99;
 }
 @keyframes bb {
@@ -449,7 +475,24 @@ export default {
   z-index: 9999;
   width: 73%;
   height: 600px;
-  margin-left: 20.5%;
+  margin-left: 12.5%;
+  margin-top: 120px;
+}
+.annotation {
+  /* text-align: center; */
   margin-top: 100px;
+  font-size: 20px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.annotation > div {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  box-shadow: 0 0 5px 0 #fff;
+  background: #fff;
+  margin: 0 5px;
 }
 </style>

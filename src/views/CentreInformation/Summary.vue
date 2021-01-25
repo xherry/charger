@@ -20,8 +20,14 @@
         <div class="SummaryTable-right">
           <p class="srtit">Centre</p>
           <ul class="srul-top srul">
-            <li v-for="item in utits" :key="item">
-              <p>{{ item }}</p>
+            <li
+              v-for="item in utits"
+              :class="[seleteUtits === item.value ? 'seleteUtits' : '']"
+              @dblclick="toDetails(item.cid)"
+              :key="item.value"
+              @click="seleteCenters(item.value)"
+            >
+              <p>{{ item.value }}</p>
             </li>
           </ul>
           <ul
@@ -66,13 +72,14 @@ export default {
   data() {
     return {
       utits: [
-        "Hung Hom",
-        "Shatin",
-        "Sham Shui Po",
-        "Shek Wu Hui",
-        "Tsing Yi",
-        "Yuen Long",
+        { centreId: 0, value: "Sha Tin", cid: "CLP3301" },
+        { centreId: 1, value: "Hung Hom", cid: "CLP2101" },
+        { centreId: 2, value: "Sham Shui Po", cid: "CLP2201" },
+        { centreId: 3, value: "Tsing Yi", cid: "CLP3801" },
+        { centreId: 4, value: "Yuen Long", cid: "CLP3701" },
+        { centreId: 5, value: "Shek Wu Hui", cid: "CLP3101" },
       ],
+      seleteUtits: "",
       leftTable1: [
         { name: "Available", value: [] },
         { name: "In Use", value: [] },
@@ -96,6 +103,24 @@ export default {
     this.getSixDatas();
   },
   methods: {
+    toDetails(cid) {
+      this.$router.push({ path: "Detailed", query: { cid: cid } });
+    },
+    seleteCenters(value) {
+      this.seleteUtits = value;
+    },
+    getVal2(val) {
+      if (val) {
+        if (val == 0) {
+          val = 0;
+        } else {
+          val = Number(val).toFixed(2);
+        }
+        return val;
+      } else {
+        return "";
+      }
+    },
     // 获取查询六个地区下充电桩等信息
     getSixDatas() {
       let data = {
@@ -107,7 +132,7 @@ export default {
       });
       findBYN(data)
         .then((res) => {
-          // console.log("获取查询六个地区下充电桩等信息", res);
+          console.log("获取查询六个地区下充电桩等信息", res);
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
@@ -137,22 +162,22 @@ export default {
               item.total ? item.total : " "
             );
             this.leftTable2[0].value = objDatas.map((item) =>
-              item.totalofcharging ? item.totalofcharging : " "
+              this.getVal2(item.totalofcharging)
             );
             this.leftTable2[1].value = objDatas.map((item) =>
-              item.totalchargingtime ? item.totalchargingtime : " "
+              this.getVal2(item.totalchargingtime)
             );
             this.leftTable2[2].value = objDatas.map((item) =>
-              item.totalchargingenergy ? Number(item.totalchargingenergy).toFixed(2) : " "
+              this.getVal2(item.totalchargingenergy)
             );
             this.leftTable2[3].value = objDatas.map((item) =>
-              item.estimatedcarbonsaving ? item.estimatedcarbonsaving : " "
+              this.getVal2(item.estimatedcarbonsaving)
             );
             this.leftTable3[0].value = objDatas.map((item) =>
-              item.averagechargingtime ? item.averagechargingtime : " "
+              this.getVal2(item.averagechargingtime)
             );
             this.leftTable3[1].value = objDatas.map((item) =>
-              item.averagechargingenergy ? item.averagechargingenergy : " "
+              this.getVal2(item.averagechargingenergy)
             );
           }
         })
@@ -168,6 +193,9 @@ export default {
 </script>
 
 <style scoped>
+.seleteUtits {
+  box-shadow: inset 0 0 10px #ffffff;
+}
 .srul-main {
   background: transparent;
   border-top: 1px solid #205cbf;

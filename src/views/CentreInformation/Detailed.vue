@@ -1,6 +1,6 @@
 <template>
   <div class="Detailed">
-    <div class="chargerTop flex flex-center">
+    <div class="chargerTop flex flex-Updown-between">
       <div class="ct-item flex flex-Updown-between" @click="isShowSlete = !isShowSlete">
         <span>Centre</span>
         <div class="seleter flex flex-Updown-between">
@@ -22,6 +22,7 @@
           </div>
         </div>
       </div>
+      <div class="refresh button" @click="refresh">Refresh</div>
       <!-- <div class="ct-item flex flex-Updown-between">
         <span>Location</span>
         <input type="text" v-model="Location" @blur="getValue" placeholder="Location " />
@@ -31,6 +32,7 @@
       <p class="ortoptit">Detailed Centre Information</p>
       <div class="urtable">
         <ul class="ultit">
+          <li><p>Parking No.</p></li>
           <li @click="sorting(1)">
             <div class="flex flex-Updown-between sorting">
               <p>Charger No.</p>
@@ -82,10 +84,19 @@
         <div v-if="chargerInfoList.length != 0">
           <div class="loadMore box" v-infinite-scroll="loadMore">
             <ul
-              class="uldatas w100"
+              :class="[
+                'uldatas',
+                'w100',
+                seleteUtits == item.chargerno ? 'seleteUtits' : '',
+              ]"
               v-for="(item, index) in chargerInfoList"
               :key="index"
+              @dblclick="toDetails(item.centre)"
+              @click="seleteCenters(item.chargerno)"
             >
+             <li>
+                <p>{{ item.parkingspaceNumber | valNO }}</p>
+              </li>
               <li>
                 <p>{{ item.chargerno | valNO }}</p>
               </li>
@@ -145,13 +156,14 @@ export default {
       chargerInfoList: [],
       count: 0,
       ctypes: {
-        centreId: "",
-        value: "",
+        centreId: "CLP2201",
+        value: "Sham Shui Po Centre",
       },
       page: 1,
       count: 0,
-      chargerNo: 6,
-      status: 1,
+      chargerNo: null,
+      status: 6,
+      seleteUtits: "",
     };
   },
   created() {},
@@ -161,7 +173,15 @@ export default {
         (item) => item.cid == this.$route.query.cid
       )[0].value;
       this.ctypes.centreId = this.$route.query.cid;
-      this.Location = "G";
+    } else {
+      this.ctypes = {
+        centreId: this.$store.state.loginInfos.cid,
+        value: this.$store.state.loginInfos.cid
+          ? this.$store.state.centerType.filter(
+              (item) => item.cid == this.$store.state.loginInfos.cid
+            )[0].value
+          : "",
+      };
     }
     this.getCCECDetail();
   },
@@ -176,8 +196,14 @@ export default {
     },
   },
   methods: {
+    toDetails(cid) {
+      this.$router.push({ name: "/ChargerControl/Individual", query: { cid: cid } });
+    },
+    seleteCenters(value) {
+      this.seleteUtits = value;
+    },
     loadMore() {
-      if (this.page > Math.ceil(this.count / 10))
+      if (this.page >= Math.ceil(this.count / 10))
         return this.$message.warning("No more data!");
       this.page += 1;
       this.getCCECDetail();
@@ -190,6 +216,8 @@ export default {
       if (type == 2) {
         this.status = this.status === 1 ? 2 : 1;
       }
+      this.chargerInfoList = [];
+      this.page = 1;
       this.getCCECDetail();
     },
     getValue() {
@@ -207,12 +235,21 @@ export default {
         centreId: values.cid,
         value: values.value,
       };
+      this.chargerInfoList = [];
       this.page = 1;
+      this.getCCECDetail();
+    },
+    refresh() {
+      this.page = 1;
+      this.chargerNo = null;
+      this.chargerInfoList = [];
+      this.status = 6;
       this.getCCECDetail();
     },
     //
     getCCECDetail() {
       //  || this.Location !== ""
+      let chargerNo = this.chargerNo ? { chargerNo: this.chargerNo } : {};
       let datas =
         this.ctypes.centreId !== ""
           ? {
@@ -224,9 +261,8 @@ export default {
         page: this.page,
         limit: 10,
         userId: localStorage.getItem("userId"),
-        chargerNo: this.chargerNo,
         status: this.status,
-        // orderByChargerNo: 6,
+        ...chargerNo,
         ...datas,
       };
       let loadingInstance = this.$loading({
@@ -260,6 +296,9 @@ export default {
 </script>
 
 <style scoped>
+.seleteUtits {
+  box-shadow: inset 0 0 10px #ffffff;
+}
 .urtable {
   overflow: hidden;
 }
@@ -293,8 +332,21 @@ export default {
   overflow-x: hidden;
   overflow-y: auto;
 }
+.ultit {
+  padding-right: 12px;
+}
 .urtable > ul {
   box-sizing: border-box;
+}
+.refresh {
+  width: 100px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 20px;
+  border-radius: 6px;
+  background: #1450b0;
+  text-align: center;
+  /* margin-left: 200px; */
 }
 .overRights {
   height: 714px;
@@ -303,6 +355,7 @@ export default {
 }
 .chargerTop {
   width: 100%;
+  padding: 0 60px 0 150px;
 }
 .seleterBody {
   width: 250px;

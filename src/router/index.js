@@ -32,7 +32,7 @@ const routes = [{
         }, {
             path: 'index',
             name: 'index',
-            meta: { keepAlive: true },
+            // meta: { keepAlive: true },
             component: () =>
                 import ( /* webpackChunkName: "about" */ '../views/index.vue'),
         }, {

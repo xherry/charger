@@ -97,6 +97,15 @@
           </p>
         </div>
       </div>
+      <div class="dialog07">
+        <img src="../../assets/index/says/09.png" alt="" />
+        <div class="cartword">
+          <p class="diaName">Status</p>
+          <p class="diaValue">
+            {{ chargerInfo.status ? chargerInfo.status : "StandBy" }}
+          </p>
+        </div>
+      </div>
       <!-- <div class="buttons7 flex flex-Updown-between">
         <div class="flex flex-Updown">
           <div class="blues button">Enable</div>
@@ -161,7 +170,9 @@ export default {
   mounted() {
     // this.getIndividualCharger();
     if (Object.keys(this.loginInfos).length != 0) {
-      this.ctypes.value = this.$store.state.centerType.filter((item) => item.cid === this.loginInfos.cid)[0].value;
+      this.ctypes.value = this.$store.state.centerType.filter(
+        (item) => item.cid === this.loginInfos.cid
+      )[0].value;
       this.ctypes.centreId = this.loginInfos.cid;
       this.navList[0].value = this.loginInfos.location;
       this.navList[1].value = this.loginInfos.cno;
@@ -242,6 +253,26 @@ export default {
 </script>
 
 <style scoped>
+.dialog07 {
+  width: 335px;
+  height: 143px;
+  position: absolute;
+  left: 50px;
+  top: 200px;
+}
+.dialog07 > img {
+  width: 100%;
+  height: 100%;
+  transform: rotateZ(180deg) rotateX(180deg);
+}
+.dialog07 .cartword {
+  position: absolute;
+  left: 0;  
+  top: 0;
+}
+.dialog07 .cartword .diaValue {
+  margin-top: 15px;
+}
 .p15 {
   padding: 0 15px 0 15px;
 }

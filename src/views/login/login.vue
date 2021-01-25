@@ -14,7 +14,7 @@
             <input
               type="text"
               v-model="userInfo.userId"
-              placeholder="User ID（if any）"
+              placeholder="User ID ( if any )"
             />
           </div>
           <div class="login-input Password">
@@ -22,7 +22,7 @@
             <input
               type="password"
               v-model="userInfo.password"
-              placeholder="Password ( if any )）"
+              placeholder="Password ( if any )"
             />
           </div>
           <div class="login-input Charger" style="margin-bottom: 0px">
@@ -30,7 +30,7 @@
             <input
               type="text"
               v-model="userInfo.chargerNumber"
-              placeholder="Charger Number"
+              placeholder="Charger Number ( eg: SSP-068 )"
             />
           </div>
           <div class="elseor">
@@ -91,8 +91,8 @@ export default {
       isVisitors: true,
       iscode: false,
       userInfo: {
-        userId: "", //888888
-        password: "", //888888
+        userId: "liaojingxing", //888888
+        password: "123456", //888888
         chargerNumber: "",
         vehicleNumber: "",
       },
@@ -143,7 +143,7 @@ export default {
         }
       });
     },
-    toLogin() {  
+    toLogin() {
       if (this.userInfo.userId === "" && this.userInfo.password === "") {
         if (this.userInfo.chargerNumber !== "" || this.userInfo.vehicleNumber !== "") {
           this.visitorLogin();
@@ -164,20 +164,32 @@ export default {
             localStorage.setItem("userId", res.extend.pcUser.id);
             localStorage.setItem("roleKey", JSON.stringify(res.extend.roleKey));
             this.$store.commit("getUserInfo", res.extend);
+            let loadingInstance = this.$loading({
+              text: "Loading...",
+              background: "rgba(0,0,0,.5)",
+            });
             if (this.userInfo.chargerNumber !== "") {
               let loginInfos = this.$store.state.loginInfos;
               loginInfos.cno = this.userInfo.chargerNumber;
               loginInfos.location = "G";
               setTimeout(() => {
+                this.$nextTick(() => {
+                  // 以服务的方式调用的 Loading 需要异步关闭
+                  loadingInstance.close();
+                });
                 this.$router.replace({
                   name: "overview",
                   query: { navSeleted: 2, loginInfos },
                 });
-              }, 600);
+              }, 1000);
             } else {
               setTimeout(() => {
+                this.$nextTick(() => {
+                  // 以服务的方式调用的 Loading 需要异步关闭
+                  loadingInstance.close();
+                });
                 this.$router.replace("index");
-              }, 600);
+              }, 1000);
             }
             this.$message.success("Log in successfully！");
           }
@@ -196,18 +208,30 @@ export default {
           localStorage.setItem("userId", res.extend.pcUser.id);
           localStorage.setItem("roleKey", JSON.stringify(res.extend.roleKey));
           this.$store.commit("getUserInfo", res.extend);
+          let loadingInstance = this.$loading({
+            text: "Loading...",
+            background: "rgba(0,0,0,.5)",
+          });
           if (this.userInfo.chargerNumber !== "") {
             let loginInfos = this.$store.state.loginInfos;
             loginInfos.cno = this.userInfo.chargerNumber;
             loginInfos.location = "G";
             setTimeout(() => {
+              this.$nextTick(() => {
+                // 以服务的方式调用的 Loading 需要异步关闭
+                loadingInstance.close();
+              });
               this.$router.replace({
                 name: "overview",
                 query: { navSeleted: 2, loginInfos },
               });
-            }, 600);
+            }, 1000);
           } else {
             setTimeout(() => {
+              this.$nextTick(() => {
+                // 以服务的方式调用的 Loading 需要异步关闭
+                loadingInstance.close();
+              });
               this.$router.replace("index");
             }, 600);
           }

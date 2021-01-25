@@ -104,33 +104,21 @@
             <!--  @click="isShowSlete3 = !isShowSlete3" -->
             <p class="flex flex-Updown-between">
               <span>{{ roleKey.userType | utype }}</span>
-              <!-- <img
-                :style="{ transform: `rotate(${isShowSlete3 ? '180' : '0'}deg)` }"
-                src="../../assets/index/setting/10.png"
-                alt=""
-              /> -->
             </p>
-            <!-- <div class="seleterBody" :style="{ height: isShowSlete3 ? '200px' : '0px' }">
-              <div
-                class="button seleter_item"
-                v-for="(item, index) in userTypes"
-                :key="index"
-                @click="
-                  (utypes1.userType = item.userType),
-                    (utypes1.value = item.value),
-                    (isShowSlete3 = false)
-                "
-              >
-                {{ item.value }}
-              </div>
-            </div> -->
+          </div>
+          <div class="cdltopitem cdltopitem2 mr40 flex flex-Updown-between">
+            <span >Name</span>
+            <!--  @click="isShowSlete3 = !isShowSlete3" -->
+            <p class="flex flex-Updown-between">
+              <span>{{ $store.state.userInfo.name}}</span>
+            </p>
           </div>
           <p class="createrightbottom">Access Rights:</p>
           <div></div>
-          <div class="cdltopitem2 ctb mr40 flex flex-Updown-between">
+          <div class="cdltopitem2 ctb mt0 mr40 flex flex-Updown-between">
             <span></span>
-            <p class="mr56">Yes</p>
-            <p class="mr86">No</p>
+            <p class="mr56 op0">Yes</p>
+            <p class="mr86 op0">No</p>
           </div>
           <div
             class="cdltopitem2 ctb mr40 flex flex-Updown-between"
@@ -148,7 +136,7 @@
               <img v-else src="../../assets/index/useraccount/03.png" alt="" />
             </div>
             <!-- @click="item.value = item.value == 0 ? 1 : 0" -->
-            <div class="mr86">
+            <div class="mr86 op0">
               <img
                 v-if="item.value == 0"
                 src="../../assets/index/useraccount/03.png"
@@ -366,7 +354,8 @@ export default {
   color: #63d1ff;
   font-size: 24px;
   margin-top: 80px;
-  margin-bottom: 42px;
+  margin-left: 40px;
+  /* margin-bottom: 42px; */
 }
 .createright .cdltopitem2 > span {
   width: 400px;

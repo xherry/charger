@@ -1,7 +1,7 @@
 <template>
   <div class="indexMain flex">
-    <div class="logout" @click="logout">Log Out</div>
-    <div class="indexLeft" @click="$router.push('UserInformation')">
+    <div class="logout" @click="logout">Logout</div>
+    <div class="indexLeft">
       <div class="userName">
         <p>Welcome</p>
         <p>{{ $store.state.userInfo.name ? $store.state.userInfo.name : "" }}</p>
@@ -17,6 +17,7 @@
           <span>{{ item.name }}</span>
         </p>
       </div>
+      <div class="editUser" @click="$router.push('UserInformation')">edit</div>
     </div>
     <div class="indexRight">
       <img class="childAll pa" :src="middleBg" v-show="!showLoading" alt="" />
@@ -150,8 +151,9 @@ export default {
       })
         .then(() => {
           localStorage.clear();
-          this.$message.success("Log out successfully");
+          this.$store.commit("getUserInfo", {});
           this.$router.replace("Selectlogin");
+          this.$message.success("Log out successfully");
         })
         .catch(() => {
           this.$message("Has been cancelled");
@@ -169,12 +171,13 @@ export default {
     //
     getUserInfo() {
       let userInfo = this.$store.state.userInfo;
+      console.log(userInfo);
       if (Object.keys(userInfo).length != 0) {
         this.userInfo = [
           { key: "User Type：", name: utype(userInfo.userType) },
           { key: "User ID：", name: userInfo.userId },
           { key: "Staff ID：", name: userInfo.staffId },
-          { key: "Centre：", name: ctype(userInfo.centreId) },
+          { key: "Centre：", name: userInfo.centreId ? ctype(userInfo.centreId) : "" },
           { key: "Department： ", name: userInfo.department },
           { key: "Email：", name: userInfo.email },
           { key: "Mobile：", name: userInfo.phone },
@@ -187,11 +190,11 @@ export default {
 
 <style scoped>
 .logout {
-  background: #0b2f5e;
+  background: #0b6fa580;
   font-size: 18px;
-  padding: 8px 15px;
+  padding: 8px 20px;
   border-radius: 5px;
-  box-shadow: 0px 1px 3px 0px #236cca;
+  box-shadow: 0.5px 0.5px 2px 0px #fff;
   position: absolute;
   z-index: 999999999;
   right: 80px;
@@ -288,12 +291,13 @@ export default {
   font-size: 16px;
 }
 .userItem > p {
-  margin-bottom: 12px;
+  margin-bottom: 11px;
 }
 .userItem {
   color: #ffffff;
   font-size: 20px;
   margin-left: 15px;
+  /* margin-bottom: 10px; */
 }
 .valueKey {
   color: #28f7ff;
@@ -325,12 +329,28 @@ export default {
   padding: 0 55px;
   box-sizing: border-box;
   border-top: 0.5px solid transparent;
+  position: relative;
+}
+.editUser {
+  /* position: absolute; */
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  font-size: 20px;
+  background: #0b6fa580;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0.5px 0.5px 2px #ffffff;
+}
+.editUser:active{
+   background: #09476980;
 }
 .userName {
   font-size: 32px;
   color: #28f7ff;
-  margin-bottom: 24px;
+  margin-bottom: 10px;
   text-align: center;
-  margin-top: 70px;
+  margin-top: 50px;
 }
 </style>

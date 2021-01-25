@@ -14,14 +14,14 @@
               <!-- <input type="text" v-model="infos.UserType" class="blueInput" /> -->
               <p
                 class="flex blueInput flex-Updown-between"
-                @click="isShowSlete1 = !isShowSlete1"
               >
+                <!-- @click="isShowSlete1 = !isShowSlete1" -->
                 <span>{{ infos.UserType | utype }}</span>
-                <img
+                <!-- <img
                   :style="{ transform: `rotate(${isShowSlete1 ? '180' : '0'}deg)` }"
                   src="../assets/index/setting/10.png"
                   alt=""
-                />
+                /> -->
               </p>
               <div
                 class="seleterBody"

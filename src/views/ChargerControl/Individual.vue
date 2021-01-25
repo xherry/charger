@@ -16,24 +16,42 @@
             class="button seleter_item"
             v-for="(item, index) in $store.state.centerType"
             :key="index"
-            @click="seleteCenter(item)"
+            @click="seleteCenter(item, 1)"
           >
             {{ item.value }}
           </div>
         </div>
       </div>
-      <div
-        class="ct-item flex flex-Updown-between"
-        v-for="(item, index) in navList"
-        :key="index"
-      >
-        <span>{{ item.name }}</span>
+      <div class="ct-item flex flex-Updown-between" @click="seleteCharger">
+        <span>Charger NO.</span>
+        <div class="seleter flex flex-Updown-between p15">
+          <p>{{ chargers.value }}</p>
+          <img
+            :style="{ transform: `rotate(${isShowSlete1 ? '-180' : '0'}deg)` }"
+            src="../../assets/index/says/02.png"
+            alt=""
+          />
+        </div>
+        <div class="seleterBody" :style="{ height: isShowSlete1 ? '200px' : '0px' }">
+          <div
+            class="button seleter_item"
+            v-for="(item, index) in chargers.list"
+            :key="index"
+            @click="seleteCenter(item, 2)"
+          >
+            {{ item }}
+          </div>
+        </div>
+      </div>
+      <div class="or ct-item flex flex-Updown-between"><span>or</span></div>
+      <div class="ct-item flex flex-Updown-between">
+        <span>Vehicle No.</span>
         <div class="seleter flex flex-Updown-between">
           <input
             type="text"
             @blur="getValue"
-            :placeholder="item.name"
-            v-model="item.value"
+            placeholder="Vehicle No."
+            v-model="Vehicle"
           />
         </div>
       </div>
@@ -97,6 +115,15 @@
           </p>
         </div>
       </div>
+      <div class="dialog07">
+        <img src="../../assets/index/says/09.png" alt="" />
+        <div class="cartword">
+          <p class="diaName">Status</p>
+          <p class="diaValue">
+            {{ chargerInfo.status ? chargerInfo.status : "StandBy" }}
+          </p>
+        </div>
+      </div>
       <div class="buttons7 flex flex-Updown-between">
         <div class="flex flex-Updown" v-show="roleKey.controlOtherChargers == 0">
           <div
@@ -134,7 +161,7 @@
             :class="[
               !chargerInfo.status ||
               chargerInfo.status == 'Disconnected' ||
-              chargerInfo.status == 'OffLine' ||
+              chargerInfo.status == 'Offline' ||
               chargerInfo.status != 'InUse' ||
               chargerInfo.status != 'WaitCharging'
                 ? 'garys'
@@ -149,7 +176,7 @@
             :class="[
               !chargerInfo.status ||
               chargerInfo.status == 'Disconnected' ||
-              chargerInfo.status == 'OffLine' ||
+              chargerInfo.status == 'Offline' ||
               chargerInfo.status != 'Charging'
                 ? 'garys'
                 : 'greens',
@@ -166,7 +193,7 @@
             :class="[
               !chargerInfo.status ||
               chargerInfo.status == 'Disconnected' ||
-              chargerInfo.status == 'OffLine' ||
+              chargerInfo.status == 'Offline' ||
               chargerInfo.status != 'Disabled'
                 ? 'garys'
                 : 'blues',
@@ -180,7 +207,7 @@
             :class="[
               !chargerInfo.status ||
               chargerInfo.status == 'Disconnected' ||
-              chargerInfo.status == 'OffLine' ||
+              chargerInfo.status == 'Offline' ||
               chargerInfo.status != 'Disabled'
                 ? 'garys'
                 : 'greens',
@@ -197,14 +224,16 @@
 </template>
 
 <script>
-import { findBIC, controlCharger } from "../../common/api";
+import { findBIC, controlCharger, findByDetails } from "../../common/api";
 export default {
   name: "Individual",
   data() {
     return {
+      isShowSlete1: false,
+      Vehicle: "",
       isShowSlete: false,
       ctypes: {
-        centreId: "0",
+        centreId: "",
         value: "",
       },
       centerType: [
@@ -223,40 +252,45 @@ export default {
       chargerInfo: {},
       roleKey: {},
       centers: [],
+      chargers: {
+        list: [],
+        value: "",
+      },
     };
   },
   async created() {
     // this.centers = await this.$store.dispatch("getCenters");
     this.roleKey = JSON.parse(localStorage.getItem("roleKey"));
   },
+  filters: {},
   mounted() {
     // this.getIndividualCharger();
   },
   methods: {
     //
     getValue() {
-      if (this.navList[1].value === "") {
-        try {
-          if (this.ctypes.centreId === "") throw "Please select center";
-          // if (this.navList[0].value === "") throw "The Location cannot be empty";
-          if (this.navList[0].value === "") throw "The Charger NO. cannot be left blank";
-          // if (this.navList[2].value === "") throw "The Vehicle No. cannot be empty";
-        } catch (err) {
-          this.$message.warning(err);
-          return;
+      this.getIndividualCharger();
+    },
+    seleteCharger() {
+      this.isShowSlete1 = !this.isShowSlete1;
+      if (this.isShowSlete1) {
+        if (this.ctypes.centreId === "") {
+          return this.$message.warning("Please select the center first");
+        }
+        if (this.chargers.list == 0) {
+          return this.$message.warning("No data!");
         }
       }
-      this.getIndividualCharger();
     },
     //根据条件查询充电状态
     getIndividualCharger() {
       let data;
-      if (this.navList[1].value === "") {
+      if (this.Vehicle === "") {
         data = {
           userId: localStorage.getItem("userId"),
           centre: this.ctypes.centreId,
           // location: this.navList[0].value,
-          chargerNo: this.navList[0].value,
+          chargerNo: this.chargers.value,
           vehicleNo: "null",
         };
       } else {
@@ -265,7 +299,7 @@ export default {
           centre: " ",
           location: " ",
           chargerNo: " ",
-          vehicleNo: this.navList[1].value,
+          vehicleNo: this.Vehicle,
         };
       }
       findBIC(data).then((res) => {
@@ -278,19 +312,51 @@ export default {
         }
       });
     },
-    seleteCenter(prop) {
-      this.ctypes.centreId = prop.cid;
-      this.ctypes.value = prop.value;
-      this.isShowSlete2 = false;
-      try {
-        // if (this.navList[0].value === "") throw "The Location cannot be empty";
-        if (this.navList[0].value === "") throw "The Charger NO. cannot be left blank";
-        // if (this.navList[2].value === "") throw "The Vehicle No. cannot be empty";
-      } catch (err) {
-        this.$message.warning(err);
-        return;
+    seleteCenter(prop, type) {
+      if (type == 1) {
+        this.ctypes.centreId = prop.cid;
+        this.ctypes.value = prop.value;
+        this.getNowData(prop.cid);
       }
-      this.getIndividualCharger();
+      if (type == 2) {
+        this.chargers.value = prop;
+        this.getIndividualCharger();
+      }
+    },
+    // 查询充电桩的实时数据
+    getNowData(centreId) {
+      let data = {
+        page: 1,
+        limit: 10,
+        userId: localStorage.getItem("userId"),
+        status: 6,
+        centre: centreId,
+      };
+      let loadingInstance = this.$loading({
+        text: "Loading...",
+        background: "rgba(0,0,0,.5)",
+      });
+      findByDetails(data)
+        .then((res) => {
+          console.log(res, "查询充电桩的实时数据");
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+          if (res.code == 100) {
+            if (res.extend.chargerInfoList.length != 0) {
+              this.chargers.list = res.extend.chargerInfoList.map(
+                (item) => item.chargerno
+              );
+            }
+          }
+        })
+        .catch(() => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+        });
     },
     // 控制设备
     ControlEquipment(type) {
@@ -301,7 +367,7 @@ export default {
       }
       if (
         this.chargerInfo.status == "Disconnected" ||
-        this.chargerInfo.status == "OffLine"
+        this.chargerInfo.status == "Offline"
       ) {
         this.$message.warning("Equipment offline");
         return;
@@ -352,6 +418,11 @@ export default {
 </script>
 
 <style scoped>
+.or > span {
+  color: #fff;
+  font-size: 20px !important;
+  /* margin-right: 10px; */
+}
 .ortoptit {
   margin-top: 5px;
 }
@@ -427,6 +498,7 @@ export default {
 .dialog05 .cartword {
   margin-top: 190px;
 }
+
 .dialog03,
 .dialog02 {
   width: 335px;
@@ -437,10 +509,31 @@ export default {
   background: url("../../assets/index/says/09.png") no-repeat;
   background-size: 100% 100%;
 }
+.dialog07 {
+  width: 335px;
+  height: 143px;
+  position: absolute;
+  left: 50px;
+  top: 200px;
+}
+.dialog07 > img {
+  width: 100%;
+  height: 100%;
+  transform: rotateZ(180deg) rotateX(180deg);
+}
+.dialog07 .cartword {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.dialog07 .cartword .diaValue{
+  margin-top: 15px;
+}
 .dialog03 {
   top: 333px;
   right: 170px;
 }
+
 .dialog02 .cartword,
 .dialog03 .cartword {
   margin-left: 55px;

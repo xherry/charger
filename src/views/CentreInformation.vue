@@ -50,9 +50,19 @@ export default {
       ],
     };
   },
+  watch: {
+    $route() {
+      console.log(this.$route);
+      this.leftNavs.forEach((item) => {
+        if (this.$route.name == item.RouterPush) {
+          this.seletNavIndex = item.id;
+        }
+      });
+    },
+  },
   created() {
     this.leftNavs.forEach((item) => {
-      if(window.location.href.includes(item.RouterPush)){
+      if (window.location.href.includes(item.RouterPush)) {
         this.seletNavIndex = item.id;
       }
     });

@@ -299,6 +299,11 @@
               <span>Off-line</span>
             </div>
           </div>
+          <div class="annotation">
+            <span>Tips: Click the center</span>
+            <div></div>
+            <span>to jump to the Center information page</span>
+          </div>
         </div>
       </div>
     </div>
@@ -360,7 +365,6 @@ export default {
     }
     // 查询六个地区下充电桩等信息
     this.sixDatas = (await findBYN({ userId: 1 })).extend;
-    // console.log(this.sixDatas);
   },
   mounted() {
     let bgImg = new Image();
@@ -408,6 +412,23 @@ export default {
 </script>
 
 <style scoped>
+.annotation {
+  /* text-align: center; */
+  margin-top: 100px;
+  font-size: 20px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.annotation > div {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  box-shadow: 0 0 5px 0 #fff;
+  background: #fff;
+  margin: 0 5px;
+}
 .overRight {
   position: relative;
 }
