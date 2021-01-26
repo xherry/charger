@@ -52,7 +52,6 @@ export default {
   },
   watch: {
     $route() {
-      console.log(this.$route);
       this.leftNavs.forEach((item) => {
         if (this.$route.name == item.RouterPush) {
           this.seletNavIndex = item.id;

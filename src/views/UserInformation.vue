@@ -146,7 +146,6 @@ export default {
     let userType = this.$store.state.userInfo.userType;
     let level = this.$store.state.userTypes.filter((item) => item.userType == userType)[0]
       .level;
-    console.log(level);
     this.userTypes = this.userTypes.filter(
       (item) => level <= item.level && item.level !== 6
     );
@@ -186,7 +185,6 @@ export default {
       });
       addOrUpdEntity(uinfos)
         .then((res) => {
-          // console.log(res);
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();

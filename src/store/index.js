@@ -52,10 +52,15 @@ export default new Vuex.Store({
         loginInfos: {
             cid: "",
             location: '',
-            cno: ''
-        }
+            cno: '',
+            vno: ""
+        },
+        isBack: 0
     },
     mutations: {
+        isBacked(state, value) {
+            state.isBack = value
+        },
         changeShowBottom(state, value) {
             state.IsShowBottom = value
         },

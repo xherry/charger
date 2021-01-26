@@ -91,8 +91,8 @@ export default {
       isVisitors: true,
       iscode: false,
       userInfo: {
-        userId: "liaojingxing", //888888
-        password: "123456", //888888
+        userId: "", //liaojingxing
+        password: "", //123456
         chargerNumber: "",
         vehicleNumber: "",
       },
@@ -130,13 +130,18 @@ export default {
       localStorage.clear();
       localStorage.setItem("loginType", "1");
       this.$store.commit("getUserInfo", { pcUser: {} });
+      let loginInfos = this.$store.state.loginInfos;
+      loginInfos.cno = this.userInfo.chargerNumber;
+      loginInfos.location = "G";
+      loginInfos.vno = this.userInfo.vehicleNumber;
+      this.$store.commit("setLoginInfos", loginInfos);
       this.$router.push("overview");
     },
     sendCode() {
       sendSms({
         account: this.phone,
       }).then((res) => {
-        console.log(res, "发送验证码");
+        // console.log(res, "发送验证码");
         if (res.code == 100) {
           // this.phoneCode = res.extend.code;
           this.$message.success("Captcha code has been sent");
@@ -154,7 +159,7 @@ export default {
         }
       }
       Login(this.userInfo).then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.code == 100) {
           if (res.extend.smsCode) {
             this.phone = res.extend.phone;
@@ -168,10 +173,12 @@ export default {
               text: "Loading...",
               background: "rgba(0,0,0,.5)",
             });
-            if (this.userInfo.chargerNumber !== "") {
+            if (this.userInfo.chargerNumber !== ""||this.userInfo.vehicleNumber !== "") {
               let loginInfos = this.$store.state.loginInfos;
               loginInfos.cno = this.userInfo.chargerNumber;
               loginInfos.location = "G";
+              loginInfos.vno = this.userInfo.vehicleNumber;
+              this.$store.commit("setLoginInfos", loginInfos);
               setTimeout(() => {
                 this.$nextTick(() => {
                   // 以服务的方式调用的 Loading 需要异步关闭
@@ -203,7 +210,7 @@ export default {
         return;
       }
       loginTwo({ ...this.userInfo, code: this.phoneCode }).then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.code == 100) {
           localStorage.setItem("userId", res.extend.pcUser.id);
           localStorage.setItem("roleKey", JSON.stringify(res.extend.roleKey));
@@ -212,10 +219,12 @@ export default {
             text: "Loading...",
             background: "rgba(0,0,0,.5)",
           });
-          if (this.userInfo.chargerNumber !== "") {
+          if (this.userInfo.chargerNumber !== ""||this.userInfo.vehicleNumber !== "") {
             let loginInfos = this.$store.state.loginInfos;
             loginInfos.cno = this.userInfo.chargerNumber;
             loginInfos.location = "G";
+            loginInfos.vno = this.userInfo.vehicleNumber;
+            this.$store.commit("setLoginInfos", loginInfos);
             setTimeout(() => {
               this.$nextTick(() => {
                 // 以服务的方式调用的 Loading 需要异步关闭

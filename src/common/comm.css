@@ -263,8 +263,37 @@ input {
     height: 200px;
 }
 
+.mt0 {
+    margin-top: 0;
+}
+
 .p12 {
     padding-right: 12px;
+}
+
+.h200 {
+    height: 200px;
+    overflow-y: scroll;
+}
+
+.mr100 {
+    margin-right: 100px !important;
+}
+
+.ml100 {
+    margin-left: 100px !important;
+}
+
+.ml200 {
+    margin-left: 200px !important;
+}
+
+.ml300 {
+    margin-left: 300px !important;
+}
+
+.h0 {
+    height: 0px;
 }
 
 .mt0 {

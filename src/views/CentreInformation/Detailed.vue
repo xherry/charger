@@ -91,10 +91,10 @@
               ]"
               v-for="(item, index) in chargerInfoList"
               :key="index"
-              @dblclick="toDetails(item.centre)"
+              @dblclick="toDetails(item.centre, item.chargerno)"
               @click="seleteCenters(item.chargerno)"
             >
-             <li>
+              <li>
                 <p>{{ item.parkingspaceNumber | valNO }}</p>
               </li>
               <li>
@@ -196,8 +196,9 @@ export default {
     },
   },
   methods: {
-    toDetails(cid) {
-      this.$router.push({ name: "/ChargerControl/Individual", query: { cid: cid } });
+    toDetails(cid, chargerno) {
+      this.$store.commit("isBacked", 1);
+      this.$router.push({ path: "/ChargerControl", query: { cid, chargerno } });
     },
     seleteCenters(value) {
       this.seleteUtits = value;
@@ -271,7 +272,7 @@ export default {
       });
       findByDetails(data)
         .then((res) => {
-          console.log("查询充电桩的实时数据", res);
+          // console.log("查询充电桩的实时数据", res);
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();

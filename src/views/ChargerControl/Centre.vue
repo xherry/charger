@@ -354,7 +354,7 @@ export default {
       });
       findByDetails(data)
         .then((res) => {
-          console.log(res, "查询充电桩的实时数据");
+          // console.log(res, "查询充电桩的实时数据");
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();

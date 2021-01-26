@@ -362,9 +362,10 @@ export default {
           id: 2,
         },
       ];
+    }else{
+      // 查询六个地区下充电桩等信息
+      this.sixDatas = (await findBYN({ userId: localStorage.getItem('userId') })).extend;
     }
-    // 查询六个地区下充电桩等信息
-    this.sixDatas = (await findBYN({ userId: 1 })).extend;
   },
   mounted() {
     let bgImg = new Image();
@@ -398,6 +399,7 @@ export default {
         this.$store.commit("changeShowBottom", true);
         return;
       }
+      this.$store.commit("isBacked");
       this.$router.push({ path: "CentreInformation/Detailed", query: { cid: value } });
     },
     showEwm() {

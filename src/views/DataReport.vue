@@ -40,11 +40,11 @@ export default {
           id: 2,
           RouterPush: "dateStatus",
         },
-        {
-          name: "Data Serach（Report）",
-          id: 3,
-          RouterPush: "dSReport",
-        },
+        // {
+        //   name: "Data Serach（Report）",
+        //   id: 3,
+        //   RouterPush: "dSReport",
+        // },
       ],
     };
   },

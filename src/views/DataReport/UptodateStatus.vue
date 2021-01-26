@@ -57,10 +57,10 @@
               <p>{{ item.name }}</p>
             </li>
             <li>
-              <p v-if="item.value">{{ item.value.totalchargingtime }}</p>
+              <p v-if="item.value">{{ item.value.totalchargingtime| val2 }}</p>
             </li>
             <li>
-              <p v-if="item.value">{{ item.value.totalofcharging }}</p>
+              <p v-if="item.value">{{ item.value.totalofcharging| val2 }}</p>
             </li>
             <li>
               <p v-if="item.value">{{ item.value.totalchargingenergy | val2 }}</p>
@@ -189,7 +189,7 @@ export default {
     },
     //  根据地区查询 充电桩的充电总时长等
     seeDetails(value) {
-      console.log(value);
+      // console.log(value);
       if (!value.value) {
         this.$message.warning("No more data！");
         return;
@@ -215,7 +215,7 @@ export default {
       });
       findByDataRecord(data)
         .then((res) => {
-          console.log(res, " 根据地区查询 充电桩的充电总时长等");
+          // console.log(res, " 根据地区查询 充电桩的充电总时长等");
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();

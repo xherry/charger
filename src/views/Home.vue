@@ -10,12 +10,20 @@
       <router-view />
     </div>
     <div
-      v-if="$store.state.IsShowBottom"
-      @click="$router.push('/index')"
+      v-if="$store.state.IsShowBottom && $store.state.isBack == 0"
+      @click="$router.replace('/index')"
       class="ol-item2 flex flex-Updown-between ol-bottom"
     >
       <span>Back to Main</span>
       <img class="mr27" src="../assets/index/overview/05.png" alt="" />
+    </div>
+    <div
+      v-if="$store.state.IsShowBottom && $store.state.isBack != 0"
+      @click="goback"
+      class="ol-item2 flex flex-center back ol-bottom"
+    >
+      <span>Back</span>
+      <!-- <img class="mr27" src="../assets/index/overview/05.png" alt="" /> -->
     </div>
   </div>
 </template>
@@ -51,14 +59,15 @@ export default {
     };
   },
   methods: {
-   
+    goback() {
+      this.$store.commit("isBacked", 0);
+      this.$router.go(-1);
+    },
   },
 };
 </script>
 
 <style scoped>
-
-
 .ps {
   position: absolute;
   z-index: 0;
@@ -98,5 +107,8 @@ export default {
   width: 27px;
   height: 31px;
   margin-left: 21px;
+}
+.back>span{
+  font-size: 28px;
 }
 </style>

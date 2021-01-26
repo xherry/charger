@@ -16,8 +16,8 @@
         <div
           class="loadMore box"
           v-infinite-scroll="loadMore"
-          ref="loadMore"
           infinite-scroll-immediate="false"
+          ref="loadMore"
         >
           <ul
             class="uldatas w100"
@@ -42,20 +42,20 @@
                 />
               </div>
               <p>
-                <input type="text" :disabled="uid !== item.id" v-model="item.userId" />
+                <input type="text" :disabled="true" v-model="item.userId" />
               </p>
             </li>
             <li>
               <p>
-                <input type="text" :disabled="uid !== item.id" v-model="item.staffId" />
+                <input type="text" :disabled="true" v-model="item.staffId" />
               </p>
             </li>
             <li>
-              <p><input type="text" :disabled="uid !== item.id" v-model="item.name" /></p>
+              <p><input type="text" :disabled="true" v-model="item.name" /></p>
             </li>
             <li @click="setTypes(item.id, 1, index)">
               <p>{{ item.userType | utype }}</p>
-              <img
+              <!-- <img
                 class="seleters imgSelete"
                 :style="{
                   transform: `rotate(${isUserType === item.id ? '180' : '0'}deg)`,
@@ -77,11 +77,11 @@
                 >
                   {{ p.value }}
                 </div>
-              </div>
+              </div> -->
             </li>
             <li @click="setTypes(item.id, 2)">
               <p v-if="item.centreId">{{ item.centreId | ctype }}</p>
-              <img
+              <!-- <img
                 class="seleters imgSelete"
                 :style="{
                   transform: `rotate(${isCenterType === item.id ? '180' : '0'}deg)`,
@@ -103,25 +103,25 @@
                 >
                   {{ p.value }}
                 </div>
-              </div>
+              </div> -->
             </li>
             <li>
               <p>
                 <input
                   type="text"
-                  :disabled="uid !== item.id"
+                  :disabled="true"
                   v-model="item.department"
                 />
               </p>
             </li>
             <li>
               <p>
-                <input type="text" :disabled="uid !== item.id" v-model="item.email" />
+                <input type="text" :disabled="true" v-model="item.email" />
               </p>
             </li>
             <li>
               <p>
-                <input type="text" :disabled="uid !== item.id" v-model="item.phone" />
+                <input type="text" :disabled="true" v-model="item.phone" />
               </p>
             </li>
           </ul>
@@ -140,9 +140,9 @@
       </div> -->
     </div>
     <div class="flex flex-center">
-      <div class="button UpdateCancel" style="margin-right: 144px" @click="editUser">
+      <!-- <div class="button UpdateCancel" style="margin-right: 144px" @click="editUser">
         Edit
-      </div>
+      </div> -->
       <div class="button UpdateCancel" @click="deleUser">Delete</div>
     </div>
   </div>
@@ -199,12 +199,10 @@ export default {
     editUser() {
       if (!this.uid) return this.$message.warning("Please select user");
       let uinfo = this.uinfo;
-      console.log(uinfo);
       delete uinfo["choose"];
       delete uinfo["createTime"];
       let uinfos = { userIds: uinfo.id, ...uinfo };
       delete uinfos["id"];
-      console.log(uinfos);
       let loadingInstance = this.$loading({
         text: "Loading...",
         background: "rgba(0,0,0,.5)",

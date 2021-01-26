@@ -88,12 +88,12 @@
             <span>Mobile Phone No.</span>
             <input type="text" v-model="addUsers.phone" placeholder="Phone " />
           </div>
-          <div class="cdltopitem flex flex-Updown-between">
+          <!-- <div class="cdltopitem flex flex-Updown-between">
             <span>Verification code</span>
             <div class="getcode">
               <input type="text" v-model="addUsers.code" placeholder="code" />
             </div>
-          </div>
+          </div> -->
         </div>
         <div class="createright">
           <p class="js">
@@ -107,10 +107,10 @@
             </p>
           </div>
           <div class="cdltopitem cdltopitem2 mr40 flex flex-Updown-between">
-            <span >Name</span>
+            <span>Name</span>
             <!--  @click="isShowSlete3 = !isShowSlete3" -->
             <p class="flex flex-Updown-between">
-              <span>{{ $store.state.userInfo.name}}</span>
+              <span>{{ $store.state.userInfo.name }}</span>
             </p>
           </div>
           <p class="createrightbottom">Access Rights:</p>
@@ -148,20 +148,23 @@
         </div>
       </div>
     </div>
-    <div class="flex flex-center">
-      <div class="button UpdateCancel" style="margin-right: 144px" @click="createUser">
-        Creat new user
-      </div>
+    <div class="flex flex-center" >
+      <div class="button UpdateCancel" @click="cleaUser">Clear</div>
       <div
-        class="button UpdateCancels flex flex-center"
+        class="UpdateCancels flex flex-center op0"
         style="margin-right: 144px; font-size: 14px"
       >
-        <div @click="sendCode">
+        <!-- <div @click="sendCode">
           <div>Send confirmation</div>
           <div>SMS to notice user</div>
-        </div>
+        </div> -->
       </div>
-      <div class="button UpdateCancel" @click="cleaUser">Clear</div>
+      <div class="thebb" style="margin-right: 144px;">
+        <div class="button UpdateCancel"  @click="createUser">
+          Confirm
+        </div>
+        <p>Created and send the SMS to notice the new user</p>
+      </div>
     </div>
   </div>
 </template>
@@ -220,10 +223,10 @@ export default {
   created() {
     this.roleKey = JSON.parse(localStorage.getItem("roleKey"));
     let userType = this.roleKey.userType;
-    console.log(userType)
+    // console.log(userType);
     let level = this.$store.state.userTypes.filter((item) => item.userType == userType)[0]
       .level;
-      console.log(level)
+    // console.log(level);
     this.userTypes = this.userTypes.filter(
       (item) => level <= item.level && item.level !== 6
     );
@@ -248,56 +251,65 @@ export default {
     },
     //
     createUser() {
-      let data = {
-        ...this.addUsers,
-        userType: this.utypes.userType,
-        centreId: this.ctypes.centreId,
-      };
-      let loadingInstance = this.$loading({
-        text: "Loading...",
-        background: "rgba(0,0,0,.5)",
-      });
-      addOrUpdEntity(data)
-        .then((res) => {
-          this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
-          });
-          // console.log(res);
-          if (res.code == 100) {
-            this.$message.success("Creating a successful");
-            for (let key in this.addUsers) {
-              this.addUsers[key] = "";
-            }
-            this.utypes.userType = "";
-            this.utypes.value = "";
-            this.ctypes.centreId = "";
-            this.ctypes.value = "";
-          }
-        })
-        .catch((err) => {
-          this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
-          });
-        });
-    },
-    sendCode() {
       sendSms({
         account: this.addUsers.phone,
       }).then((res) => {
         if (res.code == 100) {
           this.$message.success("Captcha code has been sent");
-          // this.addUsers.code = res.extend.code;
+          this.addUsers.code = res.extend.code;
+          let data = {
+            ...this.addUsers,
+            userType: this.utypes.userType,
+            centreId: this.ctypes.centreId,
+          };
+          let loadingInstance = this.$loading({
+            text: "Loading...",
+            background: "rgba(0,0,0,.5)",
+          });
+          addOrUpdEntity(data)
+            .then((res) => {
+              this.$nextTick(() => {
+                // 以服务的方式调用的 Loading 需要异步关闭
+                loadingInstance.close();
+              });
+              // console.log(res);
+              if (res.code == 100) {
+                this.$message.success("Creating a successful");
+                for (let key in this.addUsers) {
+                  this.addUsers[key] = "";
+                }
+                this.utypes.userType = "";
+                this.utypes.value = "";
+                this.ctypes.centreId = "";
+                this.ctypes.value = "";
+              }
+            })
+            .catch((err) => {
+              this.$nextTick(() => {
+                // 以服务的方式调用的 Loading 需要异步关闭
+                loadingInstance.close();
+              });
+            });
         }
-        // console.log(res);
       });
     },
+    sendCode() {},
   },
 };
 </script>
 
 <style scoped>
+.thebb{
+  position: relative;
+}
+.thebb>p{
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 14px;
+}
 .getcode input {
   padding-right: 80px !important;
 }
@@ -407,7 +419,7 @@ export default {
   margin-right: 16px;
 }
 .cdltopitem {
-  margin-top: 16px;
+  margin-top: 20px;
   position: relative;
 }
 .citem {

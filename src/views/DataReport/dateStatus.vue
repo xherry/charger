@@ -1,276 +1,296 @@
 <template>
   <div class="dateStatus">
-    <div class="overRights">
-      <p class="ortoptit">Search Conditions</p>
-      <div class="dsmain flex">
-        <div class="dsmaincontent">
-          <!-- v-for="(item, index) in searchs"
-            :key="index" -->
+    <div class="chargerTop flex flex-Updown-between">
+      <div class="w100 flex flex-Updown">
+        <div
+          class="dsmleftitem cdltopitem flex flex-Updown"
+          @click="optionsId = optionsId === searchs[0].id ? '' : searchs[0].id"
+        >
+          <span>Centre</span>
+          <div class="seleteY flex flex-Updown-between p15">
+            <p>{{ searchs[0].value }}</p>
+            <img
+              :style="{ transform: `rotate(${isShowSlete ? '-180' : '0'}deg)` }"
+              src="../../assets/index/says/02.png"
+              alt=""
+            />
+          </div>
           <div
-            class="dsmleftitem cdltopitem flex flex-Updown-between"
-            @click="optionsId = optionsId === searchs[0].id ? '' : searchs[0].id"
+            class="seleterBody"
+            :style="{ height: optionsId === searchs[0].id ? '200px' : '0px' }"
           >
-            <span>{{ searchs[0].name }}</span>
-            <p class="flex flex-Updown-between">
-              <span>{{ searchs[0].value }}</span>
-              <img
-                :style="{
-                  transform: `rotate(${optionsId === searchs[0].id ? '180' : '0'}deg)`,
-                }"
-                src="../../assets/index/setting/10.png"
-                alt=""
-              />
-            </p>
             <div
-              class="seleterBody"
-              :style="{ height: optionsId === searchs[0].id ? '200px' : '0px' }"
+              class="button seleter_item"
+              v-for="(p, i) in searchs[0].children"
+              :key="i + 'ss'"
+              @click="seleteCenter(p, 1)"
             >
-              <div
-                class="button seleter_item"
-                v-for="(p, i) in searchs[0].children"
-                :key="i + 'ss'"
-                @click="seleteCenter(p)"
-              >
-                {{ p.value }}
-              </div>
+              {{ p.value }}
             </div>
-          </div>
-          <div class="dsmleftitem cdltopitem flex flex-Updown-between">
-            <span>{{ searchs[1].name }}</span>
-            <input type="text" @blur="getLocation" v-model="searchs[1].value" />
-          </div>
-          <div
-            class="dsmleftitem cdltopitem flex flex-Updown-between"
-            @click="openSelete(1)"
-          >
-            <span>{{ searchs[2].name }}</span>
-            <p class="flex flex-Updown-between">
-              <span>{{ searchs[2].value }}</span>
-              <img
-                :style="{
-                  transform: `rotate(${optionsId === searchs[2].id ? '180' : '0'}deg)`,
-                }"
-                src="../../assets/index/setting/10.png"
-                alt=""
-              />
-            </p>
-            <div
-              class="seleterBody"
-              :style="{ height: optionsId === searchs[2].id ? '200px' : '0px' }"
-            >
-              <div
-                class="button seleter_item"
-                v-for="(p, i) in ChargerType"
-                :key="i + 'ss'"
-                @click="seletes(p, 1)"
-              >
-                {{ p.chargerType }}
-              </div>
-            </div>
-          </div>
-          <div class="dsmleftitem cdltopitem flex flex-Updown-between">
-            <span>{{ searchs[3].name }}</span>
-            <input type="text" v-model="searchs[3].value" />
-          </div>
-          <div
-            class="dsmleftitem cdltopitem flex flex-Updown-between"
-            @click="optionsId = optionsId === searchs[4].id ? '' : searchs[4].id"
-          >
-            <span>{{ searchs[4].name }}</span>
-            <p class="flex flex-Updown-between">
-              <span>{{ searchs[4].value }}</span>
-              <img
-                :style="{
-                  transform: `rotate(${optionsId === searchs[4].id ? '180' : '0'}deg)`,
-                }"
-                src="../../assets/index/setting/10.png"
-                alt=""
-              />
-            </p>
-            <div
-              class="seleterBody"
-              :style="{ height: optionsId === searchs[4].id ? '200px' : '0px' }"
-            >
-              <div
-                class="button seleter_item"
-                v-for="(p, i) in BySelectTwo"
-                :key="i + 'ss'"
-                @click="seletes(p, 3)"
-              >
-                {{ p }}
-              </div>
-            </div>
-          </div>
-          <div
-            class="dsmleftitem cdltopitem flex flex-Updown-between"
-            @click="optionsId = optionsId === searchs[5].id ? '' : searchs[5].id"
-          >
-            <span>{{ searchs[5].name }}</span>
-            <p class="flex flex-Updown-between">
-              <span>{{ searchs[5].value }}</span>
-              <img
-                :style="{
-                  transform: `rotate(${optionsId === searchs[5].id ? '180' : '0'}deg)`,
-                }"
-                src="../../assets/index/setting/10.png"
-                alt=""
-              />
-            </p>
-            <div
-              class="seleterBody"
-              :style="{ height: optionsId === searchs[5].id ? '200px' : '0px' }"
-            >
-              <div
-                class="button seleter_item"
-                v-for="(p, i) in Model"
-                :key="i + 'ss'"
-                @click="seletes(p, 4)"
-              >
-                {{ p }}
-              </div>
-            </div>
-          </div>
-          <div class="dsmleftitem cdltopitem flex flex-Updown-between">
-            <span>{{ searchs[6].name }}</span>
-            <input type="text" v-model="searchs[6].value" />
-          </div>
-          <div class="dsmleftitem cdltopitem flex flex-Updown-between">
-            <span>Start From</span>
-            <div class="seleteDate">
-              <el-date-picker
-                value-format="yyyy-MM-dd"
-                format="yyyy-MM-dd"
-                :clearable="false"
-                v-model="startTime"
-                type="date"
-                placeholder="选择日期"
-              >
-              </el-date-picker>
-            </div>
-            <p class="flex flex-Updown-between">
-              <span>{{ startTime }}</span>
-              <!-- :style="{
-                  transform: `rotate(${optionsId === item.id ? '180' : '0'}deg)`,
-                }" -->
-              <img src="../../assets/index/setting/10.png" alt="" />
-            </p>
-          </div>
-          <div class="dsmleftitem cdltopitem flex flex-Updown-between">
-            <span>End To</span>
-            <div class="seleteDate">
-              <el-date-picker
-                value-format="yyyy-MM-dd"
-                format="yyyy-MM-dd"
-                :clearable="false"
-                v-model="endTime"
-                type="date"
-                placeholder="选择日期"
-              >
-              </el-date-picker>
-            </div>
-            <p class="flex flex-Updown-between">
-              <span>{{ endTime }}</span>
-              <img src="../../assets/index/setting/10.png" alt="" />
-            </p>
-          </div>
-          <p class="dttit">Data Type：</p>
-          <div
-            class="dtatas flex flex-Updown"
-            v-for="(item, index) in DataTypes"
-            :key="'d' + item.id"
-            @click="showTable(index)"
-          >
-            <img v-if="item.choose" src="../../assets/index/useraccount/04.png" alt="" />
-            <img v-else src="../../assets/index/useraccount/03.png" alt="" />
-            <p>{{ item.name }}</p>
           </div>
         </div>
-        <div class="dsmain-right">
-          <div class="drtable">
-            <ul class="ultit">
-              <li><p>From</p></li>
-              <li><p>To</p></li>
-              <li v-if="DataTypes[0].choose"><p>Charging Voltage【v】</p></li>
-              <li v-if="DataTypes[1].choose"><p>Average Charging Current【A】</p></li>
-              <li v-if="DataTypes[2].choose"><p>Average Charging Power【kw】</p></li>
-              <li v-if="DataTypes[3].choose"><p>Total Charging Energy【kwh】</p></li>
-              <li v-if="DataTypes[4].choose"><p>Charging Time【Hour】</p></li>
-              <li v-if="DataTypes[5].choose"><p>SoC Before Charging【%】</p></li>
-              <li v-if="DataTypes[6].choose">
-                <p>Mileage Travelled Before Charging【km】</p>
-              </li>
-            </ul>
-            <!-- -->
-            <div v-if="chargerInfoList.length != 0">
-              <!-- , updateId === index ? 'bshow' : '' -->
-              <div class="loadMore box" v-infinite-scroll="loadMore">
-                <ul
-                  :class="['uldatas', 'w100']"
-                  v-for="(item, index) in chargerInfoList"
-                  :key="index + 's'"
-                >
-                  <!-- @click="updateId = index" -->
-                  <li>
-                    <p>{{ startTime }}</p>
-                  </li>
-                  <li>
-                    <p>{{ endTime }}</p>
-                  </li>
-                  <li v-if="DataTypes[0].choose">
-                    <p>{{ item.chargingVoltage }}</p>
-                  </li>
-                  <li v-if="DataTypes[1].choose">
-                    <p>{{ item.chargingCurrent }}</p>
-                  </li>
-                  <li v-if="DataTypes[2].choose">
-                    <p>{{ item.chargingPower }}</p>
-                  </li>
-                  <li v-if="DataTypes[3].choose">
-                    <p>{{ item.chargingEnergy }}</p>
-                  </li>
-                  <li v-if="DataTypes[4].choose">
-                    <p>{{ item.chargingTime }}</p>
-                  </li>
-                  <li v-if="DataTypes[5].choose">
-                    <p>{{ item.socBeforeCharging }}</p>
-                  </li>
-                  <li v-if="DataTypes[6].choose">
-                    <p>{{ item.mileageTravelled }}</p>
-                  </li>
-                </ul>
-              </div>
+        <div class="dsmleftitem cdltopitem flex flex-Updown" @click="seleteCharger">
+          <span>Charger NO.</span>
+          <div class="seleteY flex flex-Updown-between p15">
+            <p>{{ searchs[1].value }}</p>
+            <img
+              :style="{
+                transform: `rotate(${optionsId === searchs[1].id ? '-180' : '0'}deg)`,
+              }"
+              src="../../assets/index/says/02.png"
+              alt=""
+            />
+          </div>
+          <div
+            class="seleterBody"
+            :class="[optionsId === searchs[1].id ? 'h200' : 'h0', 'box']"
+            v-infinite-scroll="loadMore1"
+            infinite-scroll-immediate="false"
+          >
+            <div
+              class="button seleter_item"
+              v-for="(item, index) in searchs[1].children"
+              :key="index"
+              @click="seleteCenter(item, 2)"
+            >
+              {{ item }}
             </div>
-            <div v-else>
-              <ul class="uldatas w100">
-                <li><p>No Data！</p></li>
+          </div>
+        </div>
+        <div class="or dsmleftitem cdltopitem flex flex-Updown"><span>or</span></div>
+        <div class="dsmleftitem cdltopitem flex flex-Updown">
+          <span>Vehicle No.</span>
+          <div class="flex flex-Updown-between">
+            <input
+              type="text"
+              @blur="getValue"
+              placeholder="Vehicle No."
+              v-model="searchs[2].value"
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        class="dsmleftitem cdltopitem flex flex-Updown"
+        @click="showList.table = !showList.table"
+      >
+        <span class="dsmleftitemSpan">Table</span>
+        <img v-if="showList.table" src="../../assets/index/useraccount/04.png" alt="" />
+        <img v-else src="../../assets/index/useraccount/03.png" alt="" />
+      </div>
+      <div
+        class="dsmleftitem cdltopitem flex flex-Updown"
+        @click="showList.figure = !showList.figure"
+      >
+        <span class="dsmleftitemSpan">Figure</span>
+        <img v-if="showList.figure" src="../../assets/index/useraccount/04.png" alt="" />
+        <img v-else src="../../assets/index/useraccount/03.png" alt="" />
+      </div>
+    </div>
+    <div class="chargerBottom overRights">
+      <p class="ortoptit">Search Conditions</p>
+      <div class="timeSelete flex flex-Updown">
+        <div class="titem flex flex-Updown" @click="showList.isTime = 0">
+          <p>Daily</p>
+          <img
+            v-if="showList.isTime == 0"
+            src="../../assets/index/useraccount/04.png"
+            alt=""
+          />
+          <img v-else src="../../assets/index/useraccount/03.png" alt="" />
+        </div>
+        <div class="titem flex flex-Updown" @click="showList.isTime = 1">
+          <p>Monthly</p>
+          <img
+            v-if="showList.isTime == 1"
+            src="../../assets/index/useraccount/04.png"
+            alt=""
+          />
+          <img v-else src="../../assets/index/useraccount/03.png" alt="" />
+        </div>
+        <div class="titem flex flex-Updown" @click="showList.isTime = 2">
+          <p>Annual</p>
+          <img
+            v-if="showList.isTime == 2"
+            src="../../assets/index/useraccount/04.png"
+            alt=""
+          />
+          <img v-else src="../../assets/index/useraccount/03.png" alt="" />
+        </div>
+        <div class="dsmleftitem cdltopitem flex flex-Updown" style="margin-top: 0">
+          <span>Start From</span>
+          <div class="seleteDate">
+            <el-date-picker
+              value-format="yyyy-MM-dd"
+              format="yyyy-MM-dd"
+              :clearable="false"
+              v-model="startTime"
+              type="date"
+              placeholder="选择日期"
+            >
+            </el-date-picker>
+          </div>
+          <p class="flex seleteY flex-Updown-between">
+            <span>{{ startTime }}</span>
+            <!-- :style="{
+                  transform: `rotate(${optionsId === item.id ? '180' : '0'}deg)`,
+                }" -->
+            <img src="../../assets/index/setting/10.png" alt="" />
+          </p>
+        </div>
+        <div class="dsmleftitem cdltopitem flex flex-Updown" style="margin-top: 0">
+          <span>End To</span>
+          <div class="seleteDate">
+            <el-date-picker
+              value-format="yyyy-MM-dd"
+              format="yyyy-MM-dd"
+              :clearable="false"
+              v-model="endTime"
+              type="date"
+              placeholder="选择日期"
+            >
+            </el-date-picker>
+          </div>
+          <p class="flex seleteY flex-Updown-between">
+            <span>{{ endTime }}</span>
+            <img src="../../assets/index/setting/10.png" alt="" />
+          </p>
+        </div>
+      </div>
+      <div class="dsmain flex">
+        <div class="drtable">
+          <div class="w100 p12">
+            <ul class="ultit w100">
+              <li><p>Date</p></li>
+              <li ><p>Total Charging Time (H)</p></li>
+              <li ><p>Total No. of Charging (Ts)</p></li>
+              <li><p>Total Charging Energy (KWh)</p></li>
+              <li ><p>Average Charging Power (kWh)</p></li>
+              <li><p>Unilization Rate (%)</p></li>
+            </ul>
+          </div>
+          <!--   -->
+          <div v-if="chargerInfoList.length != 0">
+            <!-- , updateId === index ? 'bshow' : '' -->
+            <div class="loadMore box" v-infinite-scroll="loadMore">
+              <ul
+                :class="['uldatas', 'w100']"
+                v-for="(item, index) in chargerInfoList"
+                :key="index + 's'"
+              >
+                <li>
+                  <p>{{ startTime }}</p>
+                </li>
+                <li >
+                  <p>{{ item.chargingVoltage }}</p>
+                </li>
+                <li >
+                  <p>{{ item.chargingCurrent }}</p>
+                </li>
+                <li >
+                  <p>{{ item.chargingPower }}</p>
+                </li>
+                <li>
+                  <p>{{ item.chargingEnergy }}</p>
+                </li>
+                <li>
+                  <p>{{ item.chargingTime }}</p>
+                </li>
               </ul>
             </div>
           </div>
-          <!-- <div class="pagination">
-            <el-pagination
-              @current-change="sizeChange"
-              background
-              layout=" prev, pager, next, jumper, ->, total, slot"
-              :total="count"
-              :page-size="8"
-              hide-on-single-page
-            >
-            </el-pagination>
-          </div> -->
+          <div v-else class="p12">
+            <ul class="uldatas w100 btb">
+              <li><p>No Data！</p></li>
+            </ul>
+          </div>
         </div>
-        <p class="Update">
-          <span class="button" @click="getParams">Update</span>
-        </p>
+      </div>
+      <div class="flex flex-Updown-between w100 dlist">
+        <div class="dlleft">
+          <div class="dltopitem flex flex-Updown-around">
+            <div class="titem flex flex-Updown" @click="downList.isTime = 0">
+              <p>Daily</p>
+              <img
+                v-if="downList.isTime == 0"
+                src="../../assets/index/useraccount/04.png"
+                alt=""
+              />
+              <img v-else src="../../assets/index/useraccount/03.png" alt="" />
+            </div>
+            <div class="titem flex flex-Updown" @click="downList.isTime = 1">
+              <p>Monthly</p>
+              <img
+                v-if="downList.isTime == 1"
+                src="../../assets/index/useraccount/04.png"
+                alt=""
+              />
+              <img v-else src="../../assets/index/useraccount/03.png" alt="" />
+            </div>
+            <div class="titem flex flex-Updown" @click="downList.isTime = 2">
+              <p>Annual</p>
+              <img
+                v-if="downList.isTime == 2"
+                src="../../assets/index/useraccount/04.png"
+                alt=""
+              />
+              <img v-else src="../../assets/index/useraccount/03.png" alt="" />
+            </div>
+            <div
+              class="dsmleftitem cdltopitem flex flex-Updown mt0 mb10"
+              @click="showList.table = !downList.table"
+            >
+              <span class="dsmleftitemSpan">Table</span>
+              <img
+                v-if="downList.table"
+                src="../../assets/index/useraccount/04.png"
+                alt=""
+              />
+              <img v-else src="../../assets/index/useraccount/03.png" alt="" />
+            </div>
+            <div
+              class="dsmleftitem cdltopitem flex flex-Updown mt0 mb10"
+              @click="downList.figure = !downList.figure"
+            >
+              <span class="dsmleftitemSpan">Figure</span>
+              <img
+                v-if="downList.figure"
+                src="../../assets/index/useraccount/04.png"
+                alt=""
+              />
+              <img v-else src="../../assets/index/useraccount/03.png" alt="" />
+            </div>
+          </div>
+          <div class="dltopitem flex flex-Updown-around">
+            <div
+              class="titem  flex flex-Updown"
+              v-for="(item, index) in DataTypes"
+              :key="'c' + index"
+              @click="item.choose = !item.choose"
+            >
+              <p class="tbp">{{ item.name }}</p>
+              <img
+                v-if="item.choose"
+                src="../../assets/index/useraccount/04.png"
+                alt=""
+              />
+              <img v-else src="../../assets/index/useraccount/03.png" alt="" />
+            </div>
+          </div>
+        </div>
+        <div class="" style="text-align: center">
+          <p class="Update">
+            <!-- @click="getParams" -->
+            <span class="button">Downlod</span>
+          </p>
+          <p>PDF format saved</p>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-// EVFindBySelect 下拉框查询 车辆名称
-// EVFindBySelectTwo 下拉框查询 车辆类型
-// findByChargerType 根据中心和层数 查询车类类别
-// findByModel 根据车辆类型查询车牌号
 import {
   findByParamsAll,
   EVFindBySelect,
@@ -287,10 +307,6 @@ export default {
       isShowSlete: false,
       optionsId: "",
       count: 0,
-      BySelect: [], //车辆名称
-      BySelectTwo: [], //车辆类型
-      ChargerType: [], //查询车类类别
-      Model: [], //根据车辆类型查询车牌号
       searchs: [
         {
           name: "Centre",
@@ -307,158 +323,59 @@ export default {
           ],
           id: 1,
         },
-        { name: "Location", value: "", children: [], id: 2 },
-        { name: "Charger Type", cid: "", value: "", children: [], id: 3 },
-        { name: "Charger No.", value: "", children: [], id: 4 },
-        { name: "Manufacturer", value: "", children: [], id: 5 },
-        { name: "Model", value: "", children: [], id: 6 },
+        { name: "Charger No.", value: "", children: [], id: 4, cid: "" },
         { name: "Vehicle No.", value: "", children: [], id: 6 },
       ],
       startTime: "",
       endTime: "",
-      DataTypes: [],
+      DataTypes: [
+        { name: "Total Charging Time", choose: false, id: "1" },
+        { name: "Total No. of Charging", choose: false, id: "2" },
+        { name: "Total Charging Energy", choose: false, id: "3" },
+        { name: "Average Charging Power", choose: false, id: "4" },
+        { name: "Unilization Rate", choose: false, id: "5" },
+      ],
       page: 1,
       chargerInfoList: [],
+      showList: {
+        table: false,
+        figure: false,
+        isTime: 0,
+      },
+      downList: {
+        table: false,
+        figure: false,
+        isTime: 0,
+      },
     };
   },
-  created() {
-    this.DataTypes = this.$store.state.DataTypes;
-    this.getBySelect();
-  },
+  created() {},
   mounted() {},
   methods: {
+    loadMore1() {},
     loadMore() {
       if (this.page > Math.ceil(this.count / 10))
         return this.$message.warning("No more data!");
       this.page += 1;
-      this.getParams();
     },
-    openSelete(type) {
-      if (type == 1) {
-        if (this.searchs[0].centreId === "" || this.searchs[1].value === "") {
-          this.$message.warning(
-            "Please select the center and fill in the location first"
-          );
-        }
-        this.optionsId = this.optionsId === this.searchs[2].id ? "" : this.searchs[2].id;
-      }
-    },
+    seleteCharger() {},
+    openSelete(type) {},
     // 选择
-    seletes(value, i) {
-      if (i == 1) {
-        this.searchs[2].value = value.chargerType;
-        this.searchs[2].cid = value.id;
-      }
-      if (i == 3) {
-        this.searchs[4].value = value;
-      }
-      if (i == 4) {
-        this.searchs[5].value = value;
-      }
-    },
-    // 车辆名称EVFindBySelect
-    async getBySelect() {
-      let result = await EVFindBySelect({ userId: localStorage.getItem("userId") });
-      // console.log("车辆名称EVFindBySelect", result);
-      if (result.code == 100) {
-        // this.BySelect = result.extend.electricVehicleList;
-        result.extend.electricVehicleList.forEach((item) => {
-          if (item.evManufacturer) {
-            this.getBySelectTwo(item.evManufacturer);
-          }
-          if (item.evModel) {
-            this.getModel(item.evModel);
-          }
-        });
-      }
-    },
-    // 车辆类型EVFindBySelectTwo
-    async getBySelectTwo(value) {
-      let data = {
-        manufacturer: value,
-        userId: localStorage.getItem("userId"),
-      };
-      let result = await EVFindBySelectTwo(data);
-      // console.log("车辆类型EVFindBySelectTwo", result);
-      if (result.code == 100) {
-        this.BySelectTwo = result.extend.vehicleNumberList.map((item) => {
-          if (item.evManufacturer) {
-            return item.evManufacturer;
-          }
-        });
-      }
-    },
-    getLocation() {
-      if (this.searchs[0].centreId !== "" && this.searchs[1].value !== "") {
-        this.getChargerType();
-      }
-    },
-    // findByChargerType 根据中心和层数 查询车类类别
-    async getChargerType() {
-      let data = {
-        userId: localStorage.getItem("userId"),
-        centreId: this.searchs[0].centreId,
-        location: this.searchs[1].value,
-      };
-      let result = await findByChargerType(data);
-      // console.log("查询车类类别", result);
-      if (result.code == 100) {
-        this.ChargerType = result.extend.chargerNumberingList;
-      }
-    },
-    // // findByModel 根据车辆类型查询车牌号
-    async getModel(value) {
-      let data = {
-        userId: localStorage.getItem("userId"),
-        evModel: value,
-      };
-      let result = await findByModel(data);
-      // console.log("根据车辆类型查询车牌号", result);
-      if (result.code == 100) {
-        this.Model = result.extend.vehicleNumberList.map((item) => {
-          if (item.evModel) {
-            return item.evModel;
-          }
-        });
-      }
-    },
+    seletes(value, i) {},
+
+    getLocation() {},
+    getValue() {},
     //展示表格
     showTable(index) {
-      this.DataTypes[index].choose = !this.DataTypes[index].choose;
-      this.$store.commit("showTableUl", this.DataTypes);
+      // this.DataTypes[index].choose = !this.DataTypes[index].choose;
+      // this.$store.commit("showTableUl", this.DataTypes);
     },
     //
-    seleteCenter(value) {
-      this.searchs[0].value = value.value;
-      this.searchs[0].centreId = value.centreId;
-      this.searchs[0].cid = value.cid;
-      if (this.searchs[1].value !== "") {
-        this.getChargerType();
-      }
-      // if(!this.searchs[0].cid&&!this.searchs[1].value){
-      //   this.$message.warning("Please select the center and fill in the location first")
-      //   return
-      // }
-      // this.getParams();
-    },
+    seleteCenter(value) {},
 
     //条件筛选查询
     getParams() {
       let searchs = this.searchs;
-      // try {
-      //   if (searchs[0].cid === "") throw "Please select center！";
-      //   if (searchs[1].value === "") throw "Please enter the Location";
-      //   if (searchs[2].value === "") throw "Please enter the Charger Type";
-      //   // if (searchs[3].value === "") throw "Please enter the Charger No.！";
-      //   // // if (searchs[4].value === "") throw "请输入车辆类型！";
-      //   // // if (searchs[5].value === "") throw "请输入车辆类型model！";
-      //   // if (searchs[6].value === "") throw "Please select the Vehicle No.！";
-      //   if (this.startTime === "") throw "Please select  startTime";
-      //   if (this.endTime === "") throw "Please select  endTime";
-      // } catch (err) {
-      //   this.$message.warning(err);
-      //   return;
-      // }
       let data = {
         centre: this.searchs[0].cid,
         location: this.searchs[1].value,
@@ -503,13 +420,68 @@ export default {
 </script>
 
 <style scoped>
+.dlist {
+  margin-top: 20px;
+  padding: 0 60px 0 50px;
+}
+.mb10 {
+  margin-bottom: 10px !important;
+}
+.mr15 {
+  margin-right: 15px !important;
+}
+.btb {
+  border-bottom: 2px solid #205cbf;
+}
+.timeSelete {
+  width: 100%;
+  justify-content: space-around;
+  margin-top: 40px;
+}
+.dlist .titem {
+  margin-bottom: 10px;
+  /* margin-right: 15px; */
+}
+.titem {
+  /* margin-right: ; */
+}
+.dsmleftitemSpan,
+.titem p {
+  font-size: 16px;
+  width: 120px;
+  height: 30px;
+  line-height: 30px;
+  border-radius: 10px;
+  /* font-size: 20px; */
+  /* background: #1F53AD; */
+  letter-spacing: 1.5px;
+  font-weight: 500;
+  background: url("../../assets/index/datas/01.png") no-repeat;
+  background-size: 100% 100%;
+  text-align: center;
+  cursor: pointer;
+}
+.titem .tbp{
+ width: 180px;
+  font-size: 12px;
+}
+.dsmleftitemSpan:active,
+.titem p:active {
+  opacity: 0.7;
+}
+.titem img {
+  width: 20px;
+  height: 20px;
+  margin-left: 15px;
+}
 .urtable {
   overflow: hidden;
 }
 .loadMore {
   /* background: red; */
-  max-height: 580px !important;
+  max-height: 470px !important;
   overflow-y: scroll;
+  border-bottom: 2px solid #205cbf;
 }
 .seleteDate {
   width: 190px;
@@ -520,6 +492,9 @@ export default {
   overflow: hidden;
   opacity: 0;
 }
+.dlleft {
+  width: 85%;
+}
 .el-date-editor.el-input,
 .el-date-editor.el-input__inner > input {
   width: 100% !important;
@@ -529,24 +504,25 @@ export default {
   height: 31px !important;
   box-sizing: border-box;
 }
+
 .Update > span {
   width: 160px;
   height: 44px;
   line-height: 44px;
-  display: inline-block;
-  /* background: #1F53AD; */
   border-radius: 10px;
   font-size: 20px;
+  /* background: #1F53AD; */
   letter-spacing: 2px;
   font-weight: 600;
+  display: inline-block;
   background: url("../../assets/index/datas/01.png") no-repeat;
   background-size: 100% 100%;
-  margin-top: 23px;
+  /* margin-top: 23px; */
 }
 .Update {
-  position: absolute;
-  right: 31px;
-  bottom: 22px;
+  /* position: absolute; */
+  /* right: 31px; */
+  /* bottom: 22px; */
 }
 .uldatas {
   background: transparent;
@@ -569,8 +545,8 @@ ul > li {
 .drtable ul {
   border-top: 2px solid #205cbf;
 }
-.drtable ul:last-child {
-  border-bottom: 2px solid #205cbf;
+.drtable ul:last-of-type {
+  /* border-bottom: 2px solid #205cbf; */
 }
 .drtable {
   width: 100%;
@@ -578,14 +554,14 @@ ul > li {
 .dsmain-right {
   width: 1503px;
   margin-left: 31px;
-  max-height: 590px;
+  /* max-height: 590px; */
   overflow-x: hidden;
   overflow-y: auto;
   margin-top: 28px;
   position: relative;
 }
 .drtable {
-  height: 562px;
+  /* height: 562px; */
 }
 .dtatas > img {
   width: 12px;
@@ -605,18 +581,41 @@ ul > li {
   width: 190px;
 }
 .dsmleftitem {
-  width: 300px;
+  /* width: 300px; */
+  margin-right: 15px;
 }
+
 .cdltopitem img {
   width: 14px;
   height: 8px;
   transition: all 0.2s linear;
 }
+.dsmleftitem > img {
+  width: 20px;
+  height: 20px;
+  margin-left: 15px;
+}
+.chargerTop {
+  padding: 0 40px;
+}
 .cdltopitem p {
   cursor: pointer;
 }
+.cdltopitem .seleteY {
+  margin: 0 10px;
+}
+.or {
+  margin: 0 10px;
+}
+.or > span {
+  font-size: 18px !important;
+}
+.seleterBody {
+  width: 190px;
+}
+.cdltopitem .seleteY,
 .cdltopitem input,
-.cdltopitem p {
+.cdltopitem > p {
   width: 190px;
   height: 31px;
   border: 1px solid #63d1ff;
@@ -632,7 +631,7 @@ ul > li {
 }
 .cdltopitem > span {
   color: #ffffff;
-  font-size: 12px;
+  font-size: 14px;
   display: inline-block;
   margin-right: 5px;
 }
@@ -642,13 +641,14 @@ ul > li {
 }
 .dsmain {
   width: 1406px;
-  height: 705px;
-  border: 2px solid #205cbf;
-  margin-top: 27px;
+  height: 550px;
+  /* background: red; */
+  /* border: 2px solid #205cbf; */
+  margin-top: 10px;
   margin-left: 50%;
   transform: translateX(-50%);
   border-radius: 20px;
-  padding: 0 30px;
+  padding: 0 30px 0 0;
   box-sizing: border-box;
   position: relative;
 }
@@ -658,5 +658,30 @@ ul > li {
 }
 .ortoptit {
   line-height: 55px;
+}
+.seleter {
+  width: 230px;
+  height: 38px;
+  margin-left: 20px;
+  border: 1px solid #acd1fe;
+  border-radius: 5px;
+  font-size: 18px;
+  color: #ffffff;
+  box-sizing: border-box;
+  padding-right: 15px;
+}
+.seleterBody {
+  width: 230px;
+}
+.seleter > img {
+  width: 14px;
+  height: 8px;
+  transition: all 0.2s linear;
+}
+.chargerBottom {
+  width: 1483px;
+  height: 831px;
+  margin-top: 20px;
+  position: relative;
 }
 </style>

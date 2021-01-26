@@ -16,25 +16,47 @@
             class="button seleter_item"
             v-for="(item, index) in centerType"
             :key="index"
-            @click="seleteCenter(item)"
+            @click="seleteCenter(item, 1)"
           >
             {{ item.value }}
           </div>
         </div>
       </div>
-      <div
-        class="ct-item flex flex-Updown-between"
-        v-for="(item, index) in navList"
-        :key="index"
-      >
-        <span>{{ item.name }}</span>
+      <div class="ct-item flex flex-Updown-between" @click="seleteCharger">
+        <span>Charger NO.</span>
+        <div class="seleter flex flex-Updown-between p15">
+          <p>{{ chargers.value }}</p>
+          <img
+            :style="{ transform: `rotate(${isShowSlete1 ? '-180' : '0'}deg)` }"
+            src="../../assets/index/says/02.png"
+            alt=""
+          />
+        </div>
+        <div
+          class="seleterBody"
+          :class="[isShowSlete1 ? 'h200' : 'h0', 'box']"
+          v-infinite-scroll="loadMore"
+          infinite-scroll-immediate="false"
+        >
+          <div
+            class="button seleter_item"
+            v-for="(item, index) in chargers.list"
+            :key="index"
+            @click="seleteCenter(item, 2)"
+          >
+            {{ item }}
+          </div>
+        </div>
+      </div>
+      <div class="or ct-item flex flex-Updown-between"><span>or</span></div>
+      <div class="ct-item flex flex-Updown-between">
+        <span>Vehicle No.</span>
         <div class="seleter flex flex-Updown-between">
           <input
             type="text"
             @blur="getValue"
-            :data-id="item.id"
-            :placeholder="item.name"
-            v-model="item.value"
+            placeholder="Vehicle No."
+            v-model="Vehicle"
           />
         </div>
       </div>
@@ -125,7 +147,7 @@
 </template>
 
 <script>
-import { findBIC } from "../../common/api";
+import { findBIC, findByDetails } from "../../common/api";
 export default {
   name: "ownCharg",
   data() {
@@ -155,6 +177,14 @@ export default {
       ],
       chargerInfo: {},
       centers: [],
+      chargers: {
+        list: [],
+        value: "",
+      },
+      isShowSlete1: false,
+      Vehicle: "",
+      page: 1,
+      count: 0,
     };
   },
   props: {
@@ -174,47 +204,98 @@ export default {
         (item) => item.cid === this.loginInfos.cid
       )[0].value;
       this.ctypes.centreId = this.loginInfos.cid;
-      this.navList[0].value = this.loginInfos.location;
-      this.navList[1].value = this.loginInfos.cno;
+      this.getNowData(this.loginInfos.cid);
+      // location: this.navList[0].value,
+      this.chargers.value = this.loginInfos.cno;
+      this.Vehicle = this.loginInfos.vno;
       this.getIndividualCharger();
-    }
+    } 
   },
   methods: {
-    // getValue
-    getValue() {
-      // let navList = this.navList;
-      if (this.navList[1].value === "") {
-        try {
-          if (this.ctypes.centreId === "") throw "Please select center";
-          // if (this.navList[0].value === "") throw "The Location cannot be empty";
-          if (this.navList[0].value === "") throw "The Charger NO. cannot be left blank";
-          // if (this.navList[2].value === "") throw "The Vehicle No. cannot be empty";
-        } catch (err) {
-          this.$message.warning(err);
-          return;
+    loadMore() {
+      if (this.page >= Math.ceil(this.count / 10))
+        return this.$message.warning("No more data!");
+      this.page += 1;
+      // this.getNowData();
+      this.getNowData(this.ctypes.centreId);
+    },
+    seleteCharger() {
+      this.isShowSlete1 = !this.isShowSlete1;
+      if (this.isShowSlete1) {
+        if (this.ctypes.centreId === "") {
+          return this.$message.warning("Please select the center first");
+        }
+        if (this.chargers.list == 0) {
+          return this.$message.warning("No data!");
         }
       }
-      // let arr = this.navList.fliter(item=>item.value==='');
-      // if(arr.length==0){
-      // }
+    },
+    // getValue
+    getValue() {
       this.getIndividualCharger();
+    },
+    // 查询充电桩的实时数据
+    getNowData(centreId) {
+      let data = {
+        page: this.page,
+        limit: 10,
+        userId: localStorage.getItem("userId"),
+        status: 6,
+        centre: centreId,
+      };
+      let loadingInstance = this.$loading({
+        text: "Loading...",
+        background: "rgba(0,0,0,.5)",
+      });
+      findByDetails(data)
+        .then((res) => {
+          // console.log(res, "查询充电桩的实时数据");
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+          if (res.code == 100) {
+            if (res.extend.chargerInfoList.length != 0) {
+              let arrs = res.extend.chargerInfoList.map((item) => item.chargerno);
+              this.chargers.list = [...this.chargers.list, ...arrs];
+            }
+            this.count = res.extend.count;
+          }
+        })
+        .catch(() => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+        });
     },
     //根据条件查询充电状态
     getIndividualCharger() {
-      let data = {
-        userId: localStorage.getItem("userId"),
-        centre: this.navList[1].value ? "" : this.ctypes.centreId,
-        // location: this.navList[1].value ? "" : this.navList[0].value,
-        chargerNo: this.navList[1].value ? "" : this.navList[0].value,
-        vehicleNo: this.navList[1].value ? this.navList[1].value : "null",
-      };
+      let data;
+      if (this.Vehicle === "") {
+        data = {
+          userId: localStorage.getItem("userId"),
+          centre: this.ctypes.centreId,
+          // location: this.navList[0].value,
+          chargerNo: this.chargers.value,
+          vehicleNo: "null",
+        };
+      } else {
+        data = {
+          userId: localStorage.getItem("userId"),
+          centre: " ",
+          location: " ",
+          chargerNo: " ",
+          vehicleNo: this.Vehicle,
+        };
+      }
       let loadingInstance = this.$loading({
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
       findBIC(data)
         .then((res) => {
-          console.log("根据条件查询充电状态", res);
+          // console.log("根据条件查询充电状态", res);
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
@@ -233,26 +314,29 @@ export default {
           });
         });
     },
-    seleteCenter(prop) {
-      this.ctypes.centreId = prop.cid;
-      this.ctypes.value = prop.value;
-      this.isShowSlete2 = false;
-      try {
-        // if (this.ctypes.centreId==='') throw "Please select center";
-        // if (this.navList[0].value === "") throw "The Location cannot be empty";
-        if (this.navList[0].value === "") throw "The Charger NO. cannot be left blank";
-        // if (this.navList[2].value === "") throw "The Vehicle No. cannot be empty";
-      } catch (err) {
-        this.$message.warning(err);
-        return;
+    seleteCenter(prop, type) {
+      if (type == 1) {
+        this.ctypes.centreId = prop.cid;
+        this.ctypes.value = prop.value;
+        this.page = 0;
+        this.chargers.list = [];
+        this.getNowData(prop.cid);
       }
-      this.getIndividualCharger();
+      if (type == 2) {
+        this.chargers.value = prop;
+        this.getIndividualCharger();
+      }
     },
   },
 };
 </script>
 
 <style scoped>
+.or > span {
+  color: #fff;
+  font-size: 20px !important;
+  /* margin-right: 10px; */
+}
 .dialog07 {
   width: 335px;
   height: 143px;
@@ -267,7 +351,7 @@ export default {
 }
 .dialog07 .cartword {
   position: absolute;
-  left: 0;  
+  left: 0;
   top: 0;
 }
 .dialog07 .cartword .diaValue {

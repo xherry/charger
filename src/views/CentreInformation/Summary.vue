@@ -23,8 +23,8 @@
             <li
               v-for="item in utits"
               :class="[seleteUtits === item.value ? 'seleteUtits' : '']"
-              @dblclick="toDetails(item.cid)"
               :key="item.value"
+              @dblclick="toDetails(item.cid)"
               @click="seleteCenters(item.value)"
             >
               <p>{{ item.value }}</p>
@@ -132,7 +132,7 @@ export default {
       });
       findBYN(data)
         .then((res) => {
-          console.log("获取查询六个地区下充电桩等信息", res);
+          // console.log("获取查询六个地区下充电桩等信息", res);
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();

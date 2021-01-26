@@ -119,7 +119,6 @@ export default {
   },
   created() {
     this.roleKey = JSON.parse(localStorage.getItem("roleKey"));
-    console.log(this.roleKey);
     this.loginType = localStorage.getItem("loginType");
     this.getUserInfo();
   },
@@ -171,7 +170,6 @@ export default {
     //
     getUserInfo() {
       let userInfo = this.$store.state.userInfo;
-      console.log(userInfo);
       if (Object.keys(userInfo).length != 0) {
         this.userInfo = [
           { key: "User Type：", name: utype(userInfo.userType) },

@@ -32,7 +32,12 @@
             alt=""
           />
         </div>
-        <div class="seleterBody" :style="{ height: isShowSlete1 ? '200px' : '0px' }">
+        <div
+          class="seleterBody"
+          :class="[isShowSlete1 ? 'h200' : 'h0', 'box']"
+          v-infinite-scroll="loadMore"
+          infinite-scroll-immediate="false"
+        >
           <div
             class="button seleter_item"
             v-for="(item, index) in chargers.list"
@@ -229,8 +234,6 @@ export default {
   name: "Individual",
   data() {
     return {
-      isShowSlete1: false,
-      Vehicle: "",
       isShowSlete: false,
       ctypes: {
         centreId: "",
@@ -256,6 +259,10 @@ export default {
         list: [],
         value: "",
       },
+      isShowSlete1: false,
+      Vehicle: "",
+      page: 1,
+      count: 0,
     };
   },
   async created() {
@@ -264,9 +271,38 @@ export default {
   },
   filters: {},
   mounted() {
-    // this.getIndividualCharger();
+    console.log(this.$store.state.loginInfos);
+    if (this.$route.query.cid && this.$route.query.chargerno) {
+      this.ctypes.value = this.$store.state.centerType.filter(
+        (item) => item.cid == this.$route.query.cid
+      )[0].value;
+      this.getNowData(this.$route.query.cid);
+      this.ctypes.centreId = this.$route.query.cid;
+      this.chargers.value = this.$route.query.chargerno;
+      this.getIndividualCharger();
+    } else {
+      let loginInfos = this.$store.state.loginInfos;
+      if(loginInfos.cid!==""){
+        this.ctypes.centreId = loginInfos.cid;
+        this.ctypes.value = this.$store.state.centerType.filter(
+          (item) => item.cid == loginInfos.cid
+        )[0].value;
+        this.getNowData(loginInfos.cid);
+        this.chargers.value = loginInfos.cno;
+        this.Vehicle = loginInfos.vno;
+        this.getIndividualCharger();
+      }
+    }
   },
+
   methods: {
+    loadMore() {
+      if (this.page >= Math.ceil(this.count / 10))
+        return this.$message.warning("No more data!");
+      this.page += 1;
+      // this.getNowData();
+      this.getNowData(this.ctypes.centreId);
+    },
     //
     getValue() {
       this.getIndividualCharger();
@@ -302,20 +338,37 @@ export default {
           vehicleNo: this.Vehicle,
         };
       }
-      findBIC(data).then((res) => {
-        // console.log("根据条件查询充电状态", res);
-        if (res.code == 100) {
-          this.chargerInfo = res.extend.chargerInfo || {};
-          if (!res.extend.chargerInfo) {
-            this.$message.warning("No data for the time being!");
-          }
-        }
+      let loadingInstance = this.$loading({
+        text: "Loading...",
+        background: "rgba(0,0,0,.5)",
       });
+      findBIC(data)
+        .then((res) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+          // console.log("根据条件查询充电状态", res);
+          if (res.code == 100) {
+            this.chargerInfo = res.extend.chargerInfo || {};
+            if (!res.extend.chargerInfo) {
+              this.$message.warning("No data for the time being!");
+            }
+          }
+        })
+        .catch((err) => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+        });
     },
     seleteCenter(prop, type) {
       if (type == 1) {
         this.ctypes.centreId = prop.cid;
         this.ctypes.value = prop.value;
+        this.page = 0;
+        this.chargers.list = [];
         this.getNowData(prop.cid);
       }
       if (type == 2) {
@@ -326,7 +379,7 @@ export default {
     // 查询充电桩的实时数据
     getNowData(centreId) {
       let data = {
-        page: 1,
+        page: this.page,
         limit: 10,
         userId: localStorage.getItem("userId"),
         status: 6,
@@ -338,17 +391,17 @@ export default {
       });
       findByDetails(data)
         .then((res) => {
-          console.log(res, "查询充电桩的实时数据");
+          // console.log(res, "查询充电桩的实时数据");
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
           });
           if (res.code == 100) {
             if (res.extend.chargerInfoList.length != 0) {
-              this.chargers.list = res.extend.chargerInfoList.map(
-                (item) => item.chargerno
-              );
+              let arrs = res.extend.chargerInfoList.map((item) => item.chargerno);
+              this.chargers.list = [...this.chargers.list, ...arrs];
             }
+            this.count = res.extend.count;
           }
         })
         .catch(() => {
@@ -526,7 +579,7 @@ export default {
   left: 0;
   top: 0;
 }
-.dialog07 .cartword .diaValue{
+.dialog07 .cartword .diaValue {
   margin-top: 15px;
 }
 .dialog03 {
