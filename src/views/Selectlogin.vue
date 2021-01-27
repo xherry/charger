@@ -325,13 +325,10 @@ export default {
         this.$message.warning("Temporarily no data！");
         return;
       }
-      let obj = {
-        cid: value,
-        location: "",
-        cno: "",
-      };
-      this.$store.commit("setLoginInfos", obj);
-      this.$router.push("login");
+      localStorage.setItem("cid",value)
+      setTimeout(()=>{
+        this.$router.push("login");
+      },200)
     },
   },
 };

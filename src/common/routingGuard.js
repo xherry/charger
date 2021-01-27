@@ -4,21 +4,21 @@ import store from '../store/index';
 
 // 路由守卫
 router.beforeEach((to, from, next) => {
-    let loginType = localStorage.getItem("loginType");
-    // 判断是否到主页
-    if (to.name === 'index' || to.name === 'login' || to.name === 'Selectlogin' || loginType == 1) {
-        store.commit('changeShowBottom', false)
-    } else {
-        store.commit('changeShowBottom', true)
-    }
     let roleKey = JSON.parse(localStorage.getItem("roleKey"));
-    // console.log(roleKey)
-    if (to.name === 'login') {
-        localStorage.setItem('loginType', '0');
-    }
-    // console.log(roleKey);
+    // 获取用户登录内容
+    let cid = localStorage.getItem("cid") || "";
+    // 判断是否到主页
+    let loginType = localStorage.getItem("loginType");
     // 登录获取权限
     if (roleKey) {
+        if (to.name === 'index' || to.name === 'login' || to.name === 'Selectlogin' || loginType == 1) {
+            store.commit('changeShowBottom', false)
+        } else {
+            store.commit('changeShowBottom', true)
+        }
+        if (to.name === 'login') {
+            localStorage.setItem('loginType', '0');
+        }
         if (roleKey.configureSystem == 1) {
             if (to.path.includes("setting")) {
                 Message.warning('暂无权限！')
@@ -53,6 +53,12 @@ router.beforeEach((to, from, next) => {
                 store.commit('changeShowBottom', false)
                 return
             }
+        }
+    } else {
+        if (cid !== '' && to.name === 'login') {
+            return next()
+        } else if (to.name !== 'Selectlogin') {
+            return next("Selectlogin")
         }
     }
 

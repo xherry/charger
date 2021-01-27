@@ -168,6 +168,7 @@ export default {
   },
   created() {},
   mounted() {
+    let loginInfos = JSON.parse(localStorage.getItem("chargerInfo")) ||{};
     if (this.$route.query.cid) {
       this.ctypes.value = this.$store.state.centerType.filter(
         (item) => item.cid == this.$route.query.cid
@@ -175,10 +176,10 @@ export default {
       this.ctypes.centreId = this.$route.query.cid;
     } else {
       this.ctypes = {
-        centreId: this.$store.state.loginInfos.cid,
-        value: this.$store.state.loginInfos.cid
+        centreId: loginInfos.centre,
+        value: loginInfos.centre
           ? this.$store.state.centerType.filter(
-              (item) => item.cid == this.$store.state.loginInfos.cid
+              (item) => item.cid == loginInfos.centre
             )[0].value
           : "",
       };

@@ -13,6 +13,7 @@ export default {
     return {};
   },
   created() {
+    // localStorage.clear();
     if (localStorage.getItem("userId")) {
       this.$store.commit("setUserInfo");
     }

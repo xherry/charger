@@ -271,7 +271,6 @@ export default {
   },
   filters: {},
   mounted() {
-    console.log(this.$store.state.loginInfos);
     if (this.$route.query.cid && this.$route.query.chargerno) {
       this.ctypes.value = this.$store.state.centerType.filter(
         (item) => item.cid == this.$route.query.cid
@@ -281,15 +280,15 @@ export default {
       this.chargers.value = this.$route.query.chargerno;
       this.getIndividualCharger();
     } else {
-      let loginInfos = this.$store.state.loginInfos;
-      if(loginInfos.cid!==""){
-        this.ctypes.centreId = loginInfos.cid;
+      this.loginInfos = JSON.parse(localStorage.getItem("chargerInfo")) ||{};
+      if(Object.keys(loginInfos).length!=0){
+        this.ctypes.centreId = loginInfos.centre;
         this.ctypes.value = this.$store.state.centerType.filter(
-          (item) => item.cid == loginInfos.cid
+          (item) => item.cid == loginInfos.centre
         )[0].value;
-        this.getNowData(loginInfos.cid);
-        this.chargers.value = loginInfos.cno;
-        this.Vehicle = loginInfos.vno;
+        this.getNowData(loginInfos.centre);
+        this.chargers.value = loginInfos.chargerno;
+        this.Vehicle = localStorage.getItem("vno")||"";;
         this.getIndividualCharger();
       }
     }

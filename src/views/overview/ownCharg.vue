@@ -143,6 +143,7 @@
         </div>
       </div> -->
     </div>
+    <!-- {{loginInfos}} -->
   </div>
 </template>
 
@@ -185,29 +186,24 @@ export default {
       Vehicle: "",
       page: 1,
       count: 0,
+      loginInfos:{}
     };
-  },
-  props: {
-    loginInfos: {
-      type: Object,
-      default: {},
-    },
   },
   async created() {
     this.centerType = this.$store.state.centerType;
-    // if()
   },
   mounted() {
-    // this.getIndividualCharger();
-    if (Object.keys(this.loginInfos).length != 0) {
+    let loginInfos = JSON.parse(localStorage.getItem("chargerInfo"));
+    console.log(loginInfos)
+    if (Object.keys(loginInfos).length != 0) {
       this.ctypes.value = this.$store.state.centerType.filter(
-        (item) => item.cid === this.loginInfos.cid
+        (item) => item.cid === loginInfos.centre
       )[0].value;
-      this.ctypes.centreId = this.loginInfos.cid;
-      this.getNowData(this.loginInfos.cid);
+      this.ctypes.centreId = loginInfos.centre;
+      this.getNowData(loginInfos.centre);
       // location: this.navList[0].value,
-      this.chargers.value = this.loginInfos.cno;
-      this.Vehicle = this.loginInfos.vno;
+      this.chargers.value = loginInfos.chargerno;
+      this.Vehicle = localStorage.getItem("vno")||"";
       this.getIndividualCharger();
     } 
   },

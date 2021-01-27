@@ -45,26 +45,9 @@
             />
           </div>
           <div class="button loginButton" @click="toLogin">login</div>
-          <!-- <p class="clgs vtl" @click="isVisitors = true">Visitors to login</p> -->
         </div>
-        <!-- <div class="visitors" v-else>
-          <img src="../../assets/icon.png" alt="" />
-          <div class="button loginButton" @click="visitorLogin">Visitors to login</div>
-          <div class="button loginButton clg" @click="isVisitors = false">
-            Account password login
-          </div>
-        </div> -->
       </div>
       <div id="inputCode" v-else>
-        <!-- <div class="codeValue" style="margin-bottom: 0">
-          <input
-            type="text"
-            class="childAll"
-            v-model="phone"
-            placeholder="Mobile Phone"
-          />
-          <p class="button" @click="sendCode">send</p>
-        </div> -->
         <div class="codeValue">
           <input
             type="text"
@@ -79,6 +62,12 @@
         <div class="button loginButton enter" @click="toIndex">Enter</div>
       </div>
     </div>
+    <div class="loginName">
+      <p>
+        Guest can see the availability of chargers only, or you may need to log in with
+        the charger no. or vehicle no. for detailed information.
+      </p>
+    </div>
   </div>
 </template>
 
@@ -91,8 +80,8 @@ export default {
       isVisitors: true,
       iscode: false,
       userInfo: {
-        userId: "", //liaojingxing
-        password: "", //123456
+        userId: "liaojingxing", //liaojingxing
+        password: "123456", //123456
         chargerNumber: "",
         vehicleNumber: "",
       },
@@ -130,11 +119,6 @@ export default {
       localStorage.clear();
       localStorage.setItem("loginType", "1");
       this.$store.commit("getUserInfo", { pcUser: {} });
-      let loginInfos = this.$store.state.loginInfos;
-      loginInfos.cno = this.userInfo.chargerNumber;
-      loginInfos.location = "G";
-      loginInfos.vno = this.userInfo.vehicleNumber;
-      this.$store.commit("setLoginInfos", loginInfos);
       this.$router.push("overview");
     },
     sendCode() {
@@ -158,8 +142,14 @@ export default {
           return this.$message.warning("Please enter login information");
         }
       }
-      Login(this.userInfo).then((res) => {
-        // console.log(res);
+      let loadingInstance = this.$loading({
+        text: "Loading...",
+        background: "rgba(0,0,0,.5)",
+      });
+      let cid = localStorage.getItem("cid");
+      let data = { ...this.userInfo, centre: cid };
+      Login(data).then((res) => {
+        console.log(res,"用户信息");
         if (res.code == 100) {
           if (res.extend.smsCode) {
             this.phone = res.extend.phone;
@@ -168,17 +158,13 @@ export default {
           } else {
             localStorage.setItem("userId", res.extend.pcUser.id);
             localStorage.setItem("roleKey", JSON.stringify(res.extend.roleKey));
+            localStorage.setItem("chargerInfo",JSON.stringify(res.extend.chargerInfo));
             this.$store.commit("getUserInfo", res.extend);
-            let loadingInstance = this.$loading({
-              text: "Loading...",
-              background: "rgba(0,0,0,.5)",
-            });
-            if (this.userInfo.chargerNumber !== ""||this.userInfo.vehicleNumber !== "") {
-              let loginInfos = this.$store.state.loginInfos;
-              loginInfos.cno = this.userInfo.chargerNumber;
-              loginInfos.location = "G";
-              loginInfos.vno = this.userInfo.vehicleNumber;
-              this.$store.commit("setLoginInfos", loginInfos);
+            if (
+              this.userInfo.chargerNumber !== "" ||
+              this.userInfo.vehicleNumber !== ""
+            ) {
+              localStorage.setItem("vno",this.userInfo.vehicleNumber)
               setTimeout(() => {
                 this.$nextTick(() => {
                   // 以服务的方式调用的 Loading 需要异步关闭
@@ -186,7 +172,7 @@ export default {
                 });
                 this.$router.replace({
                   name: "overview",
-                  query: { navSeleted: 2, loginInfos },
+                  query: { navSeleted: 2 },
                 });
               }, 1000);
             } else {
@@ -209,7 +195,9 @@ export default {
         this.$message.warning("Please enter the security code");
         return;
       }
-      loginTwo({ ...this.userInfo, code: this.phoneCode }).then((res) => {
+      let cid = localStorage.getItem("cid");
+      let data = { ...this.userInfo, centre: cid };
+      loginTwo({ ...data, code: this.phoneCode }).then((res) => {
         // console.log(res);
         if (res.code == 100) {
           localStorage.setItem("userId", res.extend.pcUser.id);
@@ -219,12 +207,7 @@ export default {
             text: "Loading...",
             background: "rgba(0,0,0,.5)",
           });
-          if (this.userInfo.chargerNumber !== ""||this.userInfo.vehicleNumber !== "") {
-            let loginInfos = this.$store.state.loginInfos;
-            loginInfos.cno = this.userInfo.chargerNumber;
-            loginInfos.location = "G";
-            loginInfos.vno = this.userInfo.vehicleNumber;
-            this.$store.commit("setLoginInfos", loginInfos);
+          if (this.userInfo.chargerNumber !== "" || this.userInfo.vehicleNumber !== "") {
             setTimeout(() => {
               this.$nextTick(() => {
                 // 以服务的方式调用的 Loading 需要异步关闭
@@ -232,7 +215,7 @@ export default {
               });
               this.$router.replace({
                 name: "overview",
-                query: { navSeleted: 2, loginInfos },
+                query: { navSeleted: 2 },
               });
             }, 1000);
           } else {
@@ -417,6 +400,14 @@ export default {
   position: absolute;
   top: 80px;
   left: 410px;
+}
+.loginName {
+  width: 603px;
+  white-space: pre-wrap;
+  font-size: 20px;
+  position: absolute;
+  bottom: 65px;
+  right: 113px;
 }
 .login-input-box {
   position: absolute;

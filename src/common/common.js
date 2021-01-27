@@ -63,3 +63,19 @@ Vue.filter("value2", (val) => {
         return ""
     }
 });
+
+const on = Vue.prototype.$on
+    // 防抖处理
+Vue.prototype.$on = function(event, func) {
+    let timer
+    let newFunc = func
+    if (event === 'click') {
+        newFunc = function() {
+            clearTimeout(timer)
+            timer = setTimeout(function() {
+                func.apply(this, arguments)
+            }, 500)
+        }
+    }
+    on.call(this, event, newFunc)
+}

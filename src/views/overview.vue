@@ -308,7 +308,7 @@
       </div>
     </div>
     <div v-else>
-      <own-charg :loginInfos="loginInfos"></own-charg>
+      <own-charg ></own-charg>
     </div>
   </div>
 </template>
@@ -340,13 +340,11 @@ export default {
         },
       ],
       sixDatas: {},
-      loginInfos: {},
       middleBg: require("../assets/index/0004.png"),
       showLoading: true,
     };
   },
   async created() {
-    this.loginInfos = this.$route.query.loginInfos || {};
     if (this.$route.query.navSeleted) {
       this.navSeleted = this.$route.query.navSeleted;
     }
@@ -400,7 +398,7 @@ export default {
         return;
       }
       this.$store.commit("isBacked");
-      this.$router.push({ path: "CentreInformation/Detailed", query: { cid: value } });
+      this.$router.push({ path: "CentreInformation/Summary"});
     },
     showEwm() {
       // if (value === 1) {
