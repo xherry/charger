@@ -363,6 +363,7 @@ export default {
     }else{
       // 查询六个地区下充电桩等信息
       this.sixDatas = (await findBYN({ userId: localStorage.getItem('userId') })).extend;
+      console.log(this.sixDatas)
     }
   },
   mounted() {

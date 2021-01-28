@@ -32,16 +32,31 @@
               v-model="userInfo.chargerNumber"
               placeholder="Charger Number ( eg: SSP-068 )"
             />
+            <!-- ssssssssss -->
+            <div
+              class="noseleterBodyitem box w100"
+              :class="[isShowSlete ? 'h150' : 'h0']"
+            >
+              <div
+                class="button seleter_item"
+                v-for="(item, index) in chargerInfoList"
+                :key="index"
+                @click="seleteCenter(item)"
+              >
+                {{ item }}
+              </div>
+            </div>
           </div>
           <div class="elseor">
             <p>or</p>
           </div>
-          <div class="login-input Vehicle">
+          <div v-show="!isShowSlete" class="login-input Vehicle">
             <img src="../../assets/index/login/02.png" alt="" />
             <input
               type="text"
               v-model="userInfo.vehicleNumber"
               placeholder="Vehicle Number"
+              style="z-index: 9 !important"
             />
           </div>
           <div class="button loginButton" @click="toLogin">login</div>
@@ -72,7 +87,7 @@
 </template>
 
 <script>
-import { Login, loginTwo, sendSms } from "../../common/api";
+import { Login, loginTwo, sendSms, findBySelectCNO } from "../../common/api";
 export default {
   name: "login",
   data() {
@@ -85,10 +100,22 @@ export default {
         chargerNumber: "",
         vehicleNumber: "",
       },
+      isShowSlete: false,
       phoneCode: "",
       phone: "",
       loginImg: require("../../assets/index/login/06.png"),
       showLoading: true,
+      clist: [
+        "SSP-G-687",
+        "SSP-1-628",
+        "SSP-G-658",
+        "SSP-G-698",
+        "SSP-1-680",
+        "SSP-G-168",
+        "SSP-G-368",
+        "SSP-G-128",
+      ],
+      chargerInfoList: [],
     };
   },
   mounted() {
@@ -109,8 +136,43 @@ export default {
       });
       this.showLoading = false;
     };
+    this.getCno(this.$route.query.cid);
+  },
+  watch: {
+    // chargerInfoList() {},
+    "userInfo.chargerNumber"() {
+      let chargerNumber = this.userInfo.chargerNumber;
+      if (chargerNumber === "") {
+        this.isShowSlete = false;
+      } else {
+        this.chargerInfoList = this.clist.filter((item) => {
+          return item.includes(chargerNumber.toUpperCase());
+        });
+        if (this.chargerInfoList.length > 0) {
+          this.isShowSlete = true;
+        } else {
+          this.isShowSlete = false;
+        }
+      }
+    },
   },
   methods: {
+    seleteCenter() {
+      // SSP-G-68
+      // ssssssssss
+    },
+    // 二级联动查询充电桩编号
+    getCno(cid) {
+      let data = {
+        centre: cid,
+      };
+      findBySelectCNO(data).then((res) => {
+        console.log(res, "二级联动查询充电桩编号");
+        if (res.code == 100) {
+          this.clist = res.extend.chargerInfoList;
+        }
+      });
+    },
     toAdmin() {
       window.location.href = "https://www.clplms.com/pc";
     },
@@ -119,7 +181,9 @@ export default {
       localStorage.clear();
       localStorage.setItem("loginType", "1");
       this.$store.commit("getUserInfo", { pcUser: {} });
-      this.$router.push("overview");
+      setTimeout(() => {
+        this.$router.push("overview");
+      }, 200);
     },
     sendCode() {
       sendSms({
@@ -149,7 +213,7 @@ export default {
       let cid = localStorage.getItem("cid");
       let data = { ...this.userInfo, centre: cid };
       Login(data).then((res) => {
-        console.log(res,"用户信息");
+        console.log(res, "用户信息");
         if (res.code == 100) {
           if (res.extend.smsCode) {
             this.phone = res.extend.phone;
@@ -158,13 +222,24 @@ export default {
           } else {
             localStorage.setItem("userId", res.extend.pcUser.id);
             localStorage.setItem("roleKey", JSON.stringify(res.extend.roleKey));
-            localStorage.setItem("chargerInfo",JSON.stringify(res.extend.chargerInfo));
+            res.extend.chargerInfo.chargerno =
+              this.$store.state.centerType.filter(
+                (item) => item.cid === res.extend.chargerInfo.centre
+              )[0].name +
+              "-" +
+              res.extend.chargerInfo.location +
+              "-" +
+              res.extend.chargerInfo.chargerno;
+            localStorage.setItem("chargerInfo", JSON.stringify(res.extend.chargerInfo));
             this.$store.commit("getUserInfo", res.extend);
             if (
               this.userInfo.chargerNumber !== "" ||
               this.userInfo.vehicleNumber !== ""
             ) {
-              localStorage.setItem("vno",this.userInfo.vehicleNumber)
+              let obj = this.$store.state.loginInfos;
+              obj.cno = this.userInfo.chargerNumber;
+              this.$store.commit("setLoginInfos", obj);
+              localStorage.setItem("vno", this.userInfo.vehicleNumber);
               setTimeout(() => {
                 this.$nextTick(() => {
                   // 以服务的方式调用的 Loading 需要异步关闭
@@ -174,7 +249,7 @@ export default {
                   name: "overview",
                   query: { navSeleted: 2 },
                 });
-              }, 1000);
+              }, 800);
             } else {
               setTimeout(() => {
                 this.$nextTick(() => {
@@ -182,7 +257,7 @@ export default {
                   loadingInstance.close();
                 });
                 this.$router.replace("index");
-              }, 1000);
+              }, 800);
             }
             this.$message.success("Log in successfully！");
           }
@@ -208,6 +283,10 @@ export default {
             background: "rgba(0,0,0,.5)",
           });
           if (this.userInfo.chargerNumber !== "" || this.userInfo.vehicleNumber !== "") {
+            let obj = this.$store.state.loginInfos;
+            obj.cno = this.userInfo.chargerNumber;
+            this.$store.commit("setLoginInfos", obj);
+            localStorage.setItem("vno", this.userInfo.vehicleNumber);
             setTimeout(() => {
               this.$nextTick(() => {
                 // 以服务的方式调用的 Loading 需要异步关闭
@@ -217,7 +296,7 @@ export default {
                 name: "overview",
                 query: { navSeleted: 2 },
               });
-            }, 1000);
+            }, 800);
           } else {
             setTimeout(() => {
               this.$nextTick(() => {
@@ -225,7 +304,7 @@ export default {
                 loadingInstance.close();
               });
               this.$router.replace("index");
-            }, 600);
+            }, 800);
           }
           this.$message.success("Log in successfully！");
         } else {
@@ -362,6 +441,7 @@ export default {
   margin-left: 50%;
   transform: translateX(-50%);
   position: relative;
+  transition: all 0.2s linear;
 }
 .login-input > input {
   width: 100%;
@@ -373,6 +453,7 @@ export default {
   color: #ffffff !important;
   font-size: 20px;
   outline: 0;
+  z-index: inherit;
 }
 .login-input > input::-webkit-input-placeholder {
   /* color: #ffffff; */
@@ -429,5 +510,8 @@ export default {
   transform: translateX(-50%);
   position: relative;
   z-index: 9;
+}
+.noseleterBodyitem {
+  width: 418px;
 }
 </style>

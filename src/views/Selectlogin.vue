@@ -10,7 +10,7 @@
       </div>
       <div class="overRight">
         <p class="toAdmin button" @click="toAdmin">Admin Login</p>
-        <!-- <p class="ortoptit">Charger Network</p> -->
+        <p class="ortoptit">Charger Network</p>
         <div class="sixLogin">
           <img src="../assets/index/0004.png" class="childAll" alt="" />
           <div class="childAll stronghold">
@@ -325,10 +325,15 @@ export default {
         this.$message.warning("Temporarily no data！");
         return;
       }
-      localStorage.setItem("cid",value)
-      setTimeout(()=>{
-        this.$router.push("login");
-      },200)
+      localStorage.setItem("cid", value);
+      setTimeout(() => {
+        this.$router.push({
+          path: "login",
+          query: {
+            cid: value,
+          },
+        });
+      }, 200);
     },
   },
 };
@@ -355,8 +360,8 @@ export default {
 }
 .overRight {
   position: relative;
-  background: url("../assets/index/login/07.png") no-repeat;
-  background-size: 100% 100%;
+  /* background: url("../assets/index/login/07.png") no-repeat;
+  background-size: 100% 100%; */
 }
 .sixItemBottom {
   position: absolute;
@@ -473,7 +478,7 @@ export default {
   width: 73%;
   height: 600px;
   margin-left: 12.5%;
-  margin-top: 120px;
+  margin-top: 80px;
 }
 .annotation {
   /* text-align: center; */

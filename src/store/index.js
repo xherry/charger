@@ -1,7 +1,7 @@
 // import Vue from 'vue';
 // import Vuex from 'vuex';
 import { findById, findByDetails } from '../common/api';
-import { Loading } from "element-ui";
+// import { Loading } from "element-ui";
 
 
 Vue.use(Vuex)
@@ -19,12 +19,12 @@ export default new Vuex.Store({
             { userType: 5, value: "SystemManager", level: 1 },
         ],
         centerType: [
-            { centreId: 0, value: "Shatin Centre", cid: 'CLP3301' },
-            { centreId: 1, value: "Hung Hom HQ", cid: 'CLP2101' },
-            { centreId: 2, value: "Sham Shui Po Centre", cid: 'CLP2201' },
-            { centreId: 3, value: "Tsing Yi Centre", cid: 'CLP3801' },
-            { centreId: 4, value: "Yuen Long Centre", cid: 'CLP3701' },
-            { centreId: 5, value: "Shek Wu Hui Centre", cid: 'CLP3101' },
+            { centreId: 0, value: "Sha Tin Centre", cid: 'CLP3301', name: "S" },
+            { centreId: 1, value: "Hung Hom HQ", cid: 'CLP2101', name: "HH" },
+            { centreId: 2, value: "Sham Shui Po Centre", cid: 'CLP2201', name: "SSP" },
+            { centreId: 3, value: "Tsing Yi Centre", cid: 'CLP3801', name: "TY" },
+            { centreId: 4, value: "Yuen Long Centre", cid: 'CLP3701', name: "YL" },
+            { centreId: 5, value: "Shek Wu Hui Centre", cid: 'CLP3101', name: "SWH" },
         ],
         userInfo: {},
         roleInfo: {},

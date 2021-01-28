@@ -78,6 +78,8 @@ export const findByParamsAll = (data) => $Post("/api/chargerInfo/findByParamsAll
 export const findByDataRecord = (data) => $Post("/api/chargerInfo/findByDataRecord", data);
 // 导出
 export const excelExp = (data) => $Post("/api/chargerInfo/excelExp", data, true)
+    // 二级联动查询充电桩编号
+export const findBySelectCNO = (data) => $Post("/api/chargerData/findBySelect", data)
 
 
 // 登陆部分

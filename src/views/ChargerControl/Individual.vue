@@ -22,14 +22,16 @@
           </div>
         </div>
       </div>
-      <div class="ct-item flex flex-Updown-between" @click="seleteCharger">
+      <div class="ct-item flex flex-Updown-between" >
         <span>Charger NO.</span>
         <div class="seleter flex flex-Updown-between p15">
-          <p>{{ chargers.value }}</p>
+          <!-- <p>{{ chargers.value }}</p> -->
+          <input type="text" v-model="chargers.value">
           <img
             :style="{ transform: `rotate(${isShowSlete1 ? '-180' : '0'}deg)` }"
             src="../../assets/index/says/02.png"
             alt=""
+            @click="seleteCharger"
           />
         </div>
         <div
@@ -40,7 +42,7 @@
         >
           <div
             class="button seleter_item"
-            v-for="(item, index) in chargers.list"
+            v-for="(item, index) in chargers.arrs"
             :key="index"
             @click="seleteCenter(item, 2)"
           >
@@ -258,6 +260,7 @@ export default {
       chargers: {
         list: [],
         value: "",
+        arrs:[]
       },
       isShowSlete1: false,
       Vehicle: "",
@@ -270,27 +273,35 @@ export default {
     this.roleKey = JSON.parse(localStorage.getItem("roleKey"));
   },
   filters: {},
-  mounted() {
-    if (this.$route.query.cid && this.$route.query.chargerno) {
-      this.ctypes.value = this.$store.state.centerType.filter(
-        (item) => item.cid == this.$route.query.cid
-      )[0].value;
-      this.getNowData(this.$route.query.cid);
-      this.ctypes.centreId = this.$route.query.cid;
-      this.chargers.value = this.$route.query.chargerno;
-      this.getIndividualCharger();
-    } else {
-      this.loginInfos = JSON.parse(localStorage.getItem("chargerInfo")) ||{};
-      if(Object.keys(loginInfos).length!=0){
-        this.ctypes.centreId = loginInfos.centre;
-        this.ctypes.value = this.$store.state.centerType.filter(
-          (item) => item.cid == loginInfos.centre
-        )[0].value;
-        this.getNowData(loginInfos.centre);
-        this.chargers.value = loginInfos.chargerno;
-        this.Vehicle = localStorage.getItem("vno")||"";;
-        this.getIndividualCharger();
+  watch:{
+    "chargers.value"(){
+      let chargerNumber = this.chargers.value;
+      if (chargerNumber === "") {
+        this.isShowSlete1 = false;
+      } else {
+        const regEx = //
+        this.chargers.arrs = this.chargers.list.filter((item) => {
+          return item.includes(chargerNumber.toUpperCase());
+        });
+        if (this.chargers.arrs.length > 0) {
+          this.isShowSlete1 = true;
+        } else {
+          this.isShowSlete1 = false;
+        }
       }
+    },
+  },
+  mounted() {
+    let loginInfos = JSON.parse(localStorage.getItem("chargerInfo"));
+    if(Object.keys(loginInfos).length!=0){
+      this.ctypes.centreId = loginInfos.centre;
+      this.ctypes.value = this.$store.state.centerType.filter(
+        (item) => item.cid == loginInfos.centre
+      )[0].value;
+      this.getNowData(loginInfos.centre);
+      this.chargers.value = this.$store.state.loginInfos.cno || loginInfos.chargerno;
+      this.Vehicle = localStorage.getItem("vno")||"";;
+      this.getIndividualCharger();
     }
   },
 

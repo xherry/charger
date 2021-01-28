@@ -55,6 +55,13 @@ router.beforeEach((to, from, next) => {
             }
         }
     } else {
+        if (loginType == 1) {
+            if (to.name === 'overview') return next();
+            if (to.name === 'Selectlogin') {
+                localStorage.clear();
+                return next()
+            }
+        }
         if (cid !== '' && to.name === 'login') {
             return next()
         } else if (to.name !== 'Selectlogin') {

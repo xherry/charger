@@ -17,7 +17,7 @@
           <span>{{ item.name }}</span>
         </p>
       </div>
-      <div class="editUser" @click="$router.push('UserInformation')">edit</div>
+      <div class="editUser" @click="$router.push('UserInformation')">Edit</div>
     </div>
     <div class="indexRight">
       <img class="childAll pa" :src="middleBg" v-show="!showLoading" alt="" />

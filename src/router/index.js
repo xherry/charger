@@ -148,6 +148,11 @@ const routes = [{
                 name: 'Detailed',
                 component: () =>
                     import ( /* webpackChunkName: "about" */ '../views/CentreInformation/Detailed.vue')
+            },{
+                path: 'detailInform',
+                name: 'detailInform',
+                component: () =>
+                    import ( /* webpackChunkName: "about" */ '../views/CentreInformation/detailInform.vue')
             }, ]
         },
         {

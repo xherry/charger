@@ -104,7 +104,8 @@
                         setStatus(3, item.status, item.chargerno, item.centre, index)
                       "
                     >
-                      <img
+                      <div
+                        class="canceld"
                         v-if="
                           item.status != 'Disconnected' &&
                           item.status != 'Offline' &&
@@ -112,12 +113,16 @@
                           item.status != 'InUse' &&
                           item.status != 'WaitCharging'
                         "
-                        src="../../assets/index/useraccount/04.png"
-                        alt=""
-                      />
+                      >
+                        <img
+                          class="kkxz"
+                          src="../../assets/index/useraccount/start.png"
+                          alt=""
+                        />
+                      </div>
                       <div class="cancelX" v-else>
-                        <p>x</p>
-                        <img src="../../assets/index/useraccount/03.png" alt="" />
+                        <!-- <p>x</p> -->
+                        <img src="../../assets/index/useraccount/end.png" alt="" />
                       </div>
                     </div>
                     <div
@@ -125,19 +130,28 @@
                         setStatus(2, item.status, item.chargerno, item.centre, index)
                       "
                     >
-                      <img
+                      <div
+                        class="canceld"
                         v-if="
                           item.status != 'Disconnected' &&
                           item.status != 'Offline' &&
                           item.status != 'Disable' &&
                           item.status != 'Charging'
                         "
-                        src="../../assets/index/useraccount/04.png"
-                        alt=""
-                      />
-                      <div class="cancelX" v-else>
-                        <p>x</p>
-                        <img src="../../assets/index/useraccount/03.png" alt="" />
+                      >
+                        <img
+                          class="kkxz"
+                          src="../../assets/index/useraccount/start.png"
+                          alt=""
+                        />
+                      </div>
+                      <div class="canceld" v-else>
+                        <!-- <p>x</p> -->
+                        <img
+                          class="kknxz"
+                          src="../../assets/index/useraccount/end.png"
+                          alt=""
+                        />
                       </div>
                     </div>
                   </div>
@@ -149,18 +163,14 @@
                         setStatus(4, item.status, item.chargerno, item.centre, index)
                       "
                     >
-                      <img
-                        v-if="
-                          item.status != 'Disconnected' &&
-                          item.status != 'OffLine' &&
-                          item.status == 'Disabled'
-                        "
-                        src="../../assets/index/useraccount/04.png"
-                        alt=""
-                      />
-                      <div class="cancelX" v-else>
-                        <p>x</p>
-                        <img src="../../assets/index/useraccount/03.png" alt="" />
+                      <div class="canceld">
+                        <!-- v-if="
+                            item.status != 'Disconnected' &&
+                            item.status != 'OffLine' &&
+                            item.status == 'Disabled'
+                          " -->
+                        <p v-if="item.status == 'Completed'" class="full"></p>
+                        <p v-else></p>
                       </div>
                     </div>
                     <div
@@ -168,18 +178,14 @@
                         setStatus(5, item.status, item.chargerno, item.centre, index)
                       "
                     >
-                      <img
-                        v-if="
-                          item.status != 'Disconnected' &&
-                          item.status != 'OffLine' &&
-                          item.status == 'Disabled'
-                        "
-                        src="../../assets/index/useraccount/04.png"
-                        alt=""
-                      />
-                      <div class="cancelX" v-else>
-                        <p>x</p>
-                        <img src="../../assets/index/useraccount/03.png" alt="" />
+                      <div class="canceld">
+                        <!-- v-if="
+                            item.status != 'Disconnected' &&
+                            item.status != 'OffLine' &&
+                            item.status == 'Disabled'
+                          " -->
+                        <p v-if="item.status !== 'Completed'" class="full"></p>
+                        <p v-else></p>
                       </div>
                     </div>
                   </div>
@@ -221,7 +227,7 @@ export default {
         value: "",
       },
       centerType: [
-        { centreId: 0, value: "Shatin Centre" },
+        { centreId: 0, value: "Sha Tin Centre" },
         { centreId: 1, value: "Hung Hom HQ" },
         { centreId: 2, value: "Sham Shui Po Centre" },
         { centreId: 3, value: "Tsing Yi Centre" },
@@ -236,15 +242,18 @@ export default {
     };
   },
   created() {
-    this.ctypes = {
-      centreId: this.$store.state.loginInfos.cid,
-      value: this.$store.state.loginInfos.cid
-        ? this.$store.state.centerType.filter(
-            (item) => item.cid == this.$store.state.loginInfos.cid
-          )[0].value
-        : "",
-    };
-    this.getNowData();
+    let loginInfos = JSON.parse(localStorage.getItem("chargerInfo"));
+    if (Object.keys(loginInfos).length != 0) {
+      this.ctypes = {
+        centreId: loginInfos.centre,
+        value: loginInfos.centre
+          ? this.$store.state.centerType.filter(
+              (item) => item.cid == loginInfos.centre
+            )[0].value
+          : "",
+      };
+      this.getNowData();
+    }
     // console.log(this.$store.state.loginInfos);
   },
   mounted() {},
@@ -496,6 +505,37 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.cancelX img {
+  width: 28px;
+  height: 28px;
+}
+.canceld {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(163, 159, 159);
+  border-radius: 2px;
+  margin: 0 auto;
+}
+.canceld .full {
+  width: 18px;
+  height: 18px;
+  background: #4ba7d7;
+  border-radius: 50%;
+}
+.canceld .kkxz {
+  width: 20px;
+  height: 20px;
+}
+.canceld .kknxz {
+  width: 23px;
+  height: 23px;
+  margin-left: 3px;
+  margin-top: 2px;
 }
 .cancelX p {
   color: red;

@@ -276,6 +276,11 @@ input {
     overflow-y: scroll;
 }
 
+.h150 {
+    height: 150px;
+    overflow-y: scroll;
+}
+
 .mr100 {
     margin-right: 100px !important;
 }

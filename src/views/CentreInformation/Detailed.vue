@@ -199,7 +199,7 @@ export default {
   methods: {
     toDetails(cid, chargerno) {
       this.$store.commit("isBacked", 1);
-      this.$router.push({ path: "/ChargerControl", query: { cid, chargerno } });
+      this.$router.push({ path: "detailInform", query: { cid, chargerno } });
     },
     seleteCenters(value) {
       this.seleteUtits = value;

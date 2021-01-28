@@ -226,7 +226,7 @@ ul > li {
 .UpdateCancel {
   line-height: 38px;
 }
-li img{
+li img {
   position: absolute;
   right: 10px;
   /* top: 50%;
@@ -241,7 +241,8 @@ li img{
   font-size: 20px;
   margin-top: 33px;
 }
-.seleterBody {
+.seleterBody,
+.noseleterBodyitem {
   width: 224px;
   position: absolute;
   right: 0;
@@ -250,12 +251,15 @@ li img{
   z-index: 66;
   overflow-x: hidden;
   overflow-y: auto;
-  transition: all 0.2s linear;
   box-shadow: 0 0 3px #fff;
+}
+.seleterBody {
+  transition: all 0.2s linear;
 }
 input::-webkit-input-placeholder {
   color: #ffffff90;
 }
+.noseleterBodyitem .seleter_item,
 .seleterBody .seleter_item,
 .sleterMain .seleter_item {
   width: 100%;
