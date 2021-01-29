@@ -53,7 +53,7 @@
               />
             </div>
           </li>
-          <li><p>EV Type</p></li>
+          <li><p>Charger Type</p></li>
           <li><p>Vehicle No.</p></li>
           <li>
             <div>
@@ -168,7 +168,7 @@ export default {
   },
   created() {},
   mounted() {
-    let loginInfos = JSON.parse(localStorage.getItem("chargerInfo")) ||{};
+    let loginInfos = JSON.parse(localStorage.getItem("chargerInfo"));
     if (this.$route.query.cid) {
       this.ctypes.value = this.$store.state.centerType.filter(
         (item) => item.cid == this.$route.query.cid
@@ -176,12 +176,10 @@ export default {
       this.ctypes.centreId = this.$route.query.cid;
     } else {
       this.ctypes = {
-        centreId: loginInfos.centre,
-        value: loginInfos.centre
-          ? this.$store.state.centerType.filter(
-              (item) => item.cid == loginInfos.centre
-            )[0].value
-          : "",
+        centreId: this.$store.state.loginInfos.cid?this.$store.state.loginInfos.cid:loginInfos.centre,
+        value: this.$store.state.centerType.filter(
+              (item) => item.cid == (this.$store.state.loginInfos.cid?this.$store.state.loginInfos.cid:loginInfos.centre)
+            )[0].value,
       };
     }
     this.getCCECDetail();

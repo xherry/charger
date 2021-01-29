@@ -80,6 +80,9 @@ export const findByDataRecord = (data) => $Post("/api/chargerInfo/findByDataReco
 export const excelExp = (data) => $Post("/api/chargerInfo/excelExp", data, true)
     // 二级联动查询充电桩编号
 export const findBySelectCNO = (data) => $Post("/api/chargerData/findBySelect", data)
+    // DataReport
+export const findByDataReport = (data) => $Post("/api/chargerRecord/findByDataReport", data)
+
 
 
 // 登陆部分

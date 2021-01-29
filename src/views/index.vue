@@ -149,8 +149,15 @@ export default {
         type: "warning",
       })
         .then(() => {
-          localStorage.clear();
+          let loginInfos= {
+            cid: "",
+            location: '',
+            cno: '',
+            vno: ""
+        }
+          this.$store.commit("setLoginInfos", loginInfos);
           this.$store.commit("getUserInfo", {});
+          localStorage.clear();
           this.$router.replace("Selectlogin");
           this.$message.success("Log out successfully");
         })

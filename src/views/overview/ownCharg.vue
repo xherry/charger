@@ -26,7 +26,7 @@
         <span>Charger NO.</span>
         <div class="seleter flex flex-Updown-between p15">
           <!-- <p>{{ chargers.value }}</p> -->
-          <input type="text" v-model="chargers.value" />
+          <input type="text" v-model="chargers.value"  @focus="getFocus" @blur="inputBlur"/>
           <img
             :style="{ transform: `rotate(${isShowSlete1 ? '-180' : '0'}deg)` }"
             src="../../assets/index/says/02.png"
@@ -37,9 +37,9 @@
         <div
           class="seleterBody"
           :class="[isShowSlete1 ? 'h200' : 'h0', 'box']"
-          v-infinite-scroll="loadMore"
-          infinite-scroll-immediate="false"
         >
+          <!-- v-infinite-scroll="loadMore"
+          infinite-scroll-immediate="false" -->
           <div
             class="button seleter_item"
             v-for="(item, index) in chargers.arrs"
@@ -150,7 +150,7 @@
 </template>
 
 <script>
-import { findBIC, findByDetails } from "../../common/api";
+import { findBIC, findByDetails,findBySelectCNO } from "../../common/api";
 export default {
   name: "ownCharg",
   data() {
@@ -195,17 +195,15 @@ export default {
   watch: {
     "chargers.value"() {
       let chargerNumber = this.chargers.value;
-      if (chargerNumber === "") {
-        this.isShowSlete1 = false;
-      } else {
+      if(this.chargers.list.length>0){
         this.chargers.arrs = this.chargers.list.filter((item) => {
           return item.includes(chargerNumber.toUpperCase());
         });
-        if (this.chargers.arrs.length > 0) {
-          this.isShowSlete1 = true;
-        } else {
-          this.isShowSlete1 = false;
-        }
+      }
+      if(this.chargers.arrs.length==0){
+        this.isShowSlete1 = false
+      }else{
+        this.isShowSlete1 = true
       }
     },
   },
@@ -214,26 +212,28 @@ export default {
   },
   mounted() {
     let loginInfos = JSON.parse(localStorage.getItem("chargerInfo"));
-    console.log(loginInfos);
+    // console.log(this.$store.state.loginInfos.cid)
     if (loginInfos && Object.keys(loginInfos).length != 0) {
       this.ctypes.value = this.$store.state.centerType.filter(
-        (item) => item.cid === loginInfos.centre
+        (item) => item.cid == (this.$store.state.loginInfos.cid?this.$store.state.loginInfos.cid:loginInfos.centre)
       )[0].value;
-      this.ctypes.centreId =  loginInfos.centre;
-      this.getNowData(loginInfos.centre);
-      // location: this.navList[0].value,
-      this.chargers.value = this.$store.state.loginInfos.cno ||loginInfos.chargerno;
+      this.ctypes.centreId =  this.$store.state.loginInfos.cid?this.$store.state.loginInfos.cid:loginInfos.centre;
+      // this.getNowData(this.$store.state.loginInfos.cid?this.$store.state.loginInfos.cid:loginInfos.centre);
+      this.chargers.value = this.$store.state.loginInfos.cno;
       this.Vehicle = localStorage.getItem("vno") || "";
-      this.getIndividualCharger();
+      if(this.chargers.value!==''||this.Vehicle!==""){
+        this.getIndividualCharger();
+      }
     }
   },
   methods: {
-    loadMore() {
-      if (this.page >= Math.ceil(this.count / 10))
-        return this.$message.warning("No more data!");
-      this.page += 1;
-      // this.getNowData();
-      this.getNowData(this.ctypes.centreId);
+    getFocus() {
+      this.isShowSlete1 = this.chargers.arrs.length > 0 ? true : false;
+    },
+    inputBlur() {
+      setTimeout(() => {
+        this.isShowSlete1 = false;
+      }, 200);
     },
     seleteCharger() {
       this.isShowSlete1 = !this.isShowSlete1;
@@ -253,17 +253,13 @@ export default {
     // 查询充电桩的实时数据
     getNowData(centreId) {
       let data = {
-        page: this.page,
-        limit: 10,
-        userId: localStorage.getItem("userId"),
-        status: 6,
         centre: centreId,
       };
       let loadingInstance = this.$loading({
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
-      findByDetails(data)
+      findBySelectCNO(data)
         .then((res) => {
           // console.log(res, "查询充电桩的实时数据");
           this.$nextTick(() => {
@@ -273,7 +269,8 @@ export default {
           if (res.code == 100) {
             if (res.extend.chargerInfoList.length != 0) {
               let arrs = res.extend.chargerInfoList.map((item) => item.chargerno);
-              this.chargers.list = [...this.chargers.list, ...arrs];
+              this.chargers.list = arrs;
+              this.chargers.arrs = arrs;
             }
             this.count = res.extend.count;
           }
@@ -335,6 +332,7 @@ export default {
         this.ctypes.centreId = prop.cid;
         this.ctypes.value = prop.value;
         this.page = 0;
+        this.chargers.value = "";
         this.chargers.list = [];
         this.getNowData(prop.cid);
       }

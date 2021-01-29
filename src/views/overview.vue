@@ -398,7 +398,10 @@ export default {
         this.$store.commit("changeShowBottom", true);
         return;
       }
-      this.$store.commit("isBacked");
+      // this.$store.commit("isBacked");
+      let obj = this.$store.state.loginInfos;
+      obj.cid = value;
+      this.$store.commit("setLoginInfos", obj);
       this.$router.push({ path: "CentreInformation/Summary"});
     },
     showEwm() {

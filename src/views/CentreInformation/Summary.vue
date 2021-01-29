@@ -127,7 +127,7 @@ export default {
         userId: localStorage.getItem("userId"),
       };
       let loadingInstance = this.$loading({
-        text: "加载中...",
+        text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
       findBYN(data)

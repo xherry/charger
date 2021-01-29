@@ -169,7 +169,7 @@
                             item.status != 'OffLine' &&
                             item.status == 'Disabled'
                           " -->
-                        <p v-if="item.status == 'Completed'" class="full"></p>
+                        <p v-if="item.status !== 'Completed'" class="full"></p>
                         <p v-else></p>
                       </div>
                     </div>
@@ -184,7 +184,7 @@
                             item.status != 'OffLine' &&
                             item.status == 'Disabled'
                           " -->
-                        <p v-if="item.status !== 'Completed'" class="full"></p>
+                        <p v-if="item.status == 'Completed'" class="full"></p>
                         <p v-else></p>
                       </div>
                     </div>
@@ -245,12 +245,14 @@ export default {
     let loginInfos = JSON.parse(localStorage.getItem("chargerInfo"));
     if (Object.keys(loginInfos).length != 0) {
       this.ctypes = {
-        centreId: loginInfos.centre,
-        value: loginInfos.centre
-          ? this.$store.state.centerType.filter(
-              (item) => item.cid == loginInfos.centre
-            )[0].value
-          : "",
+        centreId: this.$store.state.loginInfos.cid
+          ? this.$store.state.loginInfos.cid
+          : loginInfos.centre,
+        value: this.$store.state.centerType.filter((item) =>
+          item.cid == (this.$store.state.loginInfos.cid
+            ? this.$store.state.loginInfos.cid
+            : loginInfos.centre)
+        )[0].value,
       };
       this.getNowData();
     }

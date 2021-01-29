@@ -4,54 +4,54 @@
       <div class="w100 flex flex-Updown">
         <div
           class="dsmleftitem cdltopitem flex flex-Updown"
-          @click="optionsId = optionsId === searchs[0].id ? '' : searchs[0].id"
+          @click="isShowSlete = isShowSlete == 1 ? 0 : 1"
         >
           <span>Centre</span>
           <div class="seleteY flex flex-Updown-between p15">
-            <p>{{ searchs[0].value }}</p>
+            <p>{{ searchs.Centre.value }}</p>
             <img
-              :style="{ transform: `rotate(${isShowSlete ? '-180' : '0'}deg)` }"
+              :style="{ transform: `rotate(${isShowSlete == 1 ? '-180' : '0'}deg)` }"
               src="../../assets/index/says/02.png"
               alt=""
             />
           </div>
-          <div
-            class="seleterBody"
-            :style="{ height: optionsId === searchs[0].id ? '200px' : '0px' }"
-          >
+          <div :class="['seleterBody', isShowSlete == 1 ? 'h200' : 'h0']">
             <div
               class="button seleter_item"
-              v-for="(p, i) in searchs[0].children"
+              v-for="(p, i) in $store.state.centerType"
               :key="i + 'ss'"
-              @click="seleteCenter(p, 1)"
+              @click.stop="seleteCenter(p)"
             >
               {{ p.value }}
             </div>
           </div>
         </div>
-        <div class="dsmleftitem cdltopitem flex flex-Updown" @click="seleteCharger">
+        <div class="dsmleftitem cdltopitem flex flex-Updown">
           <span>Charger NO.</span>
           <div class="seleteY flex flex-Updown-between p15">
-            <p>{{ searchs[1].value }}</p>
+            <!-- cdltopitem img -->
+            <input
+              type="text"
+              v-model="searchs.ChargerNo.value"
+              @blur="inputBlur"
+              @focus="getFocus"
+            />
             <img
+              class="cnoImg"
+              @click="isShowSlete = isShowSlete == 2 ? 0 : 2"
               :style="{
-                transform: `rotate(${optionsId === searchs[1].id ? '-180' : '0'}deg)`,
+                transform: `rotate(${isShowSlete === 2 ? '-180' : '0'}deg)`,
               }"
               src="../../assets/index/says/02.png"
               alt=""
             />
           </div>
-          <div
-            class="seleterBody"
-            :class="[optionsId === searchs[1].id ? 'h200' : 'h0', 'box']"
-            v-infinite-scroll="loadMore1"
-            infinite-scroll-immediate="false"
-          >
+          <div class="seleterBody" :class="[isShowSlete === 2 ? 'h200' : 'h0', 'box']">
             <div
               class="button seleter_item"
-              v-for="(item, index) in searchs[1].children"
+              v-for="(item, index) in searchs.ChargerNo.arrs"
               :key="index"
-              @click="seleteCenter(item, 2)"
+              @click="seletCNOV(item)"
             >
               {{ item }}
             </div>
@@ -65,32 +65,39 @@
               type="text"
               @blur="getValue"
               placeholder="Vehicle No."
-              v-model="searchs[2].value"
+              v-model="searchs.VehicleNo"
             />
           </div>
         </div>
       </div>
       <div
         class="dsmleftitem cdltopitem flex flex-Updown"
-        @click="showList.table = !showList.table"
+        @click="showList.isTable = !showList.isTable"
       >
         <span class="dsmleftitemSpan">Table</span>
-        <img v-if="showList.table" src="../../assets/index/useraccount/04.png" alt="" />
+        <img v-if="showList.isTable" src="../../assets/index/useraccount/04.png" alt="" />
         <img v-else src="../../assets/index/useraccount/03.png" alt="" />
       </div>
       <div
         class="dsmleftitem cdltopitem flex flex-Updown"
-        @click="showList.figure = !showList.figure"
+        @click="showList.isTable = !showList.isTable"
       >
         <span class="dsmleftitemSpan">Figure</span>
-        <img v-if="showList.figure" src="../../assets/index/useraccount/04.png" alt="" />
+        <img
+          v-if="!showList.isTable"
+          src="../../assets/index/useraccount/04.png"
+          alt=""
+        />
         <img v-else src="../../assets/index/useraccount/03.png" alt="" />
       </div>
     </div>
     <div class="chargerBottom overRights">
       <p class="ortoptit">Search Conditions</p>
       <div class="timeSelete flex flex-Updown">
-        <div class="titem flex flex-Updown" @click="showList.isTime = 0">
+        <div
+          class="titem flex flex-Updown"
+          @click="(showList.isTime = 0), (startTime = ''), (endTime = '')"
+        >
           <p>Daily</p>
           <img
             v-if="showList.isTime == 0"
@@ -99,7 +106,10 @@
           />
           <img v-else src="../../assets/index/useraccount/03.png" alt="" />
         </div>
-        <div class="titem flex flex-Updown" @click="showList.isTime = 1">
+        <div
+          class="titem flex flex-Updown"
+          @click="(showList.isTime = 1), (startTime = ''), (endTime = '')"
+        >
           <p>Monthly</p>
           <img
             v-if="showList.isTime == 1"
@@ -108,7 +118,10 @@
           />
           <img v-else src="../../assets/index/useraccount/03.png" alt="" />
         </div>
-        <div class="titem flex flex-Updown" @click="showList.isTime = 2">
+        <div
+          class="titem flex flex-Updown"
+          @click="(showList.isTime = 2), (startTime = ''), (endTime = '')"
+        >
           <p>Annual</p>
           <img
             v-if="showList.isTime == 2"
@@ -121,11 +134,26 @@
           <span>Start From</span>
           <div class="seleteDate">
             <el-date-picker
-              value-format="yyyy-MM-dd"
-              format="yyyy-MM-dd"
+              :value-format="
+                showList.isTime == 0
+                  ? 'yyyy-MM-dd'
+                  : showList.isTime == 1
+                  ? 'yyyy-MM'
+                  : 'yyyy'
+              "
+              :format="
+                showList.isTime == 0
+                  ? 'yyyy-MM-dd'
+                  : showList.isTime == 1
+                  ? 'yyyy-MM'
+                  : 'yyyy'
+              "
               :clearable="false"
+              :type="
+                showList.isTime == 0 ? 'date' : showList.isTime == 1 ? 'month' : 'year'
+              "
+              @change="getStartTime"
               v-model="startTime"
-              type="date"
               placeholder="选择日期"
             >
             </el-date-picker>
@@ -142,13 +170,29 @@
           <span>End To</span>
           <div class="seleteDate">
             <el-date-picker
-              value-format="yyyy-MM-dd"
-              format="yyyy-MM-dd"
+              :value-format="
+                showList.isTime == 0
+                  ? 'yyyy-MM-dd'
+                  : showList.isTime == 1
+                  ? 'yyyy-MM'
+                  : 'yyyy'
+              "
+              :format="
+                showList.isTime == 0
+                  ? 'yyyy-MM-dd'
+                  : showList.isTime == 1
+                  ? 'yyyy-MM'
+                  : 'yyyy'
+              "
               :clearable="false"
+              :type="
+                showList.isTime == 0 ? 'date' : showList.isTime == 1 ? 'month' : 'year'
+              "
+              @change="getEndTime"
               v-model="endTime"
-              type="date"
               placeholder="选择日期"
             >
+              <!-- -->
             </el-date-picker>
           </div>
           <p class="flex seleteY flex-Updown-between">
@@ -157,52 +201,88 @@
           </p>
         </div>
       </div>
-      <div class="dsmain flex">
-        <div class="drtable">
-          <div class="w100 p12">
-            <ul class="ultit w100">
-              <li><p>Date</p></li>
-              <li ><p>Total Charging Time (H)</p></li>
-              <li ><p>Total No. of Charging (Ts)</p></li>
-              <li><p>Total Charging Energy (KWh)</p></li>
-              <li ><p>Average Charging Power (kWh)</p></li>
-              <li><p>Unilization Rate (%)</p></li>
-            </ul>
-          </div>
-          <!--   -->
-          <div v-if="chargerInfoList.length != 0">
-            <!-- , updateId === index ? 'bshow' : '' -->
-            <div class="loadMore box" v-infinite-scroll="loadMore">
-              <ul
-                :class="['uldatas', 'w100']"
-                v-for="(item, index) in chargerInfoList"
-                :key="index + 's'"
-              >
-                <li>
-                  <p>{{ startTime }}</p>
-                </li>
-                <li >
-                  <p>{{ item.chargingVoltage }}</p>
-                </li>
-                <li >
-                  <p>{{ item.chargingCurrent }}</p>
-                </li>
-                <li >
-                  <p>{{ item.chargingPower }}</p>
-                </li>
-                <li>
-                  <p>{{ item.chargingEnergy }}</p>
-                </li>
-                <li>
-                  <p>{{ item.chargingTime }}</p>
-                </li>
+      <div class="dsmains">
+        <div :class="['dsmain', showList.isTable ? '' : 'transnY001']">
+          <!-- v-show="showList.isTable" , !showList.isTable ? 'visibility' : ''-->
+          <div :class="['drtable']" ref="forms">
+            <div class="w100 p12">
+              <ul class="ultit w100">
+                <li><p>Date</p></li>
+                <li v-if="DataTypes[0].choose"><p>Total Charging Time (H)</p></li>
+                <li v-if="DataTypes[1].choose"><p>Total No. of Charging (Ts)</p></li>
+                <li v-if="DataTypes[2].choose"><p>Total Charging Energy (KWh)</p></li>
+                <li v-if="DataTypes[3].choose"><p>Average Charging Power (kWh)</p></li>
+                <li v-if="DataTypes[4].choose"><p>Unilization Rate (%)</p></li>
+              </ul>
+            </div>
+            <!--   -->
+            <div v-if="chargerInfoList.length != 0">
+              <!-- , updateId === index ? 'bshow' : '' -->
+              <div class="loadMore box" v-infinite-scroll="loadMore">
+                <ul
+                  :class="['uldatas', 'w100']"
+                  v-for="(item, index) in chargerInfoList"
+                  :key="index + 's'"
+                >
+                  <li>
+                    <p>{{ item.date }}</p>
+                  </li>
+                  <li v-if="DataTypes[0].choose">
+                    <p>{{ item.totalChargingTime | value2 }}</p>
+                  </li>
+                  <li v-if="DataTypes[1].choose">
+                    <p>{{ item.totalNoofCharging  }}</p>
+                  </li>
+                  <li v-if="DataTypes[2].choose">
+                    <p>{{ item.totalChargingEnergy | value2 }}</p>
+                  </li>
+                  <li v-if="DataTypes[3].choose">
+                    <p>{{ item.averageChargingPower | value2 }}</p>
+                  </li>
+                  <li v-if="DataTypes[4].choose">
+                    <p>{{ item.unilizationRate | value2 }}%</p>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div v-else class="p12">
+              <ul class="uldatas w100 btb">
+                <li><p>No Data！</p></li>
               </ul>
             </div>
           </div>
-          <div v-else class="p12">
-            <ul class="uldatas w100 btb">
-              <li><p>No Data！</p></li>
-            </ul>
+          <!-- v-show="!showList.isTable" -->
+        </div>
+        <div :class="['dsmain', !showList.isTable ? 'transnY001' : '']">
+          <div :class="['charts']">
+            <div style="width: 100%; overflow: hidden" ref="dsrmr">
+              <div class="flex chartItems">
+                <div class="chart-items" v-if="DataTypes[0].choose">
+                  <div class="chartP"><p>Total Charging Time</p></div>
+                  <div class="setCharts" id="chart1"></div>
+                </div>
+                <div class="chart-items nobr" v-if="DataTypes[1].choose">
+                  <div class="chartP"><p>Total No. of Charging</p></div>
+                  <div class="setCharts" id="chart2"></div>
+                </div>
+              </div>
+              <div class="flex chartItems">
+                <div class="chart-items" v-if="DataTypes[2].choose">
+                  <div class="chartP"><p>Total Charging Energy</p></div>
+                  <div class="setCharts" id="chart3"></div>
+                </div>
+                <div class="chart-items nobr" v-if="DataTypes[3].choose">
+                  <div class="chartP"><p>Average Charging Power</p></div>
+                  <div class="setCharts" id="chart4"></div>
+                </div>
+              </div>
+              <div class="flex chartItems">
+                <div class="chart-items nobb" v-if="DataTypes[4].choose">
+                  <div class="chartP"><p>Unilization Rate</p></div>
+                  <div class="setCharts" id="chart5"></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -238,11 +318,11 @@
             </div>
             <div
               class="dsmleftitem cdltopitem flex flex-Updown mt0 mb10"
-              @click="showList.table = !downList.table"
+              @click="downList.isTable = !downList.isTable"
             >
               <span class="dsmleftitemSpan">Table</span>
               <img
-                v-if="downList.table"
+                v-if="downList.isTable"
                 src="../../assets/index/useraccount/04.png"
                 alt=""
               />
@@ -250,11 +330,11 @@
             </div>
             <div
               class="dsmleftitem cdltopitem flex flex-Updown mt0 mb10"
-              @click="downList.figure = !downList.figure"
+              @click="downList.isFigure = !downList.isFigure"
             >
               <span class="dsmleftitemSpan">Figure</span>
               <img
-                v-if="downList.figure"
+                v-if="downList.isFigure"
                 src="../../assets/index/useraccount/04.png"
                 alt=""
               />
@@ -263,7 +343,7 @@
           </div>
           <div class="dltopitem flex flex-Updown-around">
             <div
-              class="titem  flex flex-Updown"
+              class="titem flex flex-Updown"
               v-for="(item, index) in DataTypes"
               :key="'c' + index"
               @click="item.choose = !item.choose"
@@ -281,7 +361,7 @@
         <div class="" style="text-align: center">
           <p class="Update">
             <!-- @click="getParams" -->
-            <span class="button">Downlod</span>
+            <span class="button" @click="toPprintOut">Downlod</span>
           </p>
           <p>PDF format saved</p>
         </div>
@@ -291,121 +371,494 @@
 </template>
 
 <script>
-import {
-  findByParamsAll,
-  EVFindBySelect,
-  EVFindBySelectTwo,
-  findByChargerType,
-  findByModel,
-} from "../../common/api";
+import html2canvas from "html2canvas";
+import JsPDF from "jspdf";
+import { findBySelectCNO, findByDataReport } from "../../common/api";
 export default {
   name: "dateStatus",
   data() {
     return {
       updateId: "",
       tableDatas: [],
-      isShowSlete: false,
+      isShowSlete: 0,
       optionsId: "",
       count: 0,
-      searchs: [
-        {
-          name: "Centre",
+      searchs: {
+        Centre: {
           value: "",
           cid: "",
-          centreId: "",
-          children: [
-            { centreId: 0, value: "Shatin Centre", cid: "CLP3301" },
-            { centreId: 1, value: "Hung Hom HQ", cid: "CLP2101" },
-            { centreId: 2, cid: "", value: "Sham Shui Po Centre", cid: "CLP2201" },
-            { centreId: 3, value: "Tsing Yi Centre", cid: "CLP3801" },
-            { centreId: 4, value: "Yuen Long Centre", cid: "CLP3701" },
-            { centreId: 5, value: "Shek Wu Hui Centre", cid: "CLP3101" },
-          ],
-          id: 1,
         },
-        { name: "Charger No.", value: "", children: [], id: 4, cid: "" },
-        { name: "Vehicle No.", value: "", children: [], id: 6 },
-      ],
+        ChargerNo: {
+          list: [],
+          arrs: [],
+          value: "",
+        },
+        VehicleNo: "",
+      },
       startTime: "",
       endTime: "",
       DataTypes: [
-        { name: "Total Charging Time", choose: false, id: "1" },
-        { name: "Total No. of Charging", choose: false, id: "2" },
-        { name: "Total Charging Energy", choose: false, id: "3" },
-        { name: "Average Charging Power", choose: false, id: "4" },
-        { name: "Unilization Rate", choose: false, id: "5" },
+        { name: "Total Charging Time", choose: true, id: "1" },
+        { name: "Total No. of Charging", choose: true, id: "2" },
+        { name: "Total Charging Energy", choose: true, id: "3" },
+        { name: "Average Charging Power", choose: true, id: "4" },
+        { name: "Unilization Rate", choose: true, id: "5" },
       ],
       page: 1,
       chargerInfoList: [],
       showList: {
-        table: false,
-        figure: false,
+        isTable: true,
         isTime: 0,
       },
       downList: {
-        table: false,
-        figure: false,
+        isTable: true,
+        isFigure: false,
         isTime: 0,
+      },
+      chartList: {
+        TCT: [],
+        TNC: [],
+        TCE: [],
+        ACP: [],
+        UR: [],
+        times: [],
       },
     };
   },
   created() {},
-  mounted() {},
-  methods: {
-    loadMore1() {},
-    loadMore() {
-      if (this.page > Math.ceil(this.count / 10))
-        return this.$message.warning("No more data!");
-      this.page += 1;
-    },
-    seleteCharger() {},
-    openSelete(type) {},
-    // 选择
-    seletes(value, i) {},
-
-    getLocation() {},
-    getValue() {},
-    //展示表格
-    showTable(index) {
-      // this.DataTypes[index].choose = !this.DataTypes[index].choose;
-      // this.$store.commit("showTableUl", this.DataTypes);
-    },
-    //
-    seleteCenter(value) {},
-
-    //条件筛选查询
-    getParams() {
-      let searchs = this.searchs;
-      let data = {
-        centre: this.searchs[0].cid,
-        location: this.searchs[1].value,
-        chargerType: this.searchs[2].cid,
-        chargerNo: this.searchs[3].value,
-        manufacturer: this.searchs[4].value,
-        model: this.searchs[5].value,
-        vehicleNo: this.searchs[6].value || "null",
-        startDate: this.startTime,
-        endDate: this.endTime,
+  mounted() {
+    let loginInfos = JSON.parse(localStorage.getItem("chargerInfo"));
+    if (Object.keys(loginInfos).length != 0) {
+      this.searchs.Centre = {
+        cid: this.$store.state.loginInfos.cid
+          ? this.$store.state.loginInfos.cid
+          : loginInfos.centre,
+        value:  this.$store.state.centerType.filter((item) =>
+              item.cid == (this.$store.state.loginInfos.cid
+                ? this.$store.state.loginInfos.cid
+                : loginInfos.centre)
+            )[0].value,
       };
-      let datas = { userIds: localStorage.getItem("userId"), page: this.page, limit: 8 };
+      this.getNowData(loginInfos.centre);
+      this.searchs.ChargerNo.value = this.$store.state.loginInfos.cno;
+      this.searchs.VehicleNo = localStorage.getItem("vno") || "";
+    }
+  },
+  watch: {
+    "searchs.ChargerNo.value"() {
+      let chargerNumber = this.searchs.ChargerNo.value;
+      if (this.searchs.ChargerNo.list.length > 0) {
+        this.searchs.ChargerNo.arrs = this.searchs.ChargerNo.list.filter((item) => {
+          return item.includes(chargerNumber.toUpperCase());
+        });
+      }
+      if(this.searchs.ChargerNo.list==0){
+        this.isShowSlete = 0
+      }else{
+        this.isShowSlete = 2
+      }
+    },
+  },
+  methods: {
+    setCharts(id, yData, xData, type) {
+      let myChart = echarts.init(document.getElementById(id));
+      let option;
+      if (type == 1) {
+        option = {
+          xAxis: {
+            type: "category",
+            boundaryGap: false,
+            data: xData,
+            axisLine: {
+              lineStyle: {
+                color: "#4699CE",
+              },
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {
+                color: "#4699CE",
+              },
+            },
+            axisLabel: {
+              interval: xData.length > 10 ? 4 : 0,
+              rotate: 40,
+            },
+          },
+          yAxis: {
+            type: "value",
+            minInterval: 1, //最小是1
+            axisLine: {
+              lineStyle: {
+                color: "#4699CE",
+              },
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {
+                color: "#4699CE",
+              },
+            },
+          },
+          series: [
+            {
+              data: yData, // ,
+              type: "line",
+              smooth: true, //曲线平滑
+              areaStyle: {},
+              label: {
+                normal: {
+                  show: true,
+                  color: "#fff",
+                },
+              },
+              itemStyle: {
+                normal: {
+                  // color:'rgba(0,146,246,.3)',
+                  color: new echarts.graphic.LinearGradient(
+                    0,
+                    0,
+                    0,
+                    1, //变化度
+                    //三种由深及浅的颜色
+                    [
+                      {
+                        offset: 0,
+                        color: "rgba(0,146,246,.8)",
+                      },
+                      {
+                        offset: 0.5,
+                        color: "rgba(0,146,246,.3)",
+                      },
+                      {
+                        offset: 1,
+                        color: "rgba(0,146,246,0)",
+                      },
+                    ]
+                  ),
+                  lineStyle: {
+                    color: "#0092f6",
+                    width: 1,
+                  },
+                },
+              },
+            },
+          ],
+        };
+      }
+      if (type == 2) {
+        option = {
+          xAxis: {
+            type: "category",
+            data: xData,
+            axisLabel: {
+              interval: xData.length > 10 ? 4 : 0,
+              rotate: 40,
+              color: "#fff",
+            },
+            axisLine: {
+              lineStyle: {
+                color: "#4699CE",
+              },
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {
+                color: "#4699CE",
+              },
+            },
+          },
+          yAxis: {
+            type: "value",
+            axisLabel: {
+              color: "#fff",
+            },
+            minInterval: 1, //最小是1
+            axisLine: {
+              lineStyle: {
+                color: "#4699CE",
+              },
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {
+                color: "#4699CE",
+              },
+            },
+          },
+          series: [
+            {
+              data: yData,
+              type: "bar",
+              itemStyle: {
+                normal: {
+                  //好，这里就是重头戏了，定义一个list，然后根据所以取得不同的值，这样就实现了，
+                  color: "#205cbf", //以下为是否显示，显示位置和显示格式的设置了
+                  label: {
+                    show: true,
+                    position: "top",
+                    color: "#FFFFFF",
+                  },
+                },
+              },
+            },
+          ],
+        };
+      }
+      myChart.setOption(option);
+    },
+    toPprintOut() {
+      if (this.downList.isTable) {
+        this.printOut("forms");
+      }
+      if (this.downList.isFigure) {
+        this.printOut("dsrmr");
+      }
+    },
+    // 导出PDF
+    printOut(theRef) {
+      this.$nextTick(() => {
+        // if (this.showList.isTable) return false;
+        let shareContent = this.$refs[theRef]; //document.getElementById("dsrmr"); //需要截图的包裹的（原生的）DOM 对象
+        let width = shareContent.clientWidth, //950, //获取dom 宽度
+          backgroundColor = "#333333",
+          height = shareContent.clientHeight, //获取dom 高度
+          canvas = document.createElement("canvas"), //创建一个canvas节点
+          scale = 1; //定义任意放大倍数 支持小数
+        canvas.width = width * scale; //定义canvas 宽度 * 缩放
+        canvas.height = height * scale; //定义canvas高度 *缩放
+        canvas.style.width = shareContent.clientWidth * scale + "px";
+        canvas.style.height = shareContent.clientHeight * scale + "px";
+        canvas.getContext("2d").scale(scale, scale); //获取context,设置scale
+        let opts = {
+          scale: scale, // 添加的scale 参数
+          canvas: canvas, //自定义 canvas
+          logging: false, //日志开关，便于查看html2canvas的内部执行流程
+          backgroundColor,
+          width: width, //dom 原始宽度
+          height: height,
+          useCORS: true, // 【重要】开启跨域配置
+        };
+        window.pageYoffset = 0;
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+        setTimeout(() => {
+          html2canvas(shareContent, opts).then(() => {
+            let contentWidth = canvas.width;
+            let contentHeight = canvas.height;
+            //一页pdf显示html页面生成的canvas高度;
+            let pageHeight = (contentWidth / 592.28) * 841.89;
+            //未生成pdf的html页面高度
+            let leftHeight = contentHeight;
+            //页面偏移
+            let position = 0;
+            //a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
+            let imgWidth = 595.28;
+            let imgHeight = (592.28 / contentWidth) * contentHeight;
+            let pageData = canvas.toDataURL("image/jpeg", 1.0);
+            // var PDF = new jspdf("", "pt", "a4");
+            let arrDPI = this.js_getDPI(); //获取显示器DPI
+            let dpiX = 96;
+            let dpiY = 96;
+            if (arrDPI.length > 0) {
+              dpiX = arrDPI[0];
+              dpiY = arrDPI[1];
+            }
+            //l:横向， p：纵向；单位： in:英寸，mm毫米；画布大小：a3,a4,leter,[]（当内容为数组时，为自定义大小）
+            let PDF = new JsPDF("l", "in", [
+              (contentWidth + 10) / dpiX,
+              (contentHeight + 10) / dpiY,
+            ]); // 自定义页面大小
+            if (leftHeight <= pageHeight) {
+              PDF.addImage(pageData, "JPEG", 5 / dpiX, 5 / dpiY);
+            } else {
+              while (leftHeight > 0) {
+                PDF.addImage(pageData, "JPEG", 0, position);
+                leftHeight -= pageHeight;
+                position -= 841.89;
+                if (leftHeight > 0) {
+                  PDF.addPage();
+                }
+              }
+            }
+            PDF.save("DataReport" + ".pdf"); // 这里是导出的文件名
+          });
+        }, 500);
+      });
+    },
+    js_getDPI() {
+      var arrDPI = new Array();
+      // console.log(window.screen.deviceXDPI);
+      if (window.screen.deviceXDPI != undefined) {
+        arrDPI[0] = window.screen.deviceXDPI;
+        arrDPI[1] = window.screen.deviceYDPI;
+      } else {
+        var tmpNode = document.createElement("DIV");
+        tmpNode.style.cssText =
+          "width:1in;height:1in;position:absolute;left:0px;top:0px;z-index:99;visibility:hidden";
+        document.body.appendChild(tmpNode);
+        arrDPI[0] = parseInt(tmpNode.offsetWidth);
+        arrDPI[1] = parseInt(tmpNode.offsetHeight);
+        tmpNode.parentNode.removeChild(tmpNode);
+      }
+      return arrDPI;
+    },
+    getStartTime(e) {
+      if (this.searchs.ChargerNo.value !== "" && this.endTime !== "") {
+        this.getParams();
+      }
+    },
+    getEndTime(e) {
+      if (this.searchs.ChargerNo.value !== "" && this.startTime !== "") {
+        this.getParams();
+      }
+    },
+    // 填写车牌号
+    getValue() {
+      this.getParams();
+    },
+    // 选择充电编号
+    seletCNOV(item) {
+      this.searchs.ChargerNo.value = item;
+      if (this.startTime !== "" && this.endTime !== "") {
+        this.getParams();
+      }
+    },
+    getFocus() {
+      this.isShowSlete = this.searchs.ChargerNo.arrs.length > 0 ? 2 : 0;
+    },
+    inputBlur() {
+      setTimeout(() => {
+        if (
+          this.searchs.ChargerNo.value !== "" &&
+          this.startTime !== "" &&
+          this.endTime !== ""
+        ) {
+          this.getParams();
+        }
+        this.isShowSlete = 0;
+      }, 200);
+    },
+    // 查询充电桩的实时数据
+    getNowData(centreId) {
+      let data = {
+        centre: centreId,
+      };
       let loadingInstance = this.$loading({
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
-      this.$store.commit("getChargerInfoData", data);
-      findByParamsAll({ ...data, ...datas })
+      findBySelectCNO(data)
         .then((res) => {
-          // console.log("条件筛选查询", res);
+          // console.log(res, "查询充电桩的实时数据");
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
           });
           if (res.code == 100) {
-            this.chargerInfoList = [
-              ...this.chargerInfoList,
-              ...res.extend.chargerInfoList,
-            ];
+            if (res.extend.chargerInfoList.length != 0) {
+              let arrs = res.extend.chargerInfoList.map((item) => item.chargerno);
+              this.searchs.ChargerNo.arrs = arrs;
+              this.searchs.ChargerNo.list = arrs;
+            }
             this.count = res.extend.count;
+          }
+        })
+        .catch(() => {
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+        });
+    },
+    loadMore() {
+      // if (this.page > Math.ceil(this.count / 10))
+      //   return this.$message.warning("No more data!");
+      // this.page += 1;
+    },
+    //
+    seleteCenter(value) {
+      this.searchs.ChargerNo = {
+        list: [],
+        arrs: [],
+        value: "",
+      };
+      this.searchs.Centre.value = value.value;
+      this.searchs.Centre.cid = value.cid;
+      this.isShowSlete = 0;
+      this.getNowData(value.cid);
+    },
+
+    //条件筛选查询
+    getParams() {
+      if (this.searchs.VehicleNo === "") {
+        if (this.searchs.Centre.cid === "") {
+          return this.$message.warning("Centre cannot be empty");
+        }
+        if (this.searchs.ChargerNo.value === "") {
+          return this.$message.warning("Chargerno cannot be empty");
+        }
+      }
+      if (this.startTime === "") {
+        return this.$message.warning("Please select a start time");
+      }
+      if (this.endTime === "") {
+        return this.$message.warning("Please select an end time");
+      }
+      let loadingInstance = this.$loading({
+        text: "Loading...",
+        background: "rgba(0,0,0,.5)",
+      });
+      let data = {
+        centre: this.searchs.Centre.cid,
+        chargerNo: this.searchs.ChargerNo.value,
+        vehicleNo: this.searchs.VehicleNo,
+        type: this.showList.isTime,
+        startTime: this.startTime,
+        endTime: this.endTime,
+      };
+      findByDataReport(data)
+        .then((res) => {
+          console.log("条件筛选查询", res);
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
+          if (res.code == 100) {
+            this.chargerInfoList = res.extend.chargerRecordList;
+            let chartList = {
+              TCT: res.extend.chargerRecordList.map((item) =>
+                item.totalChargingTime ? Number(item.totalChargingTime).toFixed(2) : 0
+              ),
+              TNC: res.extend.chargerRecordList.map((item) =>
+                item.totalNoofCharging ? item.totalNoofCharging : 0
+              ),
+              TCE: res.extend.chargerRecordList.map((item) =>
+                item.totalChargingEnergy ? Number(item.totalChargingEnergy).toFixed(2) : 0
+              ),
+              ACP: res.extend.chargerRecordList.map((item) =>
+                item.totalChargingEnergy
+                  ? Number(item.averageChargingPower).toFixed(2)
+                  : 0
+              ),
+              UR: res.extend.chargerRecordList.map((item) =>
+                item.unilizationRate ? Number(item.unilizationRate).toFixed(2) : 0
+              ),
+              times: res.extend.chargerRecordList.map((item) => item.date),
+            };
+            this.chartList = chartList;
+            setTimeout(() => {
+              this.setCharts("chart1", chartList.TCT, chartList.times, 1);
+              this.setCharts("chart2", chartList.TCT, chartList.times, 1);
+              this.setCharts("chart3", chartList.TCT, chartList.times, 1);
+              this.setCharts("chart4", chartList.TCT, chartList.times, 2);
+              this.setCharts("chart5", chartList.TCT, chartList.times, 2);
+            }, 200);
+            // this.chargerInfoList = [
+            //   ...this.chargerInfoList,
+            //   ...res.extend.chargerInfoList,
+            // ];
+            // this.count = res.extend.count;
           }
         })
         .catch((err) => {
@@ -420,6 +873,69 @@ export default {
 </script>
 
 <style scoped>
+.transnY100 {
+  transform: translateY(100%);
+}
+.transnY001 {
+  transform: translateY(-100%);
+}
+.visibility {
+  visibility: hidden;
+}
+.charts {
+  width: 1376px;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  border: 2px solid #205cbf;
+  border-radius: 6px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.chartItems {
+  /* width: 1376px; */
+  width: 100%;
+  height: 400px;
+}
+.chart-items {
+  /* width: 688px; */
+  /* width: 50%; */
+  flex: 1;
+  height: 100%;
+  position: relative;
+  border-right: 1px solid #205cbf;
+  border-bottom: 1px solid #205cbf;
+}
+.nobr {
+  border-right: 0;
+}
+.nobb {
+  border: 0;
+}
+
+.chart-items .chartP {
+  position: absolute;
+  /* width: 688px; */
+  width: 100%;
+  left: 0;
+  top: 20px;
+}
+.chart-items p {
+  /* width: 688px; */
+  width: 100%;
+  font-size: 18px;
+  text-align: center;
+}
+
+.chart-items .setCharts {
+  /* width: 688px; */
+  width: 100%;
+  height: 350px;
+  /* position: absolute;
+  bottom:0; */
+}
+
 .dlist {
   margin-top: 20px;
   padding: 0 60px 0 50px;
@@ -440,10 +956,6 @@ export default {
 }
 .dlist .titem {
   margin-bottom: 10px;
-  /* margin-right: 15px; */
-}
-.titem {
-  /* margin-right: ; */
 }
 .dsmleftitemSpan,
 .titem p {
@@ -452,8 +964,6 @@ export default {
   height: 30px;
   line-height: 30px;
   border-radius: 10px;
-  /* font-size: 20px; */
-  /* background: #1F53AD; */
   letter-spacing: 1.5px;
   font-weight: 500;
   background: url("../../assets/index/datas/01.png") no-repeat;
@@ -461,8 +971,8 @@ export default {
   text-align: center;
   cursor: pointer;
 }
-.titem .tbp{
- width: 180px;
+.titem .tbp {
+  width: 180px;
   font-size: 12px;
 }
 .dsmleftitemSpan:active,
@@ -478,7 +988,6 @@ export default {
   overflow: hidden;
 }
 .loadMore {
-  /* background: red; */
   max-height: 470px !important;
   overflow-y: scroll;
   border-bottom: 2px solid #205cbf;
@@ -511,19 +1020,13 @@ export default {
   line-height: 44px;
   border-radius: 10px;
   font-size: 20px;
-  /* background: #1F53AD; */
   letter-spacing: 2px;
   font-weight: 600;
   display: inline-block;
   background: url("../../assets/index/datas/01.png") no-repeat;
   background-size: 100% 100%;
-  /* margin-top: 23px; */
 }
-.Update {
-  /* position: absolute; */
-  /* right: 31px; */
-  /* bottom: 22px; */
-}
+
 .uldatas {
   background: transparent;
 }
@@ -545,11 +1048,9 @@ ul > li {
 .drtable ul {
   border-top: 2px solid #205cbf;
 }
-.drtable ul:last-of-type {
-  /* border-bottom: 2px solid #205cbf; */
-}
 .drtable {
   width: 100%;
+  min-height: 550px;
 }
 .dsmain-right {
   width: 1503px;
@@ -590,6 +1091,11 @@ ul > li {
   height: 8px;
   transition: all 0.2s linear;
 }
+
+.cnoImg {
+  position: absolute;
+  right: 20px;
+}
 .dsmleftitem > img {
   width: 20px;
   height: 20px;
@@ -611,7 +1117,8 @@ ul > li {
   font-size: 18px !important;
 }
 .seleterBody {
-  width: 190px;
+  width: 200px;
+  right: 10px;
 }
 .cdltopitem .seleteY,
 .cdltopitem input,
@@ -626,8 +1133,18 @@ ul > li {
   color: #63d1ff;
   font-size: 12px;
 }
+.cdltopitem .seleteY {
+  width: 200px;
+}
 .cdltopitem input {
   outline: 0;
+}
+.seleteY input {
+  position: absolute;
+  right: 10px;
+  top: 0;
+  width: 200px;
+  height: 31px;
 }
 .cdltopitem > span {
   color: #ffffff;
@@ -639,14 +1156,19 @@ ul > li {
   margin-top: 15px;
   position: relative;
 }
+.dsmains {
+  width: 1406px;
+  height: 550px;
+  margin-top: 10px;
+  margin-left: 50%;
+  transform: translateX(-50%);
+  overflow: hidden;
+}
 .dsmain {
   width: 1406px;
   height: 550px;
   /* background: red; */
   /* border: 2px solid #205cbf; */
-  margin-top: 10px;
-  margin-left: 50%;
-  transform: translateX(-50%);
   border-radius: 20px;
   padding: 0 30px 0 0;
   box-sizing: border-box;
@@ -670,9 +1192,9 @@ ul > li {
   box-sizing: border-box;
   padding-right: 15px;
 }
-.seleterBody {
+/* .seleterBody {
   width: 230px;
-}
+} */
 .seleter > img {
   width: 14px;
   height: 8px;

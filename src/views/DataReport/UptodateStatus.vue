@@ -215,7 +215,7 @@ export default {
       });
       findByDataRecord(data)
         .then((res) => {
-          // console.log(res, " 根据地区查询 充电桩的充电总时长等");
+          console.log(res, " 根据地区查询 充电桩的充电总时长等");
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
