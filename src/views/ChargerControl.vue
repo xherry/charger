@@ -50,6 +50,15 @@ export default {
       ],
     };
   },
+   watch: {
+    $route() {
+      this.leftNavs.forEach((item) => {
+        if (this.$route.name == item.RouterPush) {
+          this.seletNavIndex = item.id;
+        }
+      });
+    },
+  },
   created() {
     this.leftNavs.forEach((item) => {
        if(window.location.href.includes(item.RouterPush)){

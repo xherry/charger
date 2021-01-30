@@ -107,22 +107,27 @@
                       <div
                         class="canceld"
                         v-if="
-                          item.status != 'Disconnected' &&
-                          item.status != 'Offline' &&
-                          item.status != 'Disable' &&
-                          item.status != 'InUse' &&
+
+                          item.status != 'InUse' ||
                           item.status != 'WaitCharging'
                         "
                       >
+                          <!-- item.status != 'Disconnected' &&
+                          item.status != 'Offline' &&
+                          item.status != 'Disable' && -->
                         <img
                           class="kkxz"
                           src="../../assets/index/useraccount/start.png"
                           alt=""
                         />
                       </div>
-                      <div class="cancelX" v-else>
+                      <div class="canceld" v-else>
                         <!-- <p>x</p> -->
-                        <img src="../../assets/index/useraccount/end.png" alt="" />
+                        <img
+                          class="kknxz"
+                          src="../../assets/index/useraccount/end.png"
+                          alt=""
+                        />
                       </div>
                     </div>
                     <div
@@ -130,13 +135,15 @@
                         setStatus(2, item.status, item.chargerno, item.centre, index)
                       "
                     >
+                          <!-- item.status != 'Disconnected' &&
+                          item.status != 'Offline' &&
+                          item.status != 'Disable' && -->
+                          <!-- item.status == 'Charging' -->
                       <div
                         class="canceld"
                         v-if="
-                          item.status != 'Disconnected' &&
-                          item.status != 'Offline' &&
-                          item.status != 'Disable' &&
-                          item.status != 'Charging'
+                          item.status == 'InUse' ||
+                          item.status == 'WaitCharging'
                         "
                       >
                         <img
@@ -169,7 +176,7 @@
                             item.status != 'OffLine' &&
                             item.status == 'Disabled'
                           " -->
-                        <p v-if="item.status !== 'Completed'" class="full"></p>
+                        <p v-if="item.status != 'Completed'" class="full"></p>
                         <p v-else></p>
                       </div>
                     </div>
@@ -261,7 +268,7 @@ export default {
   mounted() {},
   methods: {
     loadMore() {
-      if (this.page >= Math.ceil(this.count / 10))
+      if (this.page >= Math.ceil(this.count / 1000000))
         return this.$message.warning("No more data!");
       this.page += 1;
       this.getNowData();
@@ -353,7 +360,7 @@ export default {
           : {};
       let data = {
         page: this.page,
-        limit: 10,
+        limit: 1000000,
         userId: localStorage.getItem("userId"),
         status: 6,
         ...chargerNo,
@@ -365,7 +372,7 @@ export default {
       });
       findByDetails(data)
         .then((res) => {
-          // console.log(res, "查询充电桩的实时数据");
+          console.log(res, "查询充电桩的实时数据");
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();

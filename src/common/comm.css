@@ -276,6 +276,11 @@ input {
     overflow-y: scroll;
 }
 
+.h300 {
+    height: 300px;
+    overflow-y: scroll;
+}
+
 .h150 {
     height: 150px;
     overflow-y: scroll;

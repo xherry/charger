@@ -19,7 +19,8 @@
                 alt=""
               />
             </p>
-            <div class="seleterBody" :style="{ height: isShowSlete1 ? '150px' : '0px' }">
+            <!-- :style="{ height: isShowSlete1 ? '100%' : '0px' }" -->
+            <div class="seleterBody" :class="[isShowSlete1?'h300':'h0']" >
               <div
                 class="button seleter_item"
                 v-for="(item, index) in userTypes"
@@ -52,7 +53,8 @@
                 alt=""
               />
             </p>
-            <div class="seleterBody" :style="{ height: isShowSlete2 ? '150px' : '0px' }">
+            <!--  :style="{ height: isShowSlete2 ? '100%' : '0px' }" -->
+            <div class="seleterBody" :class="[isShowSlete2?'h300':'h0']">
               <div
                 class="button seleter_item"
                 v-for="(item, index) in centerType"
@@ -69,24 +71,24 @@
           </div>
           <div class="cdltopitem flex flex-Updown-between">
             <span>Department (Optional)</span>
-            <input type="text" v-model="addUsers.department" placeholder="howhow" />
+            <input type="text" v-model="addUsers.department" placeholder="" />
           </div>
           <p class="leftTit">Contact information↓</p>
           <div class="cdltopitem flex flex-Updown-between">
             <span>Name</span>
-            <input type="text" v-model="addUsers.name" placeholder="what  why" />
+            <input type="text" v-model="addUsers.name" placeholder="" />
           </div>
           <div class="cdltopitem flex flex-Updown-between">
             <span>E-mail</span>
-            <input type="text" v-model="addUsers.email" placeholder="this  is ID" />
+            <input type="text" v-model="addUsers.email" placeholder="" />
           </div>
           <div class="cdltopitem flex flex-Updown-between">
             <span>Staff ID (Optional)</span>
-            <input type="text" v-model="addUsers.staffId" placeholder="whatwhat" />
+            <input type="text" v-model="addUsers.staffId" placeholder="" />
           </div>
           <div class="cdltopitem flex flex-Updown-between">
             <span>Mobile Phone No.</span>
-            <input type="text" v-model="addUsers.phone" placeholder="Phone " />
+            <input type="text" v-model="addUsers.phone" placeholder="" />
           </div>
           <!-- <div class="cdltopitem flex flex-Updown-between">
             <span>Verification code</span>
@@ -228,7 +230,7 @@ export default {
       .level;
     // console.log(level);
     this.userTypes = this.userTypes.filter(
-      (item) => level <= item.level && item.level !== 6
+      (item) => level <= item.level 
     );
     this.prmselete = [
       { name: "Check  Status", value: this.roleKey.checkStatus },

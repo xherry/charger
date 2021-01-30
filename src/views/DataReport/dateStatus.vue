@@ -744,17 +744,17 @@ export default {
       let data = {
         centre: centreId,
       };
-      let loadingInstance = this.$loading({
-        text: "Loading...",
-        background: "rgba(0,0,0,.5)",
-      });
+      // let loadingInstance = this.$loading({
+      //   text: "Loading...",
+      //   background: "rgba(0,0,0,.5)",
+      // });
       findBySelectCNO(data)
         .then((res) => {
           // console.log(res, "查询充电桩的实时数据");
-          this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
-          });
+          // this.$nextTick(() => {
+          //   // 以服务的方式调用的 Loading 需要异步关闭
+          //   loadingInstance.close();
+          // });
           if (res.code == 100) {
             if (res.extend.chargerInfoList.length != 0) {
               let arrs = res.extend.chargerInfoList.map((item) => item.chargerno);
@@ -764,12 +764,12 @@ export default {
             this.count = res.extend.count;
           }
         })
-        .catch(() => {
-          this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
-          });
-        });
+        // .catch(() => {
+        //   this.$nextTick(() => {
+        //     // 以服务的方式调用的 Loading 需要异步关闭
+        //     loadingInstance.close();
+        //   });
+        // });
     },
     loadMore() {
       // if (this.page > Math.ceil(this.count / 10))

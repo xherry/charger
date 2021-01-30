@@ -134,7 +134,7 @@
 </template>
 
 <script>
-import { findBIC, controlCharger, findByDetails } from "../../common/api";
+import { findBIC, controlCharger, findByDetails,findByChargers } from "../../common/api";
 export default {
   name: "detailInform",
   data() {
@@ -224,29 +224,22 @@ export default {
     },
     //根据条件查询充电状态
     getIndividualCharger() {
-      let data;
-      if (this.Vehicle === "") {
-        data = {
-          userId: localStorage.getItem("userId"),
-          centre: this.ctypes.centreId,
-          // location: this.navList[0].value,
-          chargerNo: this.chargers.value,
-          vehicleNo: "null",
-        };
-      } else {
-        data = {
-          userId: localStorage.getItem("userId"),
-          centre: " ",
-          location: " ",
-          chargerNo: " ",
-          vehicleNo: this.Vehicle,
-        };
-      }
       let loadingInstance = this.$loading({
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
-      findBIC(data)
+      let data;
+      if (this.Vehicle === "") {
+        data = {
+          centre: this.ctypes.centreId,
+          chargerNo: this.chargers.value,
+        };
+      } else {
+        data = {
+          vehicleNo: this.Vehicle,
+        };
+      }
+      findByChargers(data)
         .then((res) => {
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
@@ -289,17 +282,9 @@ export default {
         status: 6,
         centre: centreId,
       };
-      let loadingInstance = this.$loading({
-        text: "Loading...",
-        background: "rgba(0,0,0,.5)",
-      });
       findByDetails(data)
         .then((res) => {
           // console.log(res, "查询充电桩的实时数据");
-          this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
-          });
           if (res.code == 100) {
             if (res.extend.chargerInfoList.length != 0) {
               let arrs = res.extend.chargerInfoList.map((item) => item.chargerno);
@@ -308,12 +293,6 @@ export default {
             this.count = res.extend.count;
           }
         })
-        .catch(() => {
-          this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
-          });
-        });
     },
   },
 };
@@ -461,7 +440,7 @@ export default {
 }
 .diaValue {
   font-size: 20px;
-  margin-top: 28px;
+  margin-top: 15px;
 }
 .cartsCenter {
   position: absolute;
@@ -514,4 +493,5 @@ export default {
   padding: 0 24px 0 15px;
   color: #fff;
 }
+
 </style>

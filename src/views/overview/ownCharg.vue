@@ -150,7 +150,7 @@
 </template>
 
 <script>
-import { findBIC, findByDetails,findBySelectCNO } from "../../common/api";
+import { findBIC, findByDetails,findBySelectCNO,findByChargers } from "../../common/api";
 export default {
   name: "ownCharg",
   data() {
@@ -212,13 +212,12 @@ export default {
   },
   mounted() {
     let loginInfos = JSON.parse(localStorage.getItem("chargerInfo"));
-    // console.log(this.$store.state.loginInfos.cid)
     if (loginInfos && Object.keys(loginInfos).length != 0) {
       this.ctypes.value = this.$store.state.centerType.filter(
         (item) => item.cid == (this.$store.state.loginInfos.cid?this.$store.state.loginInfos.cid:loginInfos.centre)
       )[0].value;
       this.ctypes.centreId =  this.$store.state.loginInfos.cid?this.$store.state.loginInfos.cid:loginInfos.centre;
-      // this.getNowData(this.$store.state.loginInfos.cid?this.$store.state.loginInfos.cid:loginInfos.centre);
+      this.getNowData(this.$store.state.loginInfos.cid?this.$store.state.loginInfos.cid:loginInfos.centre);
       this.chargers.value = this.$store.state.loginInfos.cno;
       this.Vehicle = localStorage.getItem("vno") || "";
       if(this.chargers.value!==''||this.Vehicle!==""){
@@ -233,7 +232,10 @@ export default {
     inputBlur() {
       setTimeout(() => {
         this.isShowSlete1 = false;
-      }, 200);
+        if(this.chargers.value!==''){
+          this.getIndividualCharger();
+        }
+      }, 100);
     },
     seleteCharger() {
       this.isShowSlete1 = !this.isShowSlete1;
@@ -255,17 +257,17 @@ export default {
       let data = {
         centre: centreId,
       };
-      let loadingInstance = this.$loading({
-        text: "Loading...",
-        background: "rgba(0,0,0,.5)",
-      });
+      // let loadingInstance = this.$loading({
+      //   text: "Loading...",
+      //   background: "rgba(0,0,0,.5)",
+      // });
       findBySelectCNO(data)
         .then((res) => {
           // console.log(res, "查询充电桩的实时数据");
-          this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
-          });
+          // this.$nextTick(() => {
+          //   // 以服务的方式调用的 Loading 需要异步关闭
+          //   loadingInstance.close();
+          // });
           if (res.code == 100) {
             if (res.extend.chargerInfoList.length != 0) {
               let arrs = res.extend.chargerInfoList.map((item) => item.chargerno);
@@ -275,30 +277,23 @@ export default {
             this.count = res.extend.count;
           }
         })
-        .catch(() => {
-          this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
-          });
-        });
+        // .catch(() => {
+        //   this.$nextTick(() => {
+        //     // 以服务的方式调用的 Loading 需要异步关闭
+        //     loadingInstance.close();
+        //   });
+        // });
     },
     //根据条件查询充电状态
     getIndividualCharger() {
       let data;
       if (this.Vehicle === "") {
         data = {
-          userId: localStorage.getItem("userId"),
           centre: this.ctypes.centreId,
-          // location: this.navList[0].value,
           chargerNo: this.chargers.value,
-          vehicleNo: "null",
         };
       } else {
         data = {
-          userId: localStorage.getItem("userId"),
-          centre: " ",
-          location: " ",
-          chargerNo: " ",
           vehicleNo: this.Vehicle,
         };
       }
@@ -306,7 +301,7 @@ export default {
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
-      findBIC(data)
+      findByChargers(data)
         .then((res) => {
           // console.log("根据条件查询充电状态", res);
           this.$nextTick(() => {
@@ -370,7 +365,7 @@ export default {
   top: 0;
 }
 .dialog07 .cartword .diaValue {
-  margin-top: 15px;
+  margin-top: 10px;
 }
 .p15 {
   padding: 0 15px 0 15px;
@@ -476,7 +471,7 @@ export default {
 }
 .diaValue {
   font-size: 20px;
-  margin-top: 28px;
+  margin-top: 15px;
 }
 .cartsCenter {
   position: absolute;

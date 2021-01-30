@@ -82,6 +82,9 @@ export const excelExp = (data) => $Post("/api/chargerInfo/excelExp", data, true)
 export const findBySelectCNO = (data) => $Post("/api/chargerData/findBySelect", data)
     // DataReport
 export const findByDataReport = (data) => $Post("/api/chargerRecord/findByDataReport", data)
+    // 根据二级联动查询信息
+    // /api/chargerInfo/findByCharger
+export const findByChargers = (data) => $Post("/api/chargerInfo/findByCharger", data)
 
 
 

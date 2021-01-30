@@ -203,7 +203,7 @@ export default {
       this.seleteUtits = value;
     },
     loadMore() {
-      if (this.page >= Math.ceil(this.count / 10))
+      if (this.page >= Math.ceil(this.count / 1000000))
         return this.$message.warning("No more data!");
       this.page += 1;
       this.getCCECDetail();
@@ -259,7 +259,7 @@ export default {
           : {};
       let data = {
         page: this.page,
-        limit: 10,
+        limit: 1000000,
         userId: localStorage.getItem("userId"),
         status: this.status,
         ...chargerNo,
@@ -368,7 +368,7 @@ export default {
   margin-left: 20px;
   border: 1px solid #acd1fe;
   border-radius: 5px;
-  font-size: 18px;
+  font-size: 15px;
   color: #ffffff;
   box-sizing: border-box;
 }

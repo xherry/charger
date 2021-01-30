@@ -306,8 +306,8 @@ export default {
     };
   },
   async created() {
-    this.sixDatas = (await findBYN({ userId: 1 })).extend;
-    // console.log(this.sixDatas);
+    this.sixDatas = (await findBYN()).extend;
+    // console.log(this.sixDatas);  
   },
   methods: {
     toAdmin() {

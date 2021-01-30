@@ -98,17 +98,17 @@
                   :key="index + 'k'"
                 >
                   <li>
-                    <p>{{ item.chargerno }}</p>
+                    <p>{{ item.vehicleNo }}</p>
                   </li>
                   <li>
-                    <p v-if="item.chargingtime">{{ item.chargingtime }}</p>
+                    <p v-if="item.chargingTime">{{ item.chargingTime| value2 }}</p>
                   </li>
                   <li>
-                    <p v-if="item.totalofcharging">{{ item.totalofcharging }}</p>
+                    <p v-if="item.chargerNo">{{ item.chargerNo| value2  }}</p>
                   </li>
                   <li>
-                    <p v-if="item.chargingenergy">
-                      {{ item.chargingenergy | val2 }}
+                    <p v-if="item.charingEnergy">
+                      {{ item.charingEnergy | val2 }}
                     </p>
                   </li>
                 </ul>
@@ -176,7 +176,7 @@ export default {
   },
   methods: {
     loadMore() {
-      if (this.page > Math.ceil(this.count / 15))
+      if (this.page > Math.ceil(this.count / 1000000))
         return this.$message.warning("No more data!");
       this.page += 1;
       this.findData();
@@ -206,22 +206,22 @@ export default {
         userId: localStorage.getItem("userId"),
         centre: value.value.centre,
         // location: value.value.location||"G",
-        limit: 15,
+        limit: 1000000,
         page: this.page,
       };
       let loadingInstance = this.$loading({
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
-      findByDataRecord(data)
+      findByDataRecord(data)///api/chargerInfo/findByDataRecord
         .then((res) => {
-          console.log(res, " 根据地区查询 充电桩的充电总时长等");
+          // console.log(res, " 根据地区查询 充电桩的充电总时长等");
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
           });
           if (res.code == 100) {
-            this.cdetails = [...this.cdetails, ...res.extend.chargerInfoList];
+            this.cdetails = [...this.cdetails, ...res.extend.chargerRecordList];
             this.count = res.extend.count;
           }
         })

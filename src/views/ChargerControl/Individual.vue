@@ -138,7 +138,7 @@
               !chargerInfo.status ||
               chargerInfo.status == 'Disconnected' ||
               chargerInfo.status == 'OffLine' ||
-              chargerInfo.status == 'Disable'
+              chargerInfo.status != 'Disable'
                 ? 'garys'
                 : 'blues',
               'button',
@@ -152,7 +152,7 @@
               !chargerInfo.status ||
               chargerInfo.status == 'Disconnected' ||
               chargerInfo.status == 'OffLine' ||
-              chargerInfo.status != 'Disable'
+              chargerInfo.status == 'Disable'
                 ? 'garys'
                 : 'greens',
               'button',
@@ -169,6 +169,7 @@
               !chargerInfo.status ||
               chargerInfo.status == 'Disconnected' ||
               chargerInfo.status == 'Offline' ||
+              chargerInfo.status == 'Disabled'||
               chargerInfo.status != 'InUse' ||
               chargerInfo.status != 'WaitCharging'
                 ? 'garys'
@@ -184,6 +185,9 @@
               !chargerInfo.status ||
               chargerInfo.status == 'Disconnected' ||
               chargerInfo.status == 'Offline' ||
+              chargerInfo.status == 'Disabled'||
+              chargerInfo.status == 'InUse' ||
+              chargerInfo.status == 'WaitCharging'||
               chargerInfo.status != 'Charging'
                 ? 'garys'
                 : 'greens',
@@ -201,7 +205,8 @@
               !chargerInfo.status ||
               chargerInfo.status == 'Disconnected' ||
               chargerInfo.status == 'Offline' ||
-              chargerInfo.status != 'Disabled'
+              chargerInfo.status == 'Disabled'||
+              chargerInfo.status != 'Completed'
                 ? 'garys'
                 : 'blues',
               'button',
@@ -215,7 +220,8 @@
               !chargerInfo.status ||
               chargerInfo.status == 'Disconnected' ||
               chargerInfo.status == 'Offline' ||
-              chargerInfo.status != 'Disabled'
+              chargerInfo.status == 'Disabled'||
+              chargerInfo.status == 'Completed'
                 ? 'garys'
                 : 'greens',
               'button',
@@ -236,6 +242,7 @@ import {
   controlCharger,
   findByDetails,
   findBySelectCNO,
+  findByChargers
 } from "../../common/api";
 export default {
   name: "Individual",
@@ -324,6 +331,9 @@ export default {
     inputBlur() {
       setTimeout(() => {
         this.isShowSlete1 = false;
+        if(this.chargers.value!==""){
+          this.getIndividualCharger()
+        }
       }, 200);
     },
     //
@@ -346,18 +356,11 @@ export default {
       let data;
       if (this.Vehicle === "") {
         data = {
-          userId: localStorage.getItem("userId"),
           centre: this.ctypes.centreId,
-          // location: this.navList[0].value,
           chargerNo: this.chargers.value,
-          vehicleNo: "null",
         };
       } else {
         data = {
-          userId: localStorage.getItem("userId"),
-          centre: " ",
-          location: " ",
-          chargerNo: " ",
           vehicleNo: this.Vehicle,
         };
       }
@@ -365,7 +368,7 @@ export default {
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
-      findBIC(data)
+      findByChargers(data)
         .then((res) => {
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
@@ -405,17 +408,17 @@ export default {
       let data = {
         centre: centreId,
       };
-      let loadingInstance = this.$loading({
-        text: "Loading...",
-        background: "rgba(0,0,0,.5)",
-      });
+      // let loadingInstance = this.$loading({
+      //   text: "Loading...",
+      //   background: "rgba(0,0,0,.5)",
+      // });
       findBySelectCNO(data)
         .then((res) => {
           // console.log(res, "查询充电桩的实时数据");
-          this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
-          });
+          // this.$nextTick(() => {
+          //   // 以服务的方式调用的 Loading 需要异步关闭
+          //   loadingInstance.close();
+          // });
           if (res.code == 100) {
             if (res.extend.chargerInfoList.length != 0) {
               let arrs = res.extend.chargerInfoList.map((item) => item.chargerno);
@@ -426,10 +429,10 @@ export default {
           }
         })
         .catch(() => {
-          this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
-          });
+          // this.$nextTick(() => {
+          //   // 以服务的方式调用的 Loading 需要异步关闭
+          //   loadingInstance.close();
+          // });
         });
     },
     // 控制设备
@@ -524,7 +527,7 @@ export default {
 .greens {
   background: url("../../assets/index/says/05.png") no-repeat;
   background-size: 100% 100%;
-  margin-left: 40px;
+  /* margin-left: 40px; */
 }
 .buttons7 {
   width: 100%;
@@ -633,7 +636,7 @@ export default {
 }
 .diaValue {
   font-size: 20px;
-  margin-top: 28px;
+  margin-top: 15px;
 }
 .cartsCenter {
   position: absolute;
@@ -657,7 +660,7 @@ export default {
   margin-left: 20px;
   border: 1px solid #acd1fe;
   border-radius: 5px;
-  font-size: 18px;
+  font-size: 15px;
   color: #ffffff;
   box-sizing: border-box;
 }

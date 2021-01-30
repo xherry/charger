@@ -48,6 +48,15 @@ export default {
       ],
     };
   },
+   watch: {
+    $route() {
+      this.leftNavs.forEach((item) => {
+        if (this.$route.name == item.RouterPush) {
+          this.seletNavIndex = item.id;
+        }
+      });
+    },
+  },
   created() {
     this.leftNavs.forEach((item) => {
       if (item.RouterPush === window.location.href.split("#")[1].split("/")[2]) {

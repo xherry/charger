@@ -1,5 +1,6 @@
 <template>
   <div class="Summary">
+    <div class="refresh button" @click="refresh">Refresh</div>
     <div class="overRights">
       <p class="ortoptit">Summary of All Centre Charging Information</p>
       <div class="flex SummaryTable Yauto">
@@ -121,32 +122,35 @@ export default {
         return "";
       }
     },
+    refresh() {
+      this.getSixDatas();
+    },
     // 获取查询六个地区下充电桩等信息
     getSixDatas() {
       let data = {
-        userId: localStorage.getItem("userId"),
+        // userId: localStorage.getItem("userId"),
       };
-      let loadingInstance = this.$loading({
-        text: "Loading...",
-        background: "rgba(0,0,0,.5)",
-      });
+      // let loadingInstance = this.$loading({
+      //   text: "Loading...",
+      //   background: "rgba(0,0,0,.5)",
+      // });
       findBYN(data)
         .then((res) => {
           // console.log("获取查询六个地区下充电桩等信息", res);
-          this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
-          });
+          // this.$nextTick(() => {
+          //   // 以服务的方式调用的 Loading 需要异步关闭
+          //   loadingInstance.close();
+          // });
           if (res.code == 100) {
             let sixDatas = res.extend;
             // this.sixDatas = res.extend;
             let objDatas = [
-              sixDatas.hh || {},
               sixDatas.s || {},
+              sixDatas.hh || {},
               sixDatas.ssp || {},
-              sixDatas.swh || {},
               sixDatas.ty || {},
               sixDatas.yl || {},
+              sixDatas.swh || {},
             ];
             // console.log(objDatas);
             this.leftTable1[0].value = objDatas.map((item) =>
@@ -273,5 +277,18 @@ export default {
 .overRights {
   height: 800px;
   margin-top: 60px;
+}
+.refresh {
+  width: 100px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 20px;
+  border-radius: 6px;
+  background: #1450b0;
+  text-align: center;
+  /* margin-left: 200px; */
+  position: absolute;
+  top: 0;
+  right: 100px;
 }
 </style>

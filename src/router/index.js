@@ -32,7 +32,7 @@ const routes = [{
         }, {
             path: 'index',
             name: 'index',
-            // meta: { keepAlive: true },
+            meta: { keepAlive: true },
             component: () =>
                 import ( /* webpackChunkName: "about" */ '../views/index.vue'),
         }, {
@@ -98,17 +98,20 @@ const routes = [{
             children: [{
                     path: 'Createuser',
                     name: 'Createuser',
+                    meta: { keepAlive: true },
                     component: () =>
                         import ( /* webpackChunkName: "about" */ '../views/UserAccount/Createuser.vue')
-                }, {
-                    path: 'Creatusertype',
-                    name: 'Creatusertype',
-                    component: () =>
-                        import ( /* webpackChunkName: "about" */ '../views/UserAccount/Creatusertype.vue')
                 },
+                // {
+                //     path: 'Creatusertype',
+                //     name: 'Creatusertype',
+                //     component: () =>
+                //         import ( /* webpackChunkName: "about" */ '../views/UserAccount/Creatusertype.vue')
+                // },
                 {
                     path: 'UserRecords',
                     name: 'UserRecords',
+                    meta: { keepAlive: true },
                     component: () =>
                         import ( /* webpackChunkName: "about" */ '../views/UserAccount/UserRecords.vue')
                 },
@@ -117,17 +120,20 @@ const routes = [{
         {
             path: 'ChargerControl',
             name: 'ChargerControl',
+            meta: { keepAlive: true },
             component: () =>
                 import ( /* webpackChunkName: "about" */ '../views/ChargerControl.vue'),
             redirect: { name: 'Individual' }, // 跳转到下一级第一个
             children: [{
                 path: 'Individual',
                 name: 'Individual',
+                meta: { keepAlive: true },
                 component: () =>
                     import ( /* webpackChunkName: "about" */ '../views/ChargerControl/Individual.vue')
             }, {
                 path: 'Centre',
                 name: 'Centre',
+                meta: { keepAlive: true },
                 component: () =>
                     import ( /* webpackChunkName: "about" */ '../views/ChargerControl/Centre.vue')
             }, ]
@@ -135,22 +141,26 @@ const routes = [{
         {
             path: 'CentreInformation',
             name: 'CentreInformation',
+            meta: { keepAlive: true },
             component: () =>
                 import ( /* webpackChunkName: "about" */ '../views/CentreInformation.vue'),
             redirect: { name: 'Summary' }, // 跳转到下一级第一个
             children: [{
                 path: 'Summary',
                 name: 'Summary',
+                meta: { keepAlive: true },
                 component: () =>
                     import ( /* webpackChunkName: "about" */ '../views/CentreInformation/Summary.vue')
             }, {
                 path: 'Detailed',
                 name: 'Detailed',
+                meta: { keepAlive: true },
                 component: () =>
                     import ( /* webpackChunkName: "about" */ '../views/CentreInformation/Detailed.vue')
-            },{
+            }, {
                 path: 'detailInform',
                 name: 'detailInform',
+                meta: { keepAlive: true },
                 component: () =>
                     import ( /* webpackChunkName: "about" */ '../views/CentreInformation/detailInform.vue')
             }, ]
@@ -158,23 +168,28 @@ const routes = [{
         {
             path: 'DataReport',
             name: 'DataReport',
+            meta: { keepAlive: true },
             component: () =>
                 import ( /* webpackChunkName: "about" */ '../views/DataReport.vue'),
             redirect: { name: 'UptodateStatus' }, // 跳转到下一级第一个
             children: [{
                     path: 'dateStatus',
                     name: 'dateStatus',
+                    meta: { keepAlive: true },
                     component: () =>
                         import ( /* webpackChunkName: "about" */ '../views/DataReport/dateStatus.vue')
-                }, {
-                    path: 'dSReport',
-                    name: 'dSReport',
-                    component: () =>
-                        import ( /* webpackChunkName: "about" */ '../views/DataReport/dSReport.vue')
                 },
+                // {
+                //     path: 'dSReport',
+                //     name: 'dSReport',
+                //     meta: { keepAlive: true },
+                //     component: () =>
+                //         import ( /* webpackChunkName: "about" */ '../views/DataReport/dSReport.vue')
+                // },
                 {
                     path: 'UptodateStatus',
                     name: 'UptodateStatus',
+                    meta: { keepAlive: true },
                     component: () =>
                         import ( /* webpackChunkName: "about" */ '../views/DataReport/UptodateStatus.vue')
                 },

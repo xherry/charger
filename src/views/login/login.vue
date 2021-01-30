@@ -30,10 +30,18 @@
             <input
               type="text"
               v-model="userInfo.chargerNumber"
-              placeholder="Charger Number ( eg: SSP-G-68 )"
+              placeholder="Charger Number"
               @focus="getFocus"
               @blur="inputBlur"
             />
+            <div class="topImg">
+              <img
+              :style="{ transform: `rotate(${isShowSlete ? '-180' : '0'}deg)` }"
+              src="../../assets/index/says/17.png"
+              alt=""
+              />
+            </div>
+            <!-- @click="" -->
             <!-- ssssssssss -->
             <div
               class="noseleterBodyitem box w100"
@@ -114,19 +122,10 @@ export default {
   mounted() {
     let bgImg = new Image();
     bgImg.src = this.loginImg; // 获取背景图片的url
-    // let loadingInstance = this.$loading({
-    //   text: "Loading...",
-    //   background: "rgba(0,0,0,.5)",
-    // });
     bgImg.onerror = () => {
       console.log("img onerror");
     };
     bgImg.onload = () => {
-      // // 等背景图片加载成功后 去除loading
-      // this.$nextTick(() => {
-      //   // 以服务的方式调用的 Loading 需要异步关闭
-      //   loadingInstance.close();
-      // });
       this.showLoading = false;
     };
     this.getCno(this.$route.query.cid);
@@ -155,19 +154,19 @@ export default {
     },
     // 二级联动查询充电桩编号
     getCno(cid) {
-      let loadingInstance = this.$loading({
-        text: "Loading...",
-        background: "rgba(0,0,0,.5)",
-      });
+      // let loadingInstance = this.$loading({
+      //   text: "Loading...",
+      //   background: "rgba(0,0,0,.5)",
+      // });
       let data = {
         centre: cid,
       };
       findBySelectCNO(data)
         .then((res) => {
-          this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
-          });
+          // this.$nextTick(() => {
+          //   // 以服务的方式调用的 Loading 需要异步关闭
+          //   loadingInstance.close();
+          // });
           // console.log(res, "二级联动查询充电桩编号");
           if (res.code == 100) {
             this.clist = res.extend.chargerInfoList.map((item) => item.chargerno);
@@ -177,10 +176,10 @@ export default {
           }
         })
         .catch((err) => {
-          this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
-          });
+          // this.$nextTick(() => {
+          //   // 以服务的方式调用的 Loading 需要异步关闭
+          //   loadingInstance.close();
+          // });
         });
     },
     toAdmin() {
@@ -233,14 +232,6 @@ export default {
             } else {
               localStorage.setItem("userId", res.extend.pcUser.id);
               localStorage.setItem("roleKey", JSON.stringify(res.extend.roleKey));
-              // res.extend.chargerInfo.chargerno =
-              //   this.$store.state.centerType.filter(
-              //     (item) => item.cid === res.extend.chargerInfo.centre
-              //   )[0].name +
-              //   "-" +
-              //   res.extend.chargerInfo.location +
-              //   "-" +
-              //   res.extend.chargerInfo.chargerno;
               localStorage.setItem("chargerInfo", JSON.stringify(res.extend.chargerInfo));
               this.$store.commit("getUserInfo", res.extend);
               if (
@@ -344,6 +335,7 @@ export default {
 </script>
 
 <style scoped>
+
 .toAdmin {
   padding: 10px 20px;
   color: #ffffff;
@@ -541,7 +533,19 @@ export default {
 }
 .noseleterBodyitem {
   width: 418px;
-  transition: all 0.1s linear;
+  /* transition: all 0.1s linear; */
   background: #199cd4;
+}
+.login-input .topImg{
+  position: absolute !important;
+  right: 10px;
+ 
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+.login-input .topImg>img{
+   width: 30px !important;
+  height: 30px !important;
+  transition: all .2s linear;
 }
 </style>
