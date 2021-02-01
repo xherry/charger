@@ -9,19 +9,21 @@
     <div class="parentBottoms">
       <router-view />
     </div>
+    <!-- replace('/index') -->
     <div
       v-if="$store.state.IsShowBottom && $store.state.isBack == 0"
-      @click="$router.replace('/index')"
-      class="ol-item2 flex flex-Updown-between ol-bottom"
+      @click="$router.go(-1)"
+      class="ol-item2 flex flex-center back ol-bottom"
     >
-      <span>Back to Main</span>
-      <img class="mr27" src="../assets/index/overview/05.png" alt="" />
+      <!-- <span>Back to Main</span> -->
+      <span>Back</span>
+      <!-- <img class="mr27" src="../assets/index/overview/05.png" alt="" /> -->
     </div>
     <div
       v-if="$store.state.IsShowBottom && $store.state.isBack != 0"
       @click="goback"
       class="ol-item2 flex flex-center back ol-bottom"
-    >
+      >
       <span>Back</span>
       <!-- <img class="mr27" src="../assets/index/overview/05.png" alt="" /> -->
     </div>

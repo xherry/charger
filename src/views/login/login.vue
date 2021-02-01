@@ -36,9 +36,9 @@
             />
             <div class="topImg">
               <img
-              :style="{ transform: `rotate(${isShowSlete ? '-180' : '0'}deg)` }"
-              src="../../assets/index/says/17.png"
-              alt=""
+                :style="{ transform: `rotate(${isShowSlete ? '-180' : '0'}deg)` }"
+                src="../../assets/index/says/17.png"
+                alt=""
               />
             </div>
             <!-- @click="" -->
@@ -47,14 +47,17 @@
               class="noseleterBodyitem box w100"
               :class="[isShowSlete ? 'h150' : 'h0']"
             >
-              <div
-                class="button seleter_item"
-                v-for="(item, index) in chargerInfoList"
-                :key="index"
-                @click="userInfo.chargerNumber = item"
-              >
-                {{ item }}
-              </div>
+              <template v-if="clist.length != 0 && chargerInfoList.length != 0">
+                <div
+                  class="button seleter_item"
+                  v-for="(item, index) in chargerInfoList"
+                  :key="index"
+                  @click="userInfo.chargerNumber = item"
+                >
+                  {{ item }}
+                </div>
+              </template>
+              <div v-else class="button seleter_item">{{ loadingName }}</div>
             </div>
           </div>
           <div class="elseor">
@@ -106,7 +109,7 @@ export default {
       iscode: false,
       userInfo: {
         userId: "", //liaojingxing
-        password: "", //123456
+        password: "", //H123654
         chargerNumber: "",
         vehicleNumber: "",
       },
@@ -117,6 +120,7 @@ export default {
       showLoading: false,
       clist: [],
       chargerInfoList: [],
+      loadingName: "No Data!",
     };
   },
   mounted() {
@@ -133,24 +137,30 @@ export default {
   watch: {
     "userInfo.chargerNumber"() {
       let chargerNumber = this.userInfo.chargerNumber;
+      let a = chargerNumber.split("-")[0];
+      let b = chargerNumber.split("-")[1];
+      let c = chargerNumber.split("-")[2];
       this.chargerInfoList = this.clist.filter((item) => {
-        return item.includes(chargerNumber.toUpperCase());
+        if (chargerNumber.split("-").length == 3) {
+          return item.includes(a.toUpperCase() + "-" + b + "-" + c);
+        }
+        return item.includes(chargerNumber);
       });
-      if(this.chargerInfoList.length==0){
-        this.isShowSlete = false
-      }else{
-        this.isShowSlete = true
+      if (this.clist.length > 0 && this.chargerInfoList.length == 0) {
+        this.isShowSlete = false;
+      } else {
+        this.isShowSlete = true;
       }
     },
   },
   methods: {
     getFocus() {
-      this.isShowSlete = this.chargerInfoList.length > 0 ? true : false;
+      this.isShowSlete = true;
     },
     inputBlur() {
       setTimeout(() => {
         this.isShowSlete = false;
-      }, 100);
+      }, 200);
     },
     // 二级联动查询充电桩编号
     getCno(cid) {
@@ -158,28 +168,26 @@ export default {
       //   text: "Loading...",
       //   background: "rgba(0,0,0,.5)",
       // });
+      this.loadingName = "please wait...";
       let data = {
         centre: cid,
       };
       findBySelectCNO(data)
         .then((res) => {
-          // this.$nextTick(() => {
-          //   // 以服务的方式调用的 Loading 需要异步关闭
-          //   loadingInstance.close();
-          // });
-          // console.log(res, "二级联动查询充电桩编号");
           if (res.code == 100) {
-            this.clist = res.extend.chargerInfoList.map((item) => item.chargerno);
-            this.chargerInfoList = res.extend.chargerInfoList.map(
+            this.chargerInfoList = this.clist = res.extend.chargerInfoList.map(
               (item) => item.chargerno
             );
+
+            if (res.extend.chargerInfoList.length == 0) {
+              this.loadingName = "No Data...";
+            }
+          } else {
+            this.loadingName = "Data loading failed";
           }
         })
         .catch((err) => {
-          // this.$nextTick(() => {
-          //   // 以服务的方式调用的 Loading 需要异步关闭
-          //   loadingInstance.close();
-          // });
+          this.loadingName = "Data loading failed";
         });
     },
     toAdmin() {
@@ -198,7 +206,6 @@ export default {
       sendSms({
         account: this.phone,
       }).then((res) => {
-        // console.log(res, "发送验证码");
         if (res.code == 100) {
           // this.phoneCode = res.extend.code;
           this.$message.success("Captcha code has been sent");
@@ -223,7 +230,6 @@ export default {
       let data = { ...this.userInfo, centre: cid };
       Login(data)
         .then((res) => {
-          // console.log(res, "用户信息");
           if (res.code == 100) {
             if (res.extend.smsCode) {
               this.phone = res.extend.phone;
@@ -248,8 +254,8 @@ export default {
                 });
                 setTimeout(() => {
                   this.$router.replace({
-                    name: "overview",
-                    query: { navSeleted: 2 },
+                    name: "index",
+                    params: { navSeleted: 2 },
                   });
                 }, 800);
               } else {
@@ -263,6 +269,11 @@ export default {
               }
               this.$message.success("Log in successfully！");
             }
+          } else {
+            this.$nextTick(() => {
+              // 以服务的方式调用的 Loading 需要异步关闭
+              loadingInstance.close();
+            });
           }
         })
         .catch((err) => {
@@ -305,8 +316,8 @@ export default {
               });
               setTimeout(() => {
                 this.$router.replace({
-                  name: "overview",
-                  query: { navSeleted: 2 },
+                  name: "index",
+                  params: { navSeleted: 2 },
                 });
               }, 800);
             } else {
@@ -335,7 +346,6 @@ export default {
 </script>
 
 <style scoped>
-
 .toAdmin {
   padding: 10px 20px;
   color: #ffffff;
@@ -536,16 +546,16 @@ export default {
   /* transition: all 0.1s linear; */
   background: #199cd4;
 }
-.login-input .topImg{
+.login-input .topImg {
   position: absolute !important;
   right: 10px;
- 
+
   top: 50% !important;
   transform: translateY(-50%) !important;
 }
-.login-input .topImg>img{
-   width: 30px !important;
+.login-input .topImg > img {
+  width: 30px !important;
   height: 30px !important;
-  transition: all .2s linear;
+  transition: all 0.2s linear;
 }
 </style>

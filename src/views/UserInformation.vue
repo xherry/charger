@@ -12,11 +12,9 @@
             <div class="flex cdltopitem flex-Updown">
               <span>User Type</span>
               <!-- <input type="text" v-model="infos.UserType" class="blueInput" /> -->
-              <p
-                class="flex blueInput flex-Updown-between"
-              >
+              <p class="flex blueInput flex-Updown-between">
                 <!-- @click="isShowSlete1 = !isShowSlete1" -->
-                <span>{{ infos.UserType | utype }}</span>
+                <span>{{ infos.userType | utype }}</span>
                 <!-- <img
                   :style="{ transform: `rotate(${isShowSlete1 ? '180' : '0'}deg)` }"
                   src="../assets/index/setting/10.png"
@@ -39,11 +37,11 @@
             </div>
             <div class="flex cdltopitem flex-Updown">
               <span>User ID</span>
-              <input type="text" v-model="infos.UserID" class="blueInput" />
+              <input type="text" v-model="infos.userId" class="blueInput" />
             </div>
             <div class="flex cdltopitem flex-Updown">
               <span>Password</span>
-              <input type="text" v-model="infos.Password" class="blueInput" />
+              <input type="password" v-model="infos.password" class="blueInput" />
             </div>
             <div class="flex cdltopitem flex-Updown">
               <span>Centre</span>
@@ -52,7 +50,7 @@
                 class="flex blueInput flex-Updown-between"
                 @click="isShowSlete2 = !isShowSlete2"
               >
-                <span>{{ infos.Centre | ctype }}</span>
+                <span>{{ infos.centreId | ctype }}</span>
                 <img
                   :style="{ transform: `rotate(${isShowSlete2 ? '180' : '0'}deg)` }"
                   src="../assets/index/setting/10.png"
@@ -67,7 +65,7 @@
                   class="button seleter_item"
                   v-for="(item, index) in this.$store.state.centerType"
                   :key="index"
-                  @click="(infos.Centre = item.centreId), (isShowSlete2 = false)"
+                  @click="(infos.centreId = item.centreId), (isShowSlete2 = false)"
                 >
                   {{ item.value }}
                 </div>
@@ -75,26 +73,26 @@
             </div>
             <div class="flex cdltopitem flex-Updown">
               <span>Department</span>
-              <input type="text" v-model="infos.Department" class="blueInput" />
+              <input type="text" v-model="infos.department" class="blueInput" />
             </div>
           </div>
           <div class="uifright">
             <p class="uf-tit">Contact Information</p>
             <div class="flex cdltopitem flex-Updown">
               <span>Name</span>
-              <input type="text" v-model="infos.Name" class="blueInput" />
+              <input type="text" v-model="infos.name" class="blueInput" />
             </div>
             <div class="flex cdltopitem flex-Updown">
               <span>Staff ID</span>
-              <input type="text" v-model="infos.StaffID" class="blueInput" />
+              <input type="text" v-model="infos.staffId" class="blueInput" />
             </div>
             <div class="flex cdltopitem flex-Updown">
               <span>Email</span>
-              <input type="text" v-model="infos.Email" class="blueInput" />
+              <input type="text" v-model="infos.email" class="blueInput" />
             </div>
             <div class="flex cdltopitem flex-Updown">
               <span>Mobile Phone No.</span>
-              <input type="text" v-model="infos.MobilePhoneNo" class="blueInput" />
+              <input type="text" v-model="infos.phone" class="blueInput" />
             </div>
           </div>
         </div>
@@ -117,15 +115,15 @@ export default {
       isShowSlete1: false,
       isShowSlete2: false,
       infos: {
-        UserType: "",
-        UserID: "",
-        Password: "",
-        Centre: "",
-        Department: "",
-        Name: "",
-        StaffID: "",
-        Email: "",
-        MobilePhoneNo: "",
+        userType: "",
+        userId: "",
+        password: "",
+        centreId: "",
+        department: "",
+        name: "",
+        staffId: "",
+        email: "",
+        phone: "",
       },
       userTypes: [
         { userType: 0, value: "Guest", level: 6 },
@@ -157,15 +155,15 @@ export default {
       let userInfo = this.$store.state.userInfo;
       if (Object.keys(userInfo).length != 0) {
         this.infos = {
-          UserType: userInfo.userType,
-          UserID: userInfo.userId,
-          Password: userInfo.staffId,
-          Centre: userInfo.centreId,
-          Department: userInfo.department,
-          Name: userInfo.name,
-          StaffID: userInfo.staffId,
-          Email: userInfo.email,
-          MobilePhoneNo: userInfo.phone,
+          userType: userInfo.userType,
+          userId: userInfo.userId,
+          password: userInfo.staffId,
+          centreId: userInfo.centreId,
+          department: userInfo.department,
+          name: userInfo.name,
+          staffId: userInfo.staffId,
+          email: userInfo.email,
+          phone: userInfo.phone,
         };
         this.oldInfos = { ...this.infos };
       }
@@ -175,22 +173,51 @@ export default {
     },
     // 修改用户
     editUser() {
-      let infos = this.$store.state.userInfo;
-      delete infos["createTime"];
-      delete infos["id"];
+      let infos = this.infos;
       let uinfos = { userIds: localStorage.getItem("userId"), ...infos };
+      // console.log("用户信息",uinfos)
+      // return false
       let loadingInstance = this.$loading({
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
       addOrUpdEntity(uinfos)
         .then((res) => {
+          // console.log(res);
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
           });
           if (res.code == 100) {
-            this.$message.success("Modify the success！");
+            this.oldInfos = { ...this.infos };
+            let pcUser = this.$store.state.userInfo;
+            if (this.infos.password != pcUser.password) {
+              this.$message.warning("The password has been changed. Please login again");
+              let loginInfos = {
+                cid: "",
+                location: "",
+                cno: "",
+                vno: "",
+              };
+              this.$store.commit("setLoginInfos", loginInfos);
+              this.$store.commit("getUserInfo", { pcUser: {} });
+              localStorage.clear();
+              setTimeout(()=>{
+                this.$router.replace("Selectlogin");
+              },800)
+            } else {
+              this.$message.success("Modify the success！");
+              pcUser.userType = this.infos.userType;
+              pcUser.userId = this.infos.userId;
+              pcUser.password = this.infos.password;
+              pcUser.centreId = this.infos.centreId;
+              pcUser.department = this.infos.department;
+              pcUser.name = this.infos.name;
+              pcUser.staffId = this.infos.staffId;
+              pcUser.email = this.infos.email;
+              pcUser.phone = this.infos.phone;
+              this.$store.commit("getUserInfo", { pcUser: pcUser });
+            }
           }
         })
         .catch((err) => {

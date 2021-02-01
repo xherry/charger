@@ -9,9 +9,9 @@
       <div class="create flex">
         <div class="createleft">
           <p class="leftTit">User information↓</p>
-          <div class="cdltopitem flex flex-Updown-between">
+          <div class="cdltopitem flex flex-Updown-between" >
             <span>User Type</span>
-            <p class="flex flex-Updown-between" @click="isShowSlete1 = !isShowSlete1">
+            <p class="flex flex-Updown-between" :class="[isEmpty&&utypes.value===''?'borderRed':'']" @click="isShowSlete1 = !isShowSlete1">
               <span>{{ utypes.value }}</span>
               <img
                 :style="{ transform: `rotate(${isShowSlete1 ? '180' : '0'}deg)` }"
@@ -35,13 +35,13 @@
               </div>
             </div>
           </div>
-          <div class="cdltopitem flex flex-Updown-between">
+          <div class="cdltopitem flex flex-Updown-between" >
             <span>User ID</span>
-            <input type="text" v-model="addUsers.userId" placeholder="User  ID" />
+            <input type="text" :foucs="isEmpty&&addUsers.userId===''" :class="[isEmpty&&addUsers.userId===''?'borderRed':'']" @input="queryUserId" v-model="addUsers.userId" placeholder="User  ID" />
           </div>
-          <div class="cdltopitem flex flex-Updown-between">
+          <div class="cdltopitem flex flex-Updown-between" >
             <span>Password (Random)</span>
-            <input type="password" v-model="addUsers.password" placeholder="password" />
+            <input type="password"  :class="[isEmpty&&addUsers.password===''?'borderRed':'']" v-model="addUsers.password" placeholder="password" />
           </div>
           <div class="cdltopitem flex flex-Updown-between">
             <span>Centre (Optional)</span>
@@ -76,11 +76,11 @@
           <p class="leftTit">Contact information↓</p>
           <div class="cdltopitem flex flex-Updown-between">
             <span>Name</span>
-            <input type="text" v-model="addUsers.name" placeholder="" />
+            <input type="text"  :class="[isEmpty&&addUsers.name===''?'borderRed':'']" v-model="addUsers.name" placeholder="" />
           </div>
           <div class="cdltopitem flex flex-Updown-between">
             <span>E-mail</span>
-            <input type="text" v-model="addUsers.email" placeholder="" />
+            <input type="text"  :class="[isEmpty&&addUsers.email===''?'borderRed':'']" v-model="addUsers.email" placeholder="" />
           </div>
           <div class="cdltopitem flex flex-Updown-between">
             <span>Staff ID (Optional)</span>
@@ -88,7 +88,7 @@
           </div>
           <div class="cdltopitem flex flex-Updown-between">
             <span>Mobile Phone No.</span>
-            <input type="text" v-model="addUsers.phone" placeholder="" />
+            <input type="text" :class="[isEmpty&&addUsers.phone===''?'borderRed':'']" v-model="addUsers.phone" placeholder="" />
           </div>
           <!-- <div class="cdltopitem flex flex-Updown-between">
             <span>Verification code</span>
@@ -116,35 +116,37 @@
             </p>
           </div>
           <p class="createrightbottom">Access Rights:</p>
-          <div></div>
-          <div class="cdltopitem2 ctb mt0 mr40 flex flex-Updown-between">
-            <span></span>
-            <p class="mr56 op0">Yes</p>
-            <p class="mr86 op0">No</p>
-          </div>
-          <div
-            class="cdltopitem2 ctb mr40 flex flex-Updown-between"
-            v-for="(item, index) in prmselete"
-            :key="index"
-          >
-            <span>{{ item.name }}</span>
-            <!--  @click="item.value = item.value == 0 ? 1 : 0" -->
-            <div class="mr56">
-              <img
-                v-if="item.value == 0"
-                src="../../assets/index/useraccount/04.png"
-                alt=""
-              />
-              <img v-else src="../../assets/index/useraccount/03.png" alt="" />
+          <div class="pl50">
+            <div></div>
+            <div class="cdltopitem2 ctb mt0 mr40 flex flex-Updown-between">
+              <span></span>
+              <p class="mr56 op0">Yes</p>
+              <!-- <p class="mr86 op0">No</p> -->
             </div>
-            <!-- @click="item.value = item.value == 0 ? 1 : 0" -->
-            <div class="mr86 op0">
-              <img
-                v-if="item.value == 0"
-                src="../../assets/index/useraccount/03.png"
-                alt=""
-              />
-              <img v-else src="../../assets/index/useraccount/04.png" alt="" />
+            <div
+              class="cdltopitem2 ctb mr40 flex flex-Updown-between"
+              v-for="(item, index) in prmselete"
+              :key="index"
+            >
+              <span>{{ item.name }}</span>
+              <!--  @click="item.value = item.value == 0 ? 1 : 0" -->
+              <div class="mr56">
+                <img
+                  v-if="item.value == 0"
+                  src="../../assets/index/useraccount/04.png"
+                  alt=""
+                />
+                <img v-else src="../../assets/index/useraccount/03.png" alt="" />
+              </div>
+              <!-- @click="item.value = item.value == 0 ? 1 : 0" -->
+              <!-- <div class="mr86 op0">
+                <img
+                  v-if="item.value == 0"
+                  src="../../assets/index/useraccount/03.png"
+                  alt=""
+                />
+                <img v-else src="../../assets/index/useraccount/04.png" alt="" />
+              </div> -->
             </div>
           </div>
         </div>
@@ -172,7 +174,7 @@
 </template>
 
 <script>
-import { addOrUpdEntity, sendSms, roleKeySOE } from "../../common/api";
+import { addOrUpdEntity, sendSms, roleKeySOE,findByAccount } from "../../common/api";
 export default {
   name: "Createuser",
   data() {
@@ -219,6 +221,7 @@ export default {
         phone: "",
         code: "",
       },
+      isEmpty:false,
       roleKey: {},
     };
   },
@@ -250,9 +253,32 @@ export default {
       this.utypes.value = "";
       this.ctypes.centreId = "";
       this.ctypes.value = "";
+      this.isEmpty = false
     },
     //
+    queryUserId(){
+      findByAccount({userId:this.addUsers.userId}).then(res=>{
+          if(res.extend.pcUser){
+            this.$message.warning("This ID already Existed，Please re-enter")
+          }
+      })
+    },
     createUser() {
+      let addUsers = this.addUsers;
+        // userId: "",
+        // password: "",
+        // name: "",
+        // staffId: "",
+        // email: "",
+        // phone: "",
+        // code: "",
+        // userType: this.utypes.userType,
+        // centreId: this.ctypes.centreId,
+      if(this.utypes.userType===""||addUsers.userId===""||addUsers.password===""||addUsers.name===""||addUsers.email===""||addUsers.phone===""){
+        this.isEmpty = true
+        return this.$message.warning("! is empty/error")
+      }
+      this.isEmpty = false
       sendSms({
         account: this.addUsers.phone,
       }).then((res) => {
@@ -368,7 +394,7 @@ export default {
   color: #63d1ff;
   font-size: 24px;
   margin-top: 80px;
-  margin-left: 40px;
+  margin-left: 120px;
   /* margin-bottom: 42px; */
 }
 .createright .cdltopitem2 > span {
@@ -437,5 +463,8 @@ export default {
   width: 100%;
   padding: 0 219px;
   box-sizing: border-box;
+}
+.borderRed{
+  border: 1px solid red !important;
 }
 </style>

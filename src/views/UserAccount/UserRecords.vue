@@ -13,131 +13,127 @@
           <li><p>E-mail</p></li>
           <li><p>Mobile No.</p></li>
         </ul>
-        <div
-          class="loadMore box"
-          v-infinite-scroll="loadMore"
-          infinite-scroll-immediate="false"
-          ref="loadMore"
-        >
-          <ul
-            class="uldatas w100"
-            :ref="'seleteMan' + index"
-            v-for="(item, index) in pcUserList"
-            :key="index"
-          >
-            <!-- <li><p>ssssss</p></li> -->
-            <li class="flex flex-Updown ssss">
-              <div class="seletes" @click="seleteUID(item)">
-                <img
-                  v-if="uid != item.id"
-                  class="childAll"
-                  src="../../assets/index/useraccount/03.png"
+        <div v-if="pcUserList.length!=0">
+          <div
+            class="loadMore box"
+            v-infinite-scroll="loadMore"
+            infinite-scroll-immediate="false"
+            ref="loadMore"
+            >
+            <ul 
+              class="uldatas w100"
+              :ref="'seleteMan' + index"
+              v-for="(item, index) in pcUserList"
+              :key="index"
+            >
+              <!-- <li><p>ssssss</p></li> -->
+              <li class="flex flex-Updown ssss">
+                <div class="seletes" @click="seleteUID(item)">
+                  <img
+                    v-if="uid != item.id"
+                    class="childAll"
+                    src="../../assets/index/useraccount/03.png"
+                    alt=""
+                  />
+                  <img
+                    v-else
+                    class="childAll"
+                    src="../../assets/index/useraccount/04.png"
+                    alt=""
+                  />
+                </div>
+                <p>
+                  <input type="text" :disabled="true" v-model="item.userId" />
+                </p>
+              </li>
+              <li>
+                <p>
+                  <input type="text" :disabled="true" v-model="item.staffId" />
+                </p>
+              </li>
+              <li>
+                <p><input type="text" :disabled="true" v-model="item.name" /></p>
+              </li>
+              <li @click="setTypes(item.id, 1, index)">
+                <p>{{ item.userType | utype }}</p>
+                <!-- <img
+                  class="seleters imgSelete"
+                  :style="{
+                    transform: `rotate(${isUserType === item.id ? '180' : '0'}deg)`,
+                  }"
+                  src="../../assets/index/setting/10.png"
                   alt=""
                 />
-                <img
-                  v-else
-                  class="childAll"
-                  src="../../assets/index/useraccount/04.png"
+                <div
+                  class="sleterMain"
+                  :ref="'usleterMain' + index"
+                  :id="'usleterMain' + index"
+                  :style="{ height: isUserType === item.id ? '200px' : '0px' }"
+                >
+                  <div
+                    class="button seleter_item"
+                    v-for="(p, i) in $store.state.userTypes"
+                    :key="i"
+                    @click="item.userType = p.userType"
+                  >
+                    {{ p.value }}
+                  </div>
+                </div> -->
+              </li>
+              <li @click="setTypes(item.id, 2)">
+                <p v-if="item.centreId">{{ item.centreId | ctype }}</p>
+                <!-- <img
+                  class="seleters imgSelete"
+                  :style="{
+                    transform: `rotate(${isCenterType === item.id ? '180' : '0'}deg)`,
+                  }"
+                  src="../../assets/index/setting/10.png"
                   alt=""
                 />
-              </div>
-              <p>
-                <input type="text" :disabled="true" v-model="item.userId" />
-              </p>
-            </li>
-            <li>
-              <p>
-                <input type="text" :disabled="true" v-model="item.staffId" />
-              </p>
-            </li>
-            <li>
-              <p><input type="text" :disabled="true" v-model="item.name" /></p>
-            </li>
-            <li @click="setTypes(item.id, 1, index)">
-              <p>{{ item.userType | utype }}</p>
-              <!-- <img
-                class="seleters imgSelete"
-                :style="{
-                  transform: `rotate(${isUserType === item.id ? '180' : '0'}deg)`,
-                }"
-                src="../../assets/index/setting/10.png"
-                alt=""
-              />
-              <div
-                class="sleterMain"
-                :ref="'usleterMain' + index"
-                :id="'usleterMain' + index"
-                :style="{ height: isUserType === item.id ? '200px' : '0px' }"
-              >
                 <div
-                  class="button seleter_item"
-                  v-for="(p, i) in $store.state.userTypes"
-                  :key="i"
-                  @click="item.userType = p.userType"
+                  class="sleterMain"
+                  :ref="'csleterMain' + index"
+                  :id="'csleterMain' + index"
+                  :style="{ height: isCenterType === item.id ? '200px' : '0px' }"
                 >
-                  {{ p.value }}
-                </div>
-              </div> -->
-            </li>
-            <li @click="setTypes(item.id, 2)">
-              <p v-if="item.centreId">{{ item.centreId | ctype }}</p>
-              <!-- <img
-                class="seleters imgSelete"
-                :style="{
-                  transform: `rotate(${isCenterType === item.id ? '180' : '0'}deg)`,
-                }"
-                src="../../assets/index/setting/10.png"
-                alt=""
-              />
-              <div
-                class="sleterMain"
-                :ref="'csleterMain' + index"
-                :id="'csleterMain' + index"
-                :style="{ height: isCenterType === item.id ? '200px' : '0px' }"
-              >
-                <div
-                  class="button seleter_item"
-                  v-for="(p, i) in $store.state.centerType"
-                  :key="i"
-                  @click="item.centreId = p.centreId"
-                >
-                  {{ p.value }}
-                </div>
-              </div> -->
-            </li>
-            <li>
-              <p>
-                <input
-                  type="text"
-                  :disabled="true"
-                  v-model="item.department"
-                />
-              </p>
-            </li>
-            <li>
-              <p>
-                <input type="text" :disabled="true" v-model="item.email" />
-              </p>
-            </li>
-            <li>
-              <p>
-                <input type="text" :disabled="true" v-model="item.phone" />
-              </p>
-            </li>
+                  <div
+                    class="button seleter_item"
+                    v-for="(p, i) in $store.state.centerType"
+                    :key="i"
+                    @click="item.centreId = p.centreId"
+                  >
+                    {{ p.value }}
+                  </div>
+                </div> -->
+              </li>
+              <li>
+                <p>
+                  <input
+                    type="text"
+                    :disabled="true"
+                    v-model="item.department"
+                  />
+                </p>
+              </li>
+              <li>
+                <p>
+                  <input type="text" :disabled="true" v-model="item.email" />
+                </p>
+              </li>
+              <li>
+                <p>
+                  <input type="text" :disabled="true" v-model="item.phone" />
+                </p>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div v-else>
+          <ul class="uldatas w100">
+            <li><p>{{loadingName}}</p></li>
           </ul>
         </div>
       </div>
-      <!-- <div class="pagination">
-        <el-pagination
-          @current-change="sizeChange"
-          background
-          layout=" prev, pager, next, jumper, ->, total, slot"
-          :total="count"
-          hide-on-single-page
-          :page-size="9"
-        >
-        </el-pagination>
-      </div> -->
     </div>
     <div class="flex flex-center">
       <!-- <div class="button UpdateCancel" style="margin-right: 144px" @click="editUser">
@@ -169,6 +165,7 @@ export default {
       uinfo: {},
       isCenterType: "",
       isUserType: "",
+      loadingName:"No Data!"
     };
   },
   created() {},
@@ -262,6 +259,7 @@ export default {
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
+       this.loadingName = "please wait..."
       pcUserFindByAll(data)
         .then((res) => {
           // console.log("获取用户列表", res);
@@ -269,6 +267,7 @@ export default {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
           });
+          this.loadingName = "No Data!"
           if (res.code == 100) {
             if (res.extend.pcUserList.length == 0) {
               return this.$message.warning("No more data!");

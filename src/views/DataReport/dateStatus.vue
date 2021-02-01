@@ -47,14 +47,21 @@
             />
           </div>
           <div class="seleterBody" :class="[isShowSlete === 2 ? 'h200' : 'h0', 'box']">
-            <div
-              class="button seleter_item"
-              v-for="(item, index) in searchs.ChargerNo.arrs"
-              :key="index"
-              @click="seletCNOV(item)"
+            <template
+              v-if="
+                searchs.ChargerNo.arrs.length != 0 && searchs.ChargerNo.list.length != 0
+              "
             >
-              {{ item }}
-            </div>
+              <div
+                class="button seleter_item"
+                v-for="(item, index) in searchs.ChargerNo.arrs"
+                :key="index"
+                @click="seletCNOV(item)"
+              >
+                {{ item }}
+              </div>
+            </template>
+            <div v-else class="button seleter_item">{{ loadingName1 }}</div>
           </div>
         </div>
         <div class="or dsmleftitem cdltopitem flex flex-Updown"><span>or</span></div>
@@ -231,7 +238,7 @@
                     <p>{{ item.totalChargingTime | value2 }}</p>
                   </li>
                   <li v-if="DataTypes[1].choose">
-                    <p>{{ item.totalNoofCharging  }}</p>
+                    <p>{{ item.totalNoofCharging }}</p>
                   </li>
                   <li v-if="DataTypes[2].choose">
                     <p>{{ item.totalChargingEnergy | value2 }}</p>
@@ -423,6 +430,7 @@ export default {
         UR: [],
         times: [],
       },
+      loadingName1: "No Data!",
     };
   },
   created() {},
@@ -433,29 +441,40 @@ export default {
         cid: this.$store.state.loginInfos.cid
           ? this.$store.state.loginInfos.cid
           : loginInfos.centre,
-        value:  this.$store.state.centerType.filter((item) =>
-              item.cid == (this.$store.state.loginInfos.cid
-                ? this.$store.state.loginInfos.cid
-                : loginInfos.centre)
-            )[0].value,
+        value: this.$store.state.centerType.filter(
+          (item) =>
+            item.cid ==
+            (this.$store.state.loginInfos.cid
+              ? this.$store.state.loginInfos.cid
+              : loginInfos.centre)
+        )[0].value,
       };
       this.getNowData(loginInfos.centre);
       this.searchs.ChargerNo.value = this.$store.state.loginInfos.cno;
-      this.searchs.VehicleNo = localStorage.getItem("vno") || "";
+      this.searchs.VehicleNo = localStorage.getItem("vno");
     }
   },
   watch: {
     "searchs.ChargerNo.value"() {
       let chargerNumber = this.searchs.ChargerNo.value;
+      let a = chargerNumber.split("-")[0];
+      let b = chargerNumber.split("-")[1];
+      let c = chargerNumber.split("-")[2];
       if (this.searchs.ChargerNo.list.length > 0) {
         this.searchs.ChargerNo.arrs = this.searchs.ChargerNo.list.filter((item) => {
-          return item.includes(chargerNumber.toUpperCase());
+          if (chargerNumber.split("-").length == 3) {
+            return item.includes(a.toUpperCase() + "-" + b + "-" + c);
+          }
+          return item.includes(chargerNumber);
         });
       }
-      if(this.searchs.ChargerNo.list==0){
-        this.isShowSlete = 0
-      }else{
-        this.isShowSlete = 2
+      if (
+        this.searchs.ChargerNo.arrs.length > 0 &&
+        this.searchs.ChargerNo.list.length == 0
+      ) {
+        this.isShowSlete = 0;
+      } else {
+        this.isShowSlete = 2;
       }
     },
   },
@@ -715,7 +734,12 @@ export default {
     },
     // 填写车牌号
     getValue() {
-      this.getParams();
+      if (
+        (this.VehicleNo === "" && this.searchs.ChargerNo.value !== "") ||
+        this.VehicleNo !== ""
+      ) {
+        this.getParams();
+      }
     },
     // 选择充电编号
     seletCNOV(item) {
@@ -725,7 +749,7 @@ export default {
       }
     },
     getFocus() {
-      this.isShowSlete = this.searchs.ChargerNo.arrs.length > 0 ? 2 : 0;
+      this.isShowSlete = 2;
     },
     inputBlur() {
       setTimeout(() => {
@@ -741,35 +765,27 @@ export default {
     },
     // 查询充电桩的实时数据
     getNowData(centreId) {
+      this.loadingName1 = "please wait...";
       let data = {
         centre: centreId,
       };
-      // let loadingInstance = this.$loading({
-      //   text: "Loading...",
-      //   background: "rgba(0,0,0,.5)",
-      // });
       findBySelectCNO(data)
         .then((res) => {
-          // console.log(res, "查询充电桩的实时数据");
-          // this.$nextTick(() => {
-          //   // 以服务的方式调用的 Loading 需要异步关闭
-          //   loadingInstance.close();
-          // });
           if (res.code == 100) {
             if (res.extend.chargerInfoList.length != 0) {
               let arrs = res.extend.chargerInfoList.map((item) => item.chargerno);
-              this.searchs.ChargerNo.arrs = arrs;
-              this.searchs.ChargerNo.list = arrs;
+              this.searchs.ChargerNo.list = this.searchs.ChargerNo.arrs = arrs;
+            } else {
+              this.loadingName1 = "No Data...";
             }
             this.count = res.extend.count;
+          } else {
+            this.loadingName1 = "Data loading failed";
           }
         })
-        // .catch(() => {
-        //   this.$nextTick(() => {
-        //     // 以服务的方式调用的 Loading 需要异步关闭
-        //     loadingInstance.close();
-        //   });
-        // });
+        .catch(() => {
+          this.loadingName1 = "Data loading failed";
+        });
     },
     loadMore() {
       // if (this.page > Math.ceil(this.count / 10))
@@ -1117,7 +1133,7 @@ ul > li {
   font-size: 18px !important;
 }
 .seleterBody {
-  width: 200px;
+  width: 210px;
   right: 10px;
 }
 .cdltopitem .seleteY,
@@ -1134,7 +1150,7 @@ ul > li {
   font-size: 12px;
 }
 .cdltopitem .seleteY {
-  width: 200px;
+  width: 210px;
 }
 .cdltopitem input {
   outline: 0;
@@ -1143,7 +1159,7 @@ ul > li {
   position: absolute;
   right: 10px;
   top: 0;
-  width: 200px;
+  width: 210px;
   height: 31px;
 }
 .cdltopitem > span {

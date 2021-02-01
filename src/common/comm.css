@@ -271,6 +271,19 @@ input {
     padding-right: 12px;
 }
 
+.mr50 {
+    margin-right: 50px;
+}
+
+.ml50 {
+    margin-left: 50px;
+}
+
+.pl50 {
+    padding-left: 100px;
+    padding-right: 30px;
+}
+
 .h200 {
     height: 200px;
     overflow-y: scroll;

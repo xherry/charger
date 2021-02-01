@@ -1,42 +1,76 @@
 <template>
   <div class="UptodateStatus">
+    <div class="cneterShow flex flex-Updown">
+      <span>Center</span>
+      <div class="flex flex-Updown-between" @click="isOptionsId = !isOptionsId">
+        <span>{{ ctypes.value }}</span>
+        <img
+          :style="{
+            transform: `rotate(${isOptionsId ? '180' : '0'}deg)`,
+          }"
+          src="../../assets/index/setting/10.png"
+          alt=""
+        />
+        <div class="seleterBody" :style="{ height: isOptionsId ? '200px' : '0px' }">
+          <div
+            class="button seleter_item"
+            v-for="(p, i) in centerType"
+            :key="i + 'ss'"
+            @click="seleteCenter(p)"
+          >
+            {{ p.name }}
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="overRights">
       <p class="ortoptit">Summary of All Centre Charging Information</p>
-      <!-- 数据 -->
-      <div >
-        <div class="ustable">
-          <ul class="ustabletit" style="padding-right:0">
+      <div class="ustable">
+        <ul class="ustabletit">
+          <li>
+            <p>Charger No.</p>
+          </li>
+          <li>
+            <p>Total Charging Time（Hour）</p>
+          </li>
+          <li>
+            <p>Total No. of Charging（Times）</p>
+          </li>
+          <li>
+            <p>Total Charging Energy（kWh）</p>
+          </li>
+        </ul>
+        <!--  -->
+        <div v-if="cdetails.length != 0">
+          <div class="loadMore box" v-infinite-scroll="loadMore">
+            <div class="udetails">
+              <ul
+                class="ustablemain"
+                v-for="(item, index) in cdetails"
+                :key="index + 'k'"
+              >
+                <li>
+                  <p>{{ item.vehicleNo }}</p>
+                </li>
+                <li>
+                  <p v-if="item.chargingTime">{{ item.chargingTime | value2 }}</p>
+                </li>
+                <li>
+                  <p v-if="item.chargerNo">{{ item.chargerNo | value2 }}</p>
+                </li>
+                <li>
+                  <p v-if="item.charingEnergy">
+                    {{ item.charingEnergy | val2 }}
+                  </p>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div v-else>
+          <ul class="ustablemain">
             <li>
-              <p>Centre</p>
-            </li>
-            <li>
-              <p>Total Charging Time（Hour）</p>
-            </li>
-            <li>
-              <p>Total No. of Charging（Times）</p>
-            </li>
-            <li>
-              <p>Total Charging Energy（kWh）</p>
-            </li>
-            <li>
-              <p>Detail</p>
-            </li>
-          </ul>
-          <ul class="ustablemain" v-for="(item, index) in centerType" :key="index">
-            <li>
-              <p>{{ item.name }}</p>
-            </li>
-            <li>
-              <p v-if="item.value">{{ item.value.totalchargingtime| val2 }}</p>
-            </li>
-            <li>
-              <p v-if="item.value">{{ item.value.totalofcharging| val2 }}</p>
-            </li>
-            <li>
-              <p v-if="item.value">{{ item.value.totalchargingenergy | val2 }}</p>
-            </li>
-            <li>
-              <p><button class="button sees" @click="seeDetails(item)">View</button></p>
+              <p>{{ loadingName }}</p>
             </li>
           </ul>
         </div>
@@ -64,79 +98,65 @@ export default {
         { centreId: 4, name: "Yuen Long", value: null, cid: "CLP3701" },
       ],
       cdetails: [],
-      queryData: {},
       ctypes: {
         centreId: "",
         value: "",
       },
-      loadingName:"No Data!"
+      loadingName: "No Data!",
     };
   },
-  created() {
-    this.getSixData();
-  },
+  created() {},
   filters: {
     val2(val) {
       return Number(val).toFixed(2);
     },
   },
+  mounted() {
+    this.ctypes = {
+      centreId: this.$route.query.cid,
+      value: this.$store.state.centerType.filter(
+        (item) => item.cid == this.$route.query.cid
+      )[0].value,
+    };
+    this.findData();
+  },
   methods: {
+    loadMore() {
+      if (this.page > Math.ceil(this.count / 1000000))
+        return this.$message.warning("No more data!");
+      this.page += 1;
+      this.findData();
+    },
     seleteCenter(p) {
       this.ctypes.centreId = p.centreId;
       this.ctypes.value = p.name;
-      this.queryData.centre = p.centreId;
       this.findData();
     },
-    //  根据地区查询 充电桩的充电总时长等
-    seeDetails(value) {
-      console.log(value);
-      if (!value.value) {
-        this.$message.warning("No more data！");
-        return;
-      }
-      this.$router.push({path:'dataRecordView',query:{cid:value.cid}})
-    },
-    // 查询六个地区下充电桩等信息
-    async getSixData() {
+    // 根据地区查询 充电桩的充电总时长等2
+    findData() {
       let data = {
         userId: localStorage.getItem("userId"),
+        centre: this.ctypes.centreId,
+        // location: value.value.location||"G",
+        limit: 1000000,
+        page: this.page,
       };
       let loadingInstance = this.$loading({
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
-      findBYN(data)
+      this.loadingName = "please wait...";
+      findByDataRecord(data) ///api/chargerInfo/findByDataRecord
         .then((res) => {
+          console.log(res, " 根据地区查询 充电桩的充电总时长等");
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
           });
-          // console.log(res, "查询六个地区下充电桩等信息");
+          this.loadingName = "No Data!";
           if (res.code == 100) {
-            let values = res.extend;
-            this.centerType = [
-              { centreId: 1, name: "Hung Hom", value: values.hh || null, cid: "CLP2101" },
-              { centreId: 0, name: "Sha Tin", value: values.s || null, cid: "CLP3301" },
-              {
-                centreId: 2,
-                name: "Sham Shui Po",
-                value: values.ssp || null,
-                cid: "CLP2201",
-              },
-              {
-                centreId: 5,
-                name: "Shek Wu Hui",
-                value: values.swh || null,
-                cid: "CLP3101",
-              },
-              { centreId: 3, name: "Tsing Yi", value: values.ty || null, cid: "CLP3801" },
-              {
-                centreId: 4,
-                name: "Yuen Long",
-                value: values.yl || null,
-                cid: "CLP3701",
-              },
-            ];
+            this.cdetails = [...this.cdetails, ...res.extend.chargerRecordList];
+            this.count = res.extend.count;
           }
         })
         .catch((err) => {
@@ -169,7 +189,7 @@ export default {
   font-size: 18px;
 }
 .cneterShow > div {
-  width: 224px;
+  width: 250px;
   height: 38px;
   border: 1px solid #205cbf;
   border-radius: 4px;
@@ -186,20 +206,10 @@ export default {
   height: 10px;
   transition: all 0.2s linear;
 }
-.goback {
-  width: 80px;
-  height: 30px;
-  color: #ffffff;
-  font-size: 16px;
-  outline: 0;
-  border: 0;
-  background: rgb(32, 93, 193);
-  position: absolute;
-  top: 40px;
-  left: 55px;
-  border-radius: 5px;
-  z-index: 9999;
+.seleterBody{
+   width: 250px;
 }
+
 .UptodateStatus {
   position: relative;
 }
@@ -239,7 +249,7 @@ export default {
   margin-top: 53px;
   height: 810px;
 }
-.ustabletit{
+.ustabletit {
   padding-right: 12px;
 }
 .ustable {

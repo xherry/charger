@@ -117,12 +117,26 @@ export default {
       },
     };
   },
+  watch: {},
+  // beforeRouteEnter(to, from, next) {
+  //   let that = this;
+  //   if (from.name === "login" && from.query.navSeleted) {
+  //     that.toQuerynavSeleted = from.query.navSeleted;
+  //   }
+  //   next();
+  // },
   created() {
     this.roleKey = JSON.parse(localStorage.getItem("roleKey"));
     this.loginType = localStorage.getItem("loginType");
-    this.getUserInfo();
+    if (this.$route.params.navSeleted) {
+      this.$router.push({
+        name: "overview",
+        query: {navSeleted:this.$route.params.navSeleted},
+      });
+    }
   },
   mounted() {
+    this.getUserInfo();
     let bgImg = new Image();
     bgImg.src = this.middleBg; // 获取背景图片的url
     let loadingInstance = this.$loading({
@@ -149,14 +163,14 @@ export default {
         type: "warning",
       })
         .then(() => {
-          let loginInfos= {
+          let loginInfos = {
             cid: "",
-            location: '',
-            cno: '',
-            vno: ""
-        }
+            location: "",
+            cno: "",
+            vno: "",
+          };
           this.$store.commit("setLoginInfos", loginInfos);
-          this.$store.commit("getUserInfo", {});
+          this.$store.commit("getUserInfo", { pcUser: {} });
           localStorage.clear();
           this.$router.replace("Selectlogin");
           this.$message.success("Log out successfully");
@@ -348,8 +362,8 @@ export default {
   cursor: pointer;
   box-shadow: 0.5px 0.5px 2px #ffffff;
 }
-.editUser:active{
-   background: #09476980;
+.editUser:active {
+  background: #09476980;
 }
 .userName {
   font-size: 32px;

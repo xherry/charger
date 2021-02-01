@@ -85,7 +85,8 @@ export const findByDataReport = (data) => $Post("/api/chargerRecord/findByDataRe
     // 根据二级联动查询信息
     // /api/chargerInfo/findByCharger
 export const findByChargers = (data) => $Post("/api/chargerInfo/findByCharger", data)
-
+    // 查询userid是否重复
+export const findByAccount = (data) => $Post("/api/pcUser/findByAccount", data)
 
 
 // 登陆部分

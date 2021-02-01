@@ -36,7 +36,7 @@ export default {
           RouterPush: "UptodateStatus",
         },
         {
-          name: "Data Serach",
+          name: "Data Report",
           id: 2,
           RouterPush: "dateStatus",
         },

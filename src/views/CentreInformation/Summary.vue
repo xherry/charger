@@ -130,17 +130,17 @@ export default {
       let data = {
         // userId: localStorage.getItem("userId"),
       };
-      // let loadingInstance = this.$loading({
-      //   text: "Loading...",
-      //   background: "rgba(0,0,0,.5)",
-      // });
+      let loadingInstance = this.$loading({
+        text: "Loading...",
+        background: "rgba(0,0,0,.5)",
+      });
       findBYN(data)
         .then((res) => {
           // console.log("获取查询六个地区下充电桩等信息", res);
-          // this.$nextTick(() => {
-          //   // 以服务的方式调用的 Loading 需要异步关闭
-          //   loadingInstance.close();
-          // });
+          this.$nextTick(() => {
+            // 以服务的方式调用的 Loading 需要异步关闭
+            loadingInstance.close();
+          });
           if (res.code == 100) {
             let sixDatas = res.extend;
             // this.sixDatas = res.extend;
@@ -175,13 +175,16 @@ export default {
               this.getVal2(item.totalchargingenergy)
             );
             this.leftTable2[3].value = objDatas.map((item) =>
-              this.getVal2(item.estimatedcarbonsaving)
+            // item.estimatedcarbonsaving
+              this.getVal2(item.totalofcharging*0.281)
             );
             this.leftTable3[0].value = objDatas.map((item) =>
-              this.getVal2(item.averagechargingtime)
+            // item.averagechargingtime
+              this.getVal2(item.totalchargingtime/item.totalofcharging)
             );
             this.leftTable3[1].value = objDatas.map((item) =>
-              this.getVal2(item.averagechargingenergy)
+            // item.averagechargingenergy
+              this.getVal2(item.totalofcharging/item.totalofcharging)
             );
           }
         })

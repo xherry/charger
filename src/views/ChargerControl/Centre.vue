@@ -202,7 +202,7 @@
           </div>
           <div v-else>
             <ul class="uldatas w100 p12">
-              <li><p>No Data！</p></li>
+              <li><p>{{loadingName}}</p></li>
             </ul>
           </div>
         </div>
@@ -246,6 +246,7 @@ export default {
       count: 0,
       page: 1,
       chargerNo: null,
+      loadingName:'No Data!'
     };
   },
   created() {
@@ -316,7 +317,7 @@ export default {
         }
       }
       if (type == 4 || type == 5) {
-        if (status != "Disabled") {
+        if (status == "Disabled") {
           this.$message.warning("Unable to enable！");
           return;
         }
@@ -370,6 +371,7 @@ export default {
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
+      this.loadingName = "please wait..."
       findByDetails(data)
         .then((res) => {
           console.log(res, "查询充电桩的实时数据");
@@ -377,6 +379,7 @@ export default {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
           });
+          this.loadingName = "No Data!"
           if (res.code == 100) {
             this.chargerInfoList = [
               ...this.chargerInfoList,
@@ -390,6 +393,7 @@ export default {
             // 以服务的方式调用的 Loading 需要异步关闭
             loadingInstance.close();
           });
+          this.loadingName = "No Data!"
         });
     },
   },
