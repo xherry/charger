@@ -116,7 +116,8 @@
                 <p>{{ item.chargingenergy | value2 }}</p>
               </li>
               <li>
-                <p>{{ item.chargingvoltage | val3 }}</p>
+                <!-- {{ item.chargingvoltage | val3 }} -->
+                <p>{{item.chargingvoltage  | changeVal}}</p>
               </li>
               <li>
                 <p>{{ item.chargingcurrent | value2 }}</p>
@@ -164,23 +165,28 @@ export default {
       chargerNo: null,
       status: 6,
       seleteUtits: "",
-      loadingName:"No Data!"
+      loadingName:"No Data!",
+      loadingInstance:null
     };
+  },
+  beforeDestroy () {
+    if(this.loadingInstance!=null){
+      this.loadingInstance.close();
+    }
+    this.loadingInstance = null
   },
   created() {},
   mounted() {
-    let loginInfos = JSON.parse(localStorage.getItem("chargerInfo"));
     if (this.$route.query.cid) {
       this.ctypes.value = this.$store.state.centerType.filter(
         (item) => item.cid == this.$route.query.cid
       )[0].value;
       this.ctypes.centreId = this.$route.query.cid;
     } else {
+      let loginInfos = JSON.parse(localStorage.getItem("userLogins"));
       this.ctypes = {
-        centreId: this.$store.state.loginInfos.cid?this.$store.state.loginInfos.cid:loginInfos.centre,
-        value: this.$store.state.centerType.filter(
-              (item) => item.cid == (this.$store.state.loginInfos.cid?this.$store.state.loginInfos.cid:loginInfos.centre)
-            )[0].value,
+        centreId: loginInfos.cid,
+        value: this.$store.state.centerType.filter((item) => item.cid == loginInfos.cid)[0].value,
       };
     }
     this.getCCECDetail();
@@ -266,7 +272,7 @@ export default {
         ...chargerNo,
         ...datas,
       };
-      let loadingInstance = this.$loading({
+      this.loadingInstance = this.$loading({
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
@@ -275,8 +281,10 @@ export default {
         .then((res) => {
           // console.log("查询充电桩的实时数据", res);
           this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
+            if(this.loadingInstance!=null){
+              // 以服务的方式调用的 Loading 需要异步关闭
+              this.loadingInstance.close();
+            }
           });
           this.loadingName = "No Data!"
           if (res.code == 100) {
@@ -289,8 +297,10 @@ export default {
         })
         .catch((err) => {
           this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
+            if(this.loadingInstance!=null){
+              // 以服务的方式调用的 Loading 需要异步关闭
+              this.loadingInstance.close();
+            }
           });
         });
     },

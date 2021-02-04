@@ -431,28 +431,29 @@ export default {
         times: [],
       },
       loadingName1: "No Data!",
+      loadingInstance: null,
     };
   },
   created() {},
   mounted() {
-    let loginInfos = JSON.parse(localStorage.getItem("chargerInfo"));
+    let loginInfos = JSON.parse(localStorage.getItem("userLogins"));
     if (Object.keys(loginInfos).length != 0) {
       this.searchs.Centre = {
-        cid: this.$store.state.loginInfos.cid
-          ? this.$store.state.loginInfos.cid
-          : loginInfos.centre,
+        cid: loginInfos.cid,
         value: this.$store.state.centerType.filter(
-          (item) =>
-            item.cid ==
-            (this.$store.state.loginInfos.cid
-              ? this.$store.state.loginInfos.cid
-              : loginInfos.centre)
+          (item) => item.cid == loginInfos.cid
         )[0].value,
       };
-      this.getNowData(loginInfos.centre);
-      this.searchs.ChargerNo.value = this.$store.state.loginInfos.cno;
-      this.searchs.VehicleNo = localStorage.getItem("vno");
+      this.getNowData(loginInfos.cid);
+      this.searchs.ChargerNo.value = loginInfos.cno;
+      this.searchs.VehicleNo = loginInfos.vno;
     }
+  },
+  beforeDestroy() {
+    if (this.loadingInstance != null) {
+      this.loadingInstance.close();
+    }
+    this.loadingInstance = null;
   },
   watch: {
     "searchs.ChargerNo.value"() {
@@ -468,14 +469,14 @@ export default {
           return item.includes(chargerNumber);
         });
       }
-      if (
-        this.searchs.ChargerNo.arrs.length > 0 &&
-        this.searchs.ChargerNo.list.length == 0
-      ) {
-        this.isShowSlete = 0;
-      } else {
-        this.isShowSlete = 2;
-      }
+      // if (
+      //   this.searchs.ChargerNo.arrs.length > 0 &&
+      //   this.searchs.ChargerNo.list.length == 0
+      // ) {
+      //   this.isShowSlete = 0;
+      // } else {
+      //   this.isShowSlete = 2;
+      // }
     },
   },
   methods: {
@@ -821,7 +822,7 @@ export default {
       if (this.endTime === "") {
         return this.$message.warning("Please select an end time");
       }
-      let loadingInstance = this.$loading({
+      this.loadingInstance = this.$loading({
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
@@ -835,10 +836,11 @@ export default {
       };
       findByDataReport(data)
         .then((res) => {
-          console.log("条件筛选查询", res);
+          // console.log("条件筛选查询", res);
           this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
+            if (this.loadingInstance != null) {
+              this.loadingInstance.close();
+            }
           });
           if (res.code == 100) {
             this.chargerInfoList = res.extend.chargerRecordList;
@@ -879,8 +881,9 @@ export default {
         })
         .catch((err) => {
           this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
+            if (this.loadingInstance != null) {
+              this.loadingInstance.close();
+            }
           });
         });
     },

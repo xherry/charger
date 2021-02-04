@@ -308,7 +308,7 @@
       </div>
     </div>
     <div v-else>
-      <own-charg ></own-charg>
+      <own-charg :guestObj="guestObj"></own-charg>
     </div>
   </div>
 </template>
@@ -342,13 +342,18 @@ export default {
       sixDatas: {},
       middleBg: require("../assets/index/0004.png"),
       showLoading: true,
+      guestObj:{}
     };
   },
   async created() {
+    if(localStorage.getItem("loginType")&&localStorage.getItem("loginType")==1){
+      if(Object.keys(this.$route.query).length!=0){
+        this.guestObj = this.$route.query;
+      }
+    }
     if (this.$route.query.navSeleted) {
       this.navSeleted = this.$route.query.navSeleted;
     }
-
     let loginType = localStorage.getItem("loginType");
     if (loginType == "1") {
       this.navSeleted = 2;
@@ -375,7 +380,7 @@ export default {
       background: "rgba(0,0,0,.5)",
     });
     bgImg.onerror = () => {
-      console.log("img onerror");
+      // console.log("img onerror");
     };
     bgImg.onload = () => {
       // 等背景图片加载成功后 去除loading

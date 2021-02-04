@@ -289,6 +289,11 @@ input {
     overflow-y: scroll;
 }
 
+.mh100 {
+    min-height: 100px;
+    transition: all .2s linear;
+}
+
 .h300 {
     height: 300px;
     overflow-y: scroll;

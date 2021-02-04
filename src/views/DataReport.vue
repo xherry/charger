@@ -52,6 +52,7 @@ export default {
     $route() {
       this.leftNavs.forEach((item) => {
         if (this.$route.name == item.RouterPush) {
+          this.$store.commit("isBacked", 0);
           this.seletNavIndex = item.id;
         }
       });

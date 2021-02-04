@@ -103,8 +103,9 @@
         <div class="cartword">
           <p class="diaName">Charging Voltage（V）</p>
           <p class="diaValue">
-            {{ chargerInfo.chargingvoltage }}
-            {{ chargerInfo.chargingvoltage ? "V" : "" }}
+            {{chargerInfo.chargingvoltage  | changeVal}}
+            <!-- {{ chargerInfo.chargingvoltage }}
+            {{ chargerInfo.chargingvoltage ? "V" : "" }} -->
           </p>
         </div>
       </div>
@@ -201,6 +202,7 @@ export default {
       count: 0,
       loginInfos: {},
       loadingName: "please wait...",
+      loadingInstance:null
     };
   },
   watch: {
@@ -217,42 +219,47 @@ export default {
           return item.includes(chargerNumber);
         });
       }
-      if (this.chargers.list.length > 0 && this.chargers.arrs.length == 0) {
-        this.isShowSlete1 = false;
-      } else {
-        this.isShowSlete1 = true;
-      }
+      // if (this.chargers.list.length != 0 && this.chargers.arrs.length == 0) {
+      //   this.isShowSlete1 = false;
+      // } else {
+      //   this.isShowSlete1 = true;
+      // }
     },
   },
+  props:["guestObj"],
   async created() {
     this.centerType = this.$store.state.centerType;
   },
   mounted() {
-    let loginInfos = JSON.parse(localStorage.getItem("chargerInfo"));
-    if (loginInfos && Object.keys(loginInfos).length != 0) {
-      this.ctypes.value = this.$store.state.centerType.filter(
-        (item) =>
-          item.cid ==
-          (this.$store.state.loginInfos.cid
-            ? this.$store.state.loginInfos.cid
-            : loginInfos.centre)
-      )[0].value;
-      this.ctypes.centreId = this.$store.state.loginInfos.cid
-        ? this.$store.state.loginInfos.cid
-        : loginInfos.centre;
-      this.getNowData(
-        this.$store.state.loginInfos.cid
-          ? this.$store.state.loginInfos.cid
-          : loginInfos.centre
-      );
-      this.chargers.value = this.$store.state.loginInfos.cno;
-      this.Vehicle = localStorage.getItem("vno") || "";
-      if (this.chargers.value !== "" || this.Vehicle !== "") {
-        this.getIndividualCharger();
+    if(localStorage.getItem("loginType")==1){
+      if(Object.keys(this.guestObj).length!=0){
+        this.initView(this.guestObj.cid,this.guestObj.cno,this.guestObj.vno);
+      }
+    }else{
+      let loginInfos = JSON.parse(localStorage.getItem("userLogins"));
+      if (loginInfos && Object.keys(loginInfos).length != 0) {
+        this.initView(loginInfos.cid,loginInfos.cno,loginInfos.vno);
       }
     }
   },
+  beforeDestroy() {
+    if (this.loadingInstance != null) {
+      this.loadingInstance.close();
+    }
+    this.loadingInstance = null;
+  },
   methods: {
+    initView(cid,cno,vno){
+      this.ctypes.value = this.$store.state.centerType.filter(
+        (item) =>item.cid ==cid)[0].value;
+      this.ctypes.centreId =  cid;
+      this.getNowData(cid);
+      this.chargers.value = cno;
+      this.Vehicle = vno ;
+      if (this.chargers.value !== "" || this.Vehicle !== "") {
+        this.getIndividualCharger();
+      }
+    },
     getFocus() {
       this.isShowSlete1 = true;
     },
@@ -285,10 +292,6 @@ export default {
       let data = {
         centre: centreId,
       };
-      // let loadingInstance = this.$loading({
-      //   text: "Loading...",
-      //   background: "rgba(0,0,0,.5)",
-      // });
       findBySelectCNO(data)
         .then((res) => {
           // console.log(res, "查询充电桩的实时数据");
@@ -306,14 +309,14 @@ export default {
         })
         .catch(() => {
           this.loadingName = "Data loading failed";
-          // this.$nextTick(() => {
-          //   // 以服务的方式调用的 Loading 需要异步关闭
-          //   loadingInstance.close();
-          // });
         });
     },
     //根据条件查询充电状态
     getIndividualCharger() {
+      this.loadingInstance = this.$loading({
+        text: "Loading...",
+        background: "rgba(0,0,0,.5)",
+      });
       let data;
       if (this.Vehicle === "") {
         data = {
@@ -325,16 +328,13 @@ export default {
           vehicleNo: this.Vehicle,
         };
       }
-      let loadingInstance = this.$loading({
-        text: "Loading...",
-        background: "rgba(0,0,0,.5)",
-      });
       findByChargers(data)
         .then((res) => {
           // console.log("根据条件查询充电状态", res);
           this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
+            if (this.loadingInstance != null) {
+              this.loadingInstance.close();
+            }
           });
           if (res.code == 100) {
             this.chargerInfo = res.extend.chargerInfo || {};
@@ -345,8 +345,9 @@ export default {
         })
         .catch(() => {
           this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
+            if (this.loadingInstance != null) {
+              this.loadingInstance.close();
+            }
           });
         });
     },

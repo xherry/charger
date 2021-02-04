@@ -40,7 +40,7 @@
           />
         </div>
         <div class="seleterBody" :class="[isShowSlete1 ? 'h200' : 'h0', 'box']">
-          <template v-if="chargers.arrs.length!=0&&chargers.list.length!=0">
+          <template v-if="chargers.arrs.length != 0 && chargers.list.length != 0">
             <div
               class="button seleter_item"
               v-for="(item, index) in chargers.arrs"
@@ -50,7 +50,7 @@
               {{ item }}
             </div>
           </template>
-          <div v-else class="button seleter_item">{{loadingName}}</div>
+          <div v-else class="button seleter_item">{{ loadingName }}</div>
         </div>
       </div>
       <div class="or ct-item flex flex-Updown-between"><span>or</span></div>
@@ -102,8 +102,9 @@
         <div class="cartword">
           <p class="diaName">Charging Voltage（V）</p>
           <p class="diaValue">
-            {{ chargerInfo.chargingvoltage }}
-            {{ chargerInfo.chargingvoltage ? "V" : "" }}
+            {{chargerInfo.chargingvoltage  | changeVal}}
+            <!-- {{ chargerInfo.chargingvoltage }}
+            {{ chargerInfo.chargingvoltage ? "V" : "" }} -->
           </p>
         </div>
       </div>
@@ -138,26 +139,29 @@
         <div class="flex flex-Updown" v-show="roleKey.controlOtherChargers == 0">
           <div
             :class="[
-              !chargerInfo.status ||
-              chargerInfo.status == 'Disconnected' ||
-              chargerInfo.status == 'OffLine' ||
-              chargerInfo.status != 'Disabled'
-                ? 'garys'
-                : 'blues',
+              chargerInfo.status &&
+              chargerInfo.chargertype == 'PolyU' &&
+              chargerInfo.status == 'Disabled'
+                ? 'blues'
+                : 'garys',
               'button',
             ]"
             @click="ControlEquipment(1)"
           >
             Enable
           </div>
+          <!-- chargerInfo.status == 'Disconnected' ||
+              chargerInfo.status == 'OffLine' ||
+              chargerInfo.status == 'Disabled' -->
           <div
             :class="[
-              !chargerInfo.status ||
-              chargerInfo.status == 'Disconnected' ||
-              chargerInfo.status == 'OffLine' ||
-              chargerInfo.status == 'Disabled'
-                ? 'garys'
-                : 'greens',
+              chargerInfo.status &&
+              chargerInfo.chargertype == 'PolyU' &&
+              chargerInfo.status != 'Disabled' &&
+              chargerInfo.status != 'Disconnected' &&
+              chargerInfo.status != 'OffLine'
+                ? 'greens'
+                : 'garys',
               'button',
             ]"
             @click="ControlEquipment(0)"
@@ -167,33 +171,35 @@
         </div>
         <div></div>
         <div class="flex flex-Updown" v-show="roleKey.controlOwnCharger == 0">
+          <!-- chargerInfo.status == 'Disconnected' ||
+              chargerInfo.status == 'Offline' ||
+              chargerInfo.status == 'Disabled'|| -->
+          <!--   chargerInfo.status != 'WaitCharging' -->
           <div
             :class="[
-              !chargerInfo.status ||
-              chargerInfo.status == 'Disconnected' ||
-              chargerInfo.status == 'Offline' ||
-              chargerInfo.status == 'Disabled'||
-              chargerInfo.status != 'InUse' ||
-              chargerInfo.status != 'WaitCharging'
-                ? 'garys'
-                : 'blues',
+              chargerInfo.status &&
+              chargerInfo.chargertype == 'PolyU' &&
+              chargerInfo.status == 'InUse'
+                ? 'blues'
+                : 'garys',
               'button',
             ]"
             @click="ControlEquipment(3)"
           >
             Start
           </div>
-          <div
-            :class="[
-              !chargerInfo.status ||
-              chargerInfo.status == 'Disconnected' ||
+          <!-- chargerInfo.status == 'Disconnected' ||
               chargerInfo.status == 'Offline' ||
               chargerInfo.status == 'Disabled'||
               chargerInfo.status == 'InUse' ||
-              chargerInfo.status == 'WaitCharging'||
-              chargerInfo.status != 'Charging'
-                ? 'garys'
-                : 'greens',
+              chargerInfo.status == 'WaitCharging'|| -->
+          <div
+            :class="[
+              chargerInfo.status &&
+              chargerInfo.chargertype == 'PolyU' &&
+              chargerInfo.status == 'Charging'
+                ? 'greens'
+                : 'garys',
               'button',
             ]"
             @click="ControlEquipment(2)"
@@ -203,15 +209,17 @@
         </div>
         <div></div>
         <div class="flex flex-Updown" v-show="roleKey.controlOtherChargers == 0">
+          <!--  chargerInfo.status != 'Completed' -->
           <div
             :class="[
-              !chargerInfo.status ||
-              chargerInfo.status == 'Disconnected' ||
-              chargerInfo.status == 'Offline' ||
-              chargerInfo.status == 'Disabled'||
-              chargerInfo.status != 'Completed'
-                ? 'garys'
-                : 'blues',
+              chargerInfo.status &&
+              chargerInfo.chargertype == 'PolyU' &&
+              chargerInfo.status != 'Disconnected' &&
+              chargerInfo.status != 'Offline' &&
+              chargerInfo.status != 'Disabled'&&
+              chargerInfo.priorityFormula=='LMS'
+                ? 'blues'
+                : 'garys',
               'button',
             ]"
             @click="ControlEquipment(4)"
@@ -220,13 +228,14 @@
           </div>
           <div
             :class="[
-              !chargerInfo.status ||
-              chargerInfo.status == 'Disconnected' ||
-              chargerInfo.status == 'Offline' ||
-              chargerInfo.status == 'Disabled'||
-              chargerInfo.status == 'Completed'
-                ? 'garys'
-                : 'greens',
+              chargerInfo.status &&
+              chargerInfo.chargertype == 'PolyU' &&
+              chargerInfo.status != 'Disconnected' &&
+              chargerInfo.status != 'Offline' &&
+              chargerInfo.status != 'Disabled'&&
+              chargerInfo.priorityFormula=='Full'
+                ? 'greens'
+                : 'garys',
               'button',
             ]"
             @click="ControlEquipment(5)"
@@ -245,7 +254,7 @@ import {
   controlCharger,
   findByDetails,
   findBySelectCNO,
-  findByChargers
+  findByChargers,
 } from "../../common/api";
 export default {
   name: "Individual",
@@ -281,48 +290,59 @@ export default {
       Vehicle: "",
       page: 1,
       count: 0,
-      loadingName:"please wait..."
+      loadingName: "please wait...",
+      loadingInstance:null
     };
   },
   async created() {
     // this.centers = await this.$store.dispatch("getCenters");
     this.roleKey = JSON.parse(localStorage.getItem("roleKey"));
   },
-  filters: {},
+  filters: {
+ 
+  },
   watch: {
     "chargers.value"() {
       let chargerNumber = this.chargers.value;
-      if(this.chargers.list.length>0){
+      let a = chargerNumber.split("-")[0];
+      let b = chargerNumber.split("-")[1];
+      let c = chargerNumber.split("-")[2];
+      if (this.chargers.list.length > 0) {
         this.chargers.arrs = this.chargers.list.filter((item) => {
-          if(chargerNumber.split("-").length==3){
-            return item.includes(a.toUpperCase()+'-'+b+'-'+c);
+          if (chargerNumber.split("-").length == 3) {
+            return item.includes(a.toUpperCase() + "-" + b + "-" + c);
           }
-          return item.includes(chargerNumber)
+          return item.includes(chargerNumber);
         });
       }
-       if (this.chargers.list.length>0 && this.chargers.arrs.length == 0) {
-        this.isShowSlete1 = false;
-      } else {
-        this.isShowSlete1 = true;
-      }
+      //  if (this.chargers.list.length>0 && this.chargers.arrs.length == 0) {
+      //   this.isShowSlete1 = false;
+      // } else {
+      //   this.isShowSlete1 = true;
+      // }
     },
   },
   mounted() {
-    let loginInfos = JSON.parse(localStorage.getItem("chargerInfo"));
+    let loginInfos = JSON.parse(localStorage.getItem("userLogins"));
     if (Object.keys(loginInfos).length != 0) {
-      this.ctypes.centreId = loginInfos.centre;
-      this.ctypes.value = this.$store.state.centerType.filter((item) =>
-        item.cid ==  loginInfos.centre
+      this.ctypes.centreId = loginInfos.cid;
+      this.ctypes.value = this.$store.state.centerType.filter(
+        (item) => item.cid == loginInfos.cid
       )[0].value;
-      this.getNowData(loginInfos.centre);
-      this.chargers.value = this.$store.state.loginInfos.cno;
-      this.Vehicle = localStorage.getItem("vno") || "";
+      this.getNowData(loginInfos.cid);
+      this.chargers.value = loginInfos.cno;
+      this.Vehicle = loginInfos.vno;
       if (this.chargers.value !== "" || this.Vehicle !== "") {
         this.getIndividualCharger();
       }
     }
   },
-
+  beforeDestroy () {
+    if(this.loadingInstance!=null){
+      this.loadingInstance.close();
+    }
+    this.loadingInstance = null
+  },
   methods: {
     getFocus() {
       this.isShowSlete1 = true;
@@ -330,8 +350,8 @@ export default {
     inputBlur() {
       setTimeout(() => {
         this.isShowSlete1 = false;
-        if(this.chargers.value!==""){
-          this.getIndividualCharger()
+        if (this.chargers.value !== "") {
+          this.getIndividualCharger();
         }
       }, 200);
     },
@@ -363,16 +383,16 @@ export default {
           vehicleNo: this.Vehicle,
         };
       }
-      let loadingInstance = this.$loading({
+      this.loadingInstance = this.$loading({
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
       findByChargers(data)
         .then((res) => {
-          console.log("根据条件查询充电状态",res)
+          // console.log("根据条件查询充电状态", res);
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
+            this.loadingInstance.close();
           });
           // console.log("根据条件查询充电状态", res);
           if (res.code == 100) {
@@ -384,8 +404,10 @@ export default {
         })
         .catch((err) => {
           this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
+            if(this.loadingInstance!=null){
+              // 以服务的方式调用的 Loading 需要异步关闭
+              this.loadingInstance.close();
+            }
           });
         });
     },
@@ -406,7 +428,7 @@ export default {
     },
     // 查询充电桩的实时数据
     getNowData(centreId) {
-      this.loadingName = "please wait..."
+      this.loadingName = "please wait...";
       let data = {
         centre: centreId,
       };
@@ -416,15 +438,16 @@ export default {
             if (res.extend.chargerInfoList.length != 0) {
               let arrs = res.extend.chargerInfoList.map((item) => item.chargerno);
               this.chargers.arrs = this.chargers.list = [...arrs];
-            }else{
-              this.loadingName = "No Data..."
+            } else {
+              this.loadingName = "No Data...";
             }
             this.count = res.extend.count;
-          }else{
-            this.loadingName = "Data loading failed"
+          } else {
+            this.loadingName = "Data loading failed";
           }
-        }).catch(() => {
-          this.loadingName = "Data loading failed"
+        })
+        .catch(() => {
+          this.loadingName = "Data loading failed";
           // this.$nextTick(() => {
           //   // 以服务的方式调用的 Loading 需要异步关闭
           //   loadingInstance.close();
@@ -435,6 +458,10 @@ export default {
     ControlEquipment(type) {
       if (Object.keys(this.chargerInfo).length == 0) {
         this.$message.warning("There is no equipment！");
+        return;
+      }
+      if (this.chargerInfo.chargertype != "PolyU") {
+        this.$message.warning("Unable to send");
         return;
       }
       if (
@@ -451,22 +478,25 @@ export default {
         }
       }
       if (type == 3) {
-        if (
-          this.chargerInfo.status != "InUse" ||
-          this.chargerInfo.status != "WaitCharging"
-        ) {
-          this.$message.warning("Unable to enable！");
+        if (this.chargerInfo.status != "InUse") {
+          this.$message.warning("Unable to start！");
           return;
         }
       }
       if (type == 2) {
         if (this.chargerInfo.status != "Charging") {
-          this.$message.warning("Unable to enable！");
+          this.$message.warning("Unable to stop！");
           return;
         }
       }
       if (type == 4 || type == 5) {
         if (this.chargerInfo.status == "Disabled") {
+          this.$message.warning("Unable to enable！");
+          return;
+        }else if(type==4&&this.chargerInfo.priorityFormula!="LMS"){
+          this.$message.warning("Unable to enable！");
+          return;
+        }else if(type==5&&this.chargerInfo.priorityFormula!="Full"){
           this.$message.warning("Unable to enable！");
           return;
         }
@@ -475,7 +505,7 @@ export default {
         userIds: localStorage.getItem("userId"),
         type: type, //0，Disable；1，Enable；2，Stop；3，Start；4，LMS；5、Full
         centre: this.chargerInfo.centre,
-        chargerNo: this.chargers.value
+        chargerNo: this.chargers.value,
       };
       controlCharger(data).then((res) => {
         // console.log(res, "控制设备");
@@ -626,7 +656,7 @@ export default {
   margin-top: 24px;
 }
 .diaName {
-  font-size: 14px;
+  font-size: 18px;
   color: #edf5ff;
 }
 .diaValue {

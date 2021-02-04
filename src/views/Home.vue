@@ -12,7 +12,7 @@
     <!-- replace('/index') -->
     <div
       v-if="$store.state.IsShowBottom && $store.state.isBack == 0"
-      @click="$router.go(-1)"
+      @click="$router.replace('/index')"
       class="ol-item2 flex flex-center back ol-bottom"
     >
       <!-- <span>Back to Main</span> -->
@@ -44,19 +44,11 @@ export default {
   mounted() {
     let bgImg = new Image();
     bgImg.src = this.bg01; // 获取背景图片的url
-    let loadingInstance = this.$loading({
-      text: "Loading...",
-      background: "rgba(0,0,0,.5)",
-    });
     bgImg.onerror = () => {
       console.log("img onerror");
     };
     bgImg.onload = () => {
       // 等背景图片加载成功后 去除loading
-      this.$nextTick(() => {
-        // 以服务的方式调用的 Loading 需要异步关闭
-        loadingInstance.close();
-      });
       this.showLoading = false;
     };
   },

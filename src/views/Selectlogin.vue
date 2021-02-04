@@ -314,11 +314,6 @@ export default {
       window.location.href = "https://www.clplms.com/pc";
     },
     showEwm(value) {
-      // if (value === 1) {
-      //   this.isShowSixItems = true;
-      // } else {
-      //   this.isShowSixItems = false;
-      // }
     },
     tologin(value, data) {
       if (!data) {

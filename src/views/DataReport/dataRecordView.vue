@@ -103,6 +103,7 @@ export default {
         value: "",
       },
       loadingName: "No Data!",
+      loadingInstance: null,
     };
   },
   created() {},
@@ -119,6 +120,12 @@ export default {
       )[0].value,
     };
     this.findData();
+  },
+  beforeDestroy() {
+    if (this.loadingInstance != null) {
+      this.loadingInstance.close();
+    }
+    this.loadingInstance = null;
   },
   methods: {
     loadMore() {
@@ -141,17 +148,17 @@ export default {
         limit: 1000000,
         page: this.page,
       };
-      let loadingInstance = this.$loading({
+      this.loadingInstance = this.$loading({
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
       this.loadingName = "please wait...";
       findByDataRecord(data) ///api/chargerInfo/findByDataRecord
         .then((res) => {
-          console.log(res, " 根据地区查询 充电桩的充电总时长等");
+          // console.log(res, " 根据地区查询 充电桩的充电总时长等");
           this.$nextTick(() => {
             // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
+            this.loadingInstance.close();
           });
           this.loadingName = "No Data!";
           if (res.code == 100) {
@@ -160,10 +167,10 @@ export default {
           }
         })
         .catch((err) => {
-          this.$nextTick(() => {
+          if (this.loadingInstance != null) {
             // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
-          });
+            this.loadingInstance.close();
+          }
         });
     },
   },
@@ -206,8 +213,8 @@ export default {
   height: 10px;
   transition: all 0.2s linear;
 }
-.seleterBody{
-   width: 250px;
+.seleterBody {
+  width: 250px;
 }
 
 .UptodateStatus {

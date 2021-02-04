@@ -134,7 +134,7 @@
 </template>
 
 <script>
-import { findBIC, controlCharger, findByDetails,findByChargers } from "../../common/api";
+import { findBIC, controlCharger, findByDetails, findByChargers } from "../../common/api";
 export default {
   name: "detailInform",
   data() {
@@ -168,11 +168,18 @@ export default {
       Vehicle: "",
       page: 1,
       count: 0,
+      loadingInstance: null,
     };
   },
   async created() {
     // this.centers = await this.$store.dispatch("getCenters");
     this.roleKey = JSON.parse(localStorage.getItem("roleKey"));
+  },
+  beforeDestroy() {
+    if (this.loadingInstance != null) {
+      this.loadingInstance.close();
+    }
+    this.loadingInstance = null;
   },
   filters: {},
   mounted() {
@@ -185,15 +192,15 @@ export default {
       this.chargers.value = this.$route.query.chargerno;
       this.getIndividualCharger();
     } else {
-      this.loginInfos = JSON.parse(localStorage.getItem("chargerInfo")) ||{};
-      if(Object.keys(loginInfos).length!=0){
+      this.loginInfos = JSON.parse(localStorage.getItem("chargerInfo")) || {};
+      if (Object.keys(loginInfos).length != 0) {
         this.ctypes.centreId = loginInfos.centre;
         this.ctypes.value = this.$store.state.centerType.filter(
           (item) => item.cid == loginInfos.centre
         )[0].value;
         this.getNowData(loginInfos.centre);
         this.chargers.value = loginInfos.chargerno;
-        this.Vehicle = localStorage.getItem("vno")||"";;
+        this.Vehicle = localStorage.getItem("vno") || "";
         this.getIndividualCharger();
       }
     }
@@ -224,7 +231,7 @@ export default {
     },
     //根据条件查询充电状态
     getIndividualCharger() {
-      let loadingInstance = this.$loading({
+      this.getNowDataloadingInstance = this.$loading({
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
@@ -242,8 +249,10 @@ export default {
       findByChargers(data)
         .then((res) => {
           this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
+            if (this.loadingInstance != null) {
+              // 以服务的方式调用的 Loading 需要异步关闭
+              this.loadingInstance.close();
+            }
           });
           // console.log("根据条件查询充电状态", res);
           if (res.code == 100) {
@@ -255,8 +264,10 @@ export default {
         })
         .catch((err) => {
           this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
+            if (this.loadingInstance != null) {
+              // 以服务的方式调用的 Loading 需要异步关闭
+              this.loadingInstance.close();
+            }
           });
         });
     },
@@ -282,17 +293,16 @@ export default {
         status: 6,
         centre: centreId,
       };
-      findByDetails(data)
-        .then((res) => {
-          // console.log(res, "查询充电桩的实时数据");
-          if (res.code == 100) {
-            if (res.extend.chargerInfoList.length != 0) {
-              let arrs = res.extend.chargerInfoList.map((item) => item.chargerno);
-              this.chargers.list = [...this.chargers.list, ...arrs];
-            }
-            this.count = res.extend.count;
+      findByDetails(data).then((res) => {
+        // console.log(res, "查询充电桩的实时数据");
+        if (res.code == 100) {
+          if (res.extend.chargerInfoList.length != 0) {
+            let arrs = res.extend.chargerInfoList.map((item) => item.chargerno);
+            this.chargers.list = [...this.chargers.list, ...arrs];
           }
-        })
+          this.count = res.extend.count;
+        }
+      });
     },
   },
 };
@@ -493,5 +503,4 @@ export default {
   padding: 0 24px 0 15px;
   color: #fff;
 }
-
 </style>

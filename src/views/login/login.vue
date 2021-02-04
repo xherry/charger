@@ -39,6 +39,7 @@
                 :style="{ transform: `rotate(${isShowSlete ? '-180' : '0'}deg)` }"
                 src="../../assets/index/says/17.png"
                 alt=""
+                @click="isShowSlete=!isShowSlete"
               />
             </div>
             <!-- @click="" -->
@@ -109,8 +110,8 @@ export default {
       iscode: false,
       userInfo: {
         userId: "", //liaojingxing
-        password: "", //H123654
-        chargerNumber: "",
+        password: "", //686868
+        chargerNumber: "",//HH-G-10
         vehicleNumber: "",
       },
       isShowSlete: false,
@@ -146,11 +147,11 @@ export default {
         }
         return item.includes(chargerNumber);
       });
-      if (this.clist.length > 0 && this.chargerInfoList.length == 0) {
-        this.isShowSlete = false;
-      } else {
-        this.isShowSlete = true;
-      }
+      // if (this.clist.length > 0 && this.chargerInfoList.length == 0) {
+      //   this.isShowSlete = false;
+      // } else {
+      //   this.isShowSlete = true;
+      // }
     },
   },
   methods: {
@@ -164,10 +165,6 @@ export default {
     },
     // 二级联动查询充电桩编号
     getCno(cid) {
-      // let loadingInstance = this.$loading({
-      //   text: "Loading...",
-      //   background: "rgba(0,0,0,.5)",
-      // });
       this.loadingName = "please wait...";
       let data = {
         centre: cid,
@@ -199,7 +196,14 @@ export default {
       localStorage.setItem("loginType", "1");
       this.$store.commit("getUserInfo", { pcUser: {} });
       setTimeout(() => {
-        this.$router.push("overview");
+        this.$router.push({
+          name: "overview",
+          query: {
+            cid: this.$route.query.cid,
+            cno: this.userInfo.chargerNumber,
+            vno: this.userInfo.vehicleNumber,
+          },
+        });
       }, 200);
     },
     sendCode() {
@@ -239,15 +243,11 @@ export default {
               localStorage.setItem("userId", res.extend.pcUser.id);
               localStorage.setItem("roleKey", JSON.stringify(res.extend.roleKey));
               localStorage.setItem("chargerInfo", JSON.stringify(res.extend.chargerInfo));
+              let userLogins = {cid:this.$route.query.cid,cno:"",vno:""};
               this.$store.commit("getUserInfo", res.extend);
-              if (
-                this.userInfo.chargerNumber !== "" ||
-                this.userInfo.vehicleNumber !== ""
-              ) {
-                let obj = this.$store.state.loginInfos;
-                obj.cno = this.userInfo.chargerNumber;
-                this.$store.commit("setLoginInfos", obj);
-                localStorage.setItem("vno", this.userInfo.vehicleNumber);
+              if (this.userInfo.chargerNumber !== "" ||this.userInfo.vehicleNumber !== "") {
+                userLogins.cno = this.userInfo.chargerNumber;
+                userLogins.vno = this.userInfo.vehicleNumber;
                 this.$nextTick(() => {
                   // 以服务的方式调用的 Loading 需要异步关闭
                   loadingInstance.close();
@@ -267,6 +267,7 @@ export default {
                   this.$router.replace("index");
                 }, 800);
               }
+              localStorage.setItem("userLogins", JSON.stringify(userLogins));
               this.$message.success("Log in successfully！");
             }
           } else {
@@ -302,14 +303,10 @@ export default {
             localStorage.setItem("userId", res.extend.pcUser.id);
             localStorage.setItem("roleKey", JSON.stringify(res.extend.roleKey));
             this.$store.commit("getUserInfo", res.extend);
-            if (
-              this.userInfo.chargerNumber !== "" ||
-              this.userInfo.vehicleNumber !== ""
-            ) {
-              let obj = this.$store.state.loginInfos;
-              obj.cno = this.userInfo.chargerNumber;
-              this.$store.commit("setLoginInfos", obj);
-              localStorage.setItem("vno", this.userInfo.vehicleNumber);
+             let userLogins = {cid:this.$route.query.cid,cno:"",vno:""};
+            if (this.userInfo.chargerNumber !== "" ||this.userInfo.vehicleNumber !== "" ) {
+               userLogins.cno = this.userInfo.chargerNumber;
+                userLogins.vno = this.userInfo.vehicleNumber;
               this.$nextTick(() => {
                 // 以服务的方式调用的 Loading 需要异步关闭
                 loadingInstance.close();
@@ -329,6 +326,7 @@ export default {
                 this.$router.replace("index");
               }, 800);
             }
+            localStorage.setItem("userLogins", JSON.stringify(userLogins));
             this.$message.success("Log in successfully！");
           } else {
             this.iscode = false;

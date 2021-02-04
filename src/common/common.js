@@ -79,3 +79,11 @@ Vue.prototype.$on = function(event, func) {
     }
     on.call(this, event, newFunc)
 }
+Vue.filter("changeVal", (val) => {
+    if (val) {
+        let newVal = val.split("Φ");
+        return newVal[0] + "P" + " " + Math.ceil(newVal[1]) + 'V'
+    } else {
+        return ""
+    }
+})

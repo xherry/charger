@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <keep-alive>
-      <router-view v-if="$route.meta.keepAlive" />
+      <router-view v-if="$route.meta.keepAlive"></router-view>
     </keep-alive>
     <router-view v-if="!$route.meta.keepAlive"></router-view>
   </div>
@@ -23,6 +23,25 @@ export default {
 
 <style>
 @import "./common/comm.css";
+/* .zzzzc{
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: #FF000070;
+  z-index: 99999;
+} */
+.el-loading-mask {
+  position: absolute;
+  width: 0;
+  height: 0;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translateX(-50%, -50%) !important;
+}
+.el-loading-spinner {
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

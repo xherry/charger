@@ -13,14 +13,14 @@
           <li><p>E-mail</p></li>
           <li><p>Mobile No.</p></li>
         </ul>
-        <div v-if="pcUserList.length!=0">
+        <div v-if="pcUserList.length != 0">
           <div
             class="loadMore box"
             v-infinite-scroll="loadMore"
             infinite-scroll-immediate="false"
             ref="loadMore"
-            >
-            <ul 
+          >
+            <ul
               class="uldatas w100"
               :ref="'seleteMan' + index"
               v-for="(item, index) in pcUserList"
@@ -108,11 +108,7 @@
               </li>
               <li>
                 <p>
-                  <input
-                    type="text"
-                    :disabled="true"
-                    v-model="item.department"
-                  />
+                  <input type="text" :disabled="true" v-model="item.department" />
                 </p>
               </li>
               <li>
@@ -130,7 +126,9 @@
         </div>
         <div v-else>
           <ul class="uldatas w100">
-            <li><p>{{loadingName}}</p></li>
+            <li>
+              <p>{{ loadingName }}</p>
+            </li>
           </ul>
         </div>
       </div>
@@ -165,7 +163,8 @@ export default {
       uinfo: {},
       isCenterType: "",
       isUserType: "",
-      loadingName:"No Data!"
+      loadingName: "No Data!",
+      loadingInstance: null,
     };
   },
   created() {},
@@ -200,7 +199,7 @@ export default {
       delete uinfo["createTime"];
       let uinfos = { userIds: uinfo.id, ...uinfo };
       delete uinfos["id"];
-      let loadingInstance = this.$loading({
+      this.loadingInstance = this.$loading({
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
@@ -208,8 +207,9 @@ export default {
         .then((res) => {
           // console.log(res);
           this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
+            if (this.loadingInstance != null) {
+              this.loadingInstance.close();
+            }
           });
           if (res.code == 100) {
             this.$message.success("Modify the success！");
@@ -218,8 +218,9 @@ export default {
         })
         .catch((err) => {
           this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
+            if (this.loadingInstance != null) {
+              this.loadingInstance.close();
+            }
           });
         });
     },
@@ -255,19 +256,20 @@ export default {
         page: this.page,
         limit: 15,
       };
-      let loadingInstance = this.$loading({
+      this.loadingInstance = this.$loading({
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
-       this.loadingName = "please wait..."
+      this.loadingName = "please wait...";
       pcUserFindByAll(data)
         .then((res) => {
           // console.log("获取用户列表", res);
           this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
+            if (this.loadingInstance != null) {
+              this.loadingInstance.close();
+            }
           });
-          this.loadingName = "No Data!"
+          this.loadingName = "No Data!";
           if (res.code == 100) {
             if (res.extend.pcUserList.length == 0) {
               return this.$message.warning("No more data!");
@@ -281,11 +283,18 @@ export default {
         })
         .catch((err) => {
           this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
+            if (this.loadingInstance != null) {
+              this.loadingInstance.close();
+            }
           });
         });
     },
+  },
+  beforeDestroy() {
+    if (this.loadingInstance != null) {
+      this.loadingInstance.close();
+    }
+    this.loadingInstance = null;
   },
 };
 </script>

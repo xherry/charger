@@ -3,9 +3,9 @@
     <div class="overRights">
       <p class="ortoptit">Summary of All Centre Charging Information</p>
       <!-- 数据 -->
-      <div >
+      <div>
         <div class="ustable">
-          <ul class="ustabletit" style="padding-right:0">
+          <ul class="ustabletit" style="padding-right: 0">
             <li>
               <p>Centre</p>
             </li>
@@ -27,10 +27,10 @@
               <p>{{ item.name }}</p>
             </li>
             <li>
-              <p v-if="item.value">{{ item.value.totalchargingtime| val2 }}</p>
+              <p v-if="item.value">{{ item.value.totalchargingtime | val2 }}</p>
             </li>
             <li>
-              <p v-if="item.value">{{ item.value.totalofcharging| val2 }}</p>
+              <p v-if="item.value">{{ item.value.totalofcharging | val2 }}</p>
             </li>
             <li>
               <p v-if="item.value">{{ item.value.totalchargingenergy | val2 }}</p>
@@ -69,7 +69,8 @@ export default {
         centreId: "",
         value: "",
       },
-      loadingName:"No Data!"
+      loadingName: "No Data!",
+      loadingInstance: null,
     };
   },
   created() {
@@ -80,6 +81,12 @@ export default {
       return Number(val).toFixed(2);
     },
   },
+  beforeDestroy() {
+    if (this.loadingInstance != null) {
+      this.loadingInstance.close();
+    }
+    this.loadingInstance = null;
+  },
   methods: {
     seleteCenter(p) {
       this.ctypes.centreId = p.centreId;
@@ -89,27 +96,29 @@ export default {
     },
     //  根据地区查询 充电桩的充电总时长等
     seeDetails(value) {
-      console.log(value);
+      // console.log(value);
       if (!value.value) {
         this.$message.warning("No more data！");
         return;
       }
-      this.$router.push({path:'dataRecordView',query:{cid:value.cid}})
+      this.$store.commit("isBacked", 1);
+      this.$router.push({ path: "dataRecordView", query: { cid: value.cid } });
     },
     // 查询六个地区下充电桩等信息
     async getSixData() {
       let data = {
         userId: localStorage.getItem("userId"),
       };
-      let loadingInstance = this.$loading({
+      this.loadingInstance = this.$loading({
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
       findBYN(data)
         .then((res) => {
           this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
+            if (this.loadingInstance != null) {
+              this.loadingInstance.close();
+            }
           });
           // console.log(res, "查询六个地区下充电桩等信息");
           if (res.code == 100) {
@@ -141,8 +150,9 @@ export default {
         })
         .catch((err) => {
           this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
+            if (this.loadingInstance != null) {
+              this.loadingInstance.close();
+            }
           });
         });
     },
@@ -239,7 +249,7 @@ export default {
   margin-top: 53px;
   height: 810px;
 }
-.ustabletit{
+.ustabletit {
   padding-right: 12px;
 }
 .ustable {

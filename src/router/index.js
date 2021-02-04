@@ -141,7 +141,7 @@ const routes = [{
         {
             path: 'CentreInformation',
             name: 'CentreInformation',
-            meta: { keepAlive: true },
+            // meta: { keepAlive: true },
             component: () =>
                 import ( /* webpackChunkName: "about" */ '../views/CentreInformation.vue'),
             redirect: { name: 'Summary' }, // 跳转到下一级第一个

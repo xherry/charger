@@ -9,9 +9,13 @@
       <div class="create flex">
         <div class="createleft">
           <p class="leftTit">User information↓</p>
-          <div class="cdltopitem flex flex-Updown-between" >
+          <div class="cdltopitem flex flex-Updown-between">
             <span>User Type</span>
-            <p class="flex flex-Updown-between" :class="[isEmpty&&utypes.value===''?'borderRed':'']" @click="isShowSlete1 = !isShowSlete1">
+            <p
+              class="flex flex-Updown-between"
+              :class="[isEmpty && utypes.value === '' ? 'borderRed' : '']"
+              @click="isShowSlete1 = !isShowSlete1"
+            >
               <span>{{ utypes.value }}</span>
               <img
                 :style="{ transform: `rotate(${isShowSlete1 ? '180' : '0'}deg)` }"
@@ -19,8 +23,12 @@
                 alt=""
               />
             </p>
+            <div :class="['warningItem', isEmpty && utypes.value === '' ? '' : 'op0']">
+              <img src="../../assets/index/warning.png" alt="" />
+              <span>Please select a userType</span>
+            </div>
             <!-- :style="{ height: isShowSlete1 ? '100%' : '0px' }" -->
-            <div class="seleterBody" :class="[isShowSlete1?'h300':'h0']" >
+            <div class="seleterBody" :class="[isShowSlete1 ? 'mh100' : 'h0']">
               <div
                 class="button seleter_item"
                 v-for="(item, index) in userTypes"
@@ -35,13 +43,45 @@
               </div>
             </div>
           </div>
-          <div class="cdltopitem flex flex-Updown-between" >
+          <div class="cdltopitem flex flex-Updown-between">
             <span>User ID</span>
-            <input type="text" :foucs="isEmpty&&addUsers.userId===''" :class="[isEmpty&&addUsers.userId===''?'borderRed':'']" @input="queryUserId" v-model="addUsers.userId" placeholder="User  ID" />
+            <input
+              type="text"
+              :foucs="isEmpty && addUsers.userId === ''"
+              :class="[isEmpty && addUsers.userId === '' ? 'borderRed' : '']"
+              @input="queryUserId"
+              v-model="addUsers.userId"
+              placeholder="User  ID"
+            />
+            <div
+              :class="[
+                'warningItem',
+                (addUsers.userId !== '' && isID) || (isEmpty && addUsers.userId === '')
+                  ? ''
+                  : 'op0',
+              ]"
+            >
+              <img src="../../assets/index/warning.png" alt="" />
+              <span v-if="addUsers.userId !== ''"
+                >This ID already Existed，Please re-enter</span
+              >
+              <span v-if="isEmpty && addUsers.userId === ''">UserID is empty</span>
+            </div>
           </div>
-          <div class="cdltopitem flex flex-Updown-between" >
+          <div class="cdltopitem flex flex-Updown-between">
             <span>Password (Random)</span>
-            <input type="password"  :class="[isEmpty&&addUsers.password===''?'borderRed':'']" v-model="addUsers.password" placeholder="password" />
+            <input
+              type="password"
+              :class="[isEmpty && addUsers.password === '' ? 'borderRed' : '']"
+              v-model="addUsers.password"
+              placeholder="password"
+            />
+            <div
+              :class="['warningItem', isEmpty && addUsers.password === '' ? '' : 'op0']"
+            >
+              <img src="../../assets/index/warning.png" alt="" />
+              <span>Password is empty</span>
+            </div>
           </div>
           <div class="cdltopitem flex flex-Updown-between">
             <span>Centre (Optional)</span>
@@ -54,7 +94,7 @@
               />
             </p>
             <!--  :style="{ height: isShowSlete2 ? '100%' : '0px' }" -->
-            <div class="seleterBody" :class="[isShowSlete2?'h300':'h0']">
+            <div class="seleterBody" :class="[isShowSlete2 ? 'mh100' : 'h0']">
               <div
                 class="button seleter_item"
                 v-for="(item, index) in centerType"
@@ -76,11 +116,48 @@
           <p class="leftTit">Contact information↓</p>
           <div class="cdltopitem flex flex-Updown-between">
             <span>Name</span>
-            <input type="text"  :class="[isEmpty&&addUsers.name===''?'borderRed':'']" v-model="addUsers.name" placeholder="" />
+            <input
+              type="text"
+              :class="[isEmpty && addUsers.name === '' ? 'borderRed' : '']"
+              v-model="addUsers.name"
+              placeholder=""
+            />
+            <div :class="['warningItem', isEmpty && addUsers.name === '' ? '' : 'op0']">
+              <img src="../../assets/index/warning.png" alt="" />
+              <span>Name is empty</span>
+            </div>
           </div>
           <div class="cdltopitem flex flex-Updown-between">
             <span>E-mail</span>
-            <input type="text"  :class="[isEmpty&&addUsers.email===''?'borderRed':'']" v-model="addUsers.email" placeholder="" />
+            <input
+              type="text"
+              :class="[
+                isEmpty &&
+                addUsers.email === '' &&
+                !/^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/.test(
+                  addUsers.email
+                )
+                  ? 'borderRed'
+                  : '',
+              ]"
+              v-model="addUsers.email"
+              placeholder=""
+            />
+            <div
+              :class="[
+                'warningItem',
+                (isEmpty && addUsers.email === '') ||
+                (addUsers.email !== '' &&
+                  !/^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/.test(
+                    addUsers.email
+                  ))
+                  ? ''
+                  : 'op0',
+              ]"
+            >
+              <img src="../../assets/index/warning.png" alt="" />
+              <span>email format is wrong</span>
+            </div>
           </div>
           <div class="cdltopitem flex flex-Updown-between">
             <span>Staff ID (Optional)</span>
@@ -88,7 +165,16 @@
           </div>
           <div class="cdltopitem flex flex-Updown-between">
             <span>Mobile Phone No.</span>
-            <input type="text" :class="[isEmpty&&addUsers.phone===''?'borderRed':'']" v-model="addUsers.phone" placeholder="" />
+            <input
+              type="text"
+              :class="[isEmpty && addUsers.phone === '' ? 'borderRed' : '']"
+              v-model="addUsers.phone"
+              placeholder=""
+            />
+            <div :class="['warningItem', isEmpty && addUsers.phone === '' ? '' : 'op0']">
+              <img src="../../assets/index/warning.png" alt="" />
+              <span>Mobile Phone No. format is wrong</span>
+            </div>
           </div>
           <!-- <div class="cdltopitem flex flex-Updown-between">
             <span>Verification code</span>
@@ -152,7 +238,7 @@
         </div>
       </div>
     </div>
-    <div class="flex flex-center" >
+    <div class="flex flex-center">
       <div class="button UpdateCancel" @click="cleaUser">Clear</div>
       <div
         class="UpdateCancels flex flex-center op0"
@@ -163,10 +249,8 @@
           <div>SMS to notice user</div>
         </div> -->
       </div>
-      <div class="thebb" style="margin-right: 144px;">
-        <div class="button UpdateCancel"  @click="createUser">
-          Confirm
-        </div>
+      <div class="thebb" style="margin-right: 144px">
+        <div class="button UpdateCancel" @click="createUser">Confirm</div>
         <p>Created and send the SMS to notice the new user</p>
       </div>
     </div>
@@ -174,7 +258,7 @@
 </template>
 
 <script>
-import { addOrUpdEntity, sendSms, roleKeySOE,findByAccount } from "../../common/api";
+import { addOrUpdEntity, sendSms, roleKeySOE, findByAccount } from "../../common/api";
 export default {
   name: "Createuser",
   data() {
@@ -221,8 +305,10 @@ export default {
         phone: "",
         code: "",
       },
-      isEmpty:false,
+      isEmpty: false,
       roleKey: {},
+      isID: false,
+      loadingInstance: null,
     };
   },
   created() {
@@ -232,9 +318,7 @@ export default {
     let level = this.$store.state.userTypes.filter((item) => item.userType == userType)[0]
       .level;
     // console.log(level);
-    this.userTypes = this.userTypes.filter(
-      (item) => level <= item.level 
-    );
+    this.userTypes = this.userTypes.filter((item) => level <= item.level && item.level!=6);
     this.prmselete = [
       { name: "Check  Status", value: this.roleKey.checkStatus },
       { name: "Control  Own  Charger", value: this.roleKey.controlOwnCharger },
@@ -243,6 +327,12 @@ export default {
       { name: "Create User", value: this.roleKey.createAccount },
       { name: "Configure System", value: this.roleKey.configureSystem },
     ];
+  },
+  beforeDestroy() {
+    if (this.loadingInstance != null) {
+      this.loadingInstance.close();
+    }
+    this.loadingInstance = null;
   },
   methods: {
     cleaUser() {
@@ -253,32 +343,41 @@ export default {
       this.utypes.value = "";
       this.ctypes.centreId = "";
       this.ctypes.value = "";
-      this.isEmpty = false
+      this.isEmpty = false;
     },
     //
-    queryUserId(){
-      findByAccount({userId:this.addUsers.userId}).then(res=>{
-          if(res.extend.pcUser){
-            this.$message.warning("This ID already Existed，Please re-enter")
-          }
-      })
+    queryUserId() {
+      findByAccount({ userId: this.addUsers.userId }).then((res) => {
+        if (res.extend.pcUser) {
+          this.isID = true;
+        } else {
+          this.isID = false;
+        }
+      });
     },
     createUser() {
       let addUsers = this.addUsers;
-        // userId: "",
-        // password: "",
-        // name: "",
-        // staffId: "",
-        // email: "",
-        // phone: "",
-        // code: "",
-        // userType: this.utypes.userType,
-        // centreId: this.ctypes.centreId,
-      if(this.utypes.userType===""||addUsers.userId===""||addUsers.password===""||addUsers.name===""||addUsers.email===""||addUsers.phone===""){
-        this.isEmpty = true
-        return this.$message.warning("! is empty/error")
+      // userId: "",
+      // password: "",
+      // name: "",
+      // staffId: "",
+      // email: "",
+      // phone: "",
+      // code: "",
+      // userType: this.utypes.userType,
+      // centreId: this.ctypes.centreId,
+      if (
+        this.utypes.userType === "" ||
+        addUsers.userId === "" ||
+        addUsers.password === "" ||
+        addUsers.name === "" ||
+        addUsers.email === "" ||
+        addUsers.phone === ""
+      ) {
+        this.isEmpty = true;
+        return this.$message.warning("Please fill in the required information!");
       }
-      this.isEmpty = false
+      this.isEmpty = false;
       sendSms({
         account: this.addUsers.phone,
       }).then((res) => {
@@ -290,15 +389,16 @@ export default {
             userType: this.utypes.userType,
             centreId: this.ctypes.centreId,
           };
-          let loadingInstance = this.$loading({
+          this.loadingInstance = this.$loading({
             text: "Loading...",
             background: "rgba(0,0,0,.5)",
           });
           addOrUpdEntity(data)
             .then((res) => {
               this.$nextTick(() => {
-                // 以服务的方式调用的 Loading 需要异步关闭
-                loadingInstance.close();
+                if (this.loadingInstance != null) {
+                  this.loadingInstance.close();
+                }
               });
               // console.log(res);
               if (res.code == 100) {
@@ -314,8 +414,9 @@ export default {
             })
             .catch((err) => {
               this.$nextTick(() => {
-                // 以服务的方式调用的 Loading 需要异步关闭
-                loadingInstance.close();
+                if (this.loadingInstance != null) {
+                  this.loadingInstance.close();
+                }
               });
             });
         }
@@ -327,10 +428,39 @@ export default {
 </script>
 
 <style scoped>
-.thebb{
+.warningItem {
+  position: absolute;
+  height: 35px;
+  padding: 0 20px;
+  min-width: 150px;
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  background: #eee1d3;
+  font-size: 16px;
+  color: #ea9518;
+  /* right: -365px; */
+  left: 101%;
+  transition: all 0.2s linear;
+  opacity: 1;
+  z-index: 999;
+}
+.warningItem img {
+  width: 20px !important;
+  height: 20px !important;
+  margin-right: 10px;
+}
+.warningItem span {
+  display: block;
+  white-space: nowrap;
+}
+.op0 {
+  opacity: 0 !important;
+}
+.thebb {
   position: relative;
 }
-.thebb>p{
+.thebb > p {
   position: absolute;
   bottom: -20px;
   left: 50%;
@@ -464,7 +594,8 @@ export default {
   padding: 0 219px;
   box-sizing: border-box;
 }
-.borderRed{
+.borderRed {
   border: 1px solid red !important;
+  /* color: #e4941ddc; */
 }
 </style>

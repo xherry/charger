@@ -91,20 +91,28 @@ export default {
         { name: "Total No. of Charging", value: [] },
         { name: "Total Charging Time (Hour)", value: [] },
         { name: "Total Charging Energy (kWh)", value: [] },
-        { name: "Estimated Carbon Saving", value: [] },
+        { name: "Estimated Carbon Saving (kg)", value: [] },
       ],
       leftTable3: [
-        { name: "Average Charging Time", value: [] },
+        { name: "Average Charging Time (Hour)", value: [] },
         { name: "Average Charging Energy (kWh)", value: [] },
       ],
       sixDatas: {},
+      loadingInstance:null
     };
   },
   created() {
     this.getSixDatas();
   },
+  beforeDestroy () {
+    if(this.loadingInstance!=null){
+      this.loadingInstance.close();
+    }
+    this.loadingInstance = null
+  },
   methods: {
     toDetails(cid) {
+      this.$store.commit("isBacked", 1);
       this.$router.push({ path: "Detailed", query: { cid: cid } });
     },
     seleteCenters(value) {
@@ -130,7 +138,7 @@ export default {
       let data = {
         // userId: localStorage.getItem("userId"),
       };
-      let loadingInstance = this.$loading({
+      this.loadingInstance = this.$loading({
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
@@ -138,8 +146,10 @@ export default {
         .then((res) => {
           // console.log("获取查询六个地区下充电桩等信息", res);
           this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
+            if(this.loadingInstance!=null){
+              // 以服务的方式调用的 Loading 需要异步关闭
+              this.loadingInstance.close();
+            }
           });
           if (res.code == 100) {
             let sixDatas = res.extend;
@@ -176,7 +186,7 @@ export default {
             );
             this.leftTable2[3].value = objDatas.map((item) =>
             // item.estimatedcarbonsaving
-              this.getVal2(item.totalofcharging*0.281)
+              this.getVal2(item.totalchargingenergy*0.281)
             );
             this.leftTable3[0].value = objDatas.map((item) =>
             // item.averagechargingtime
@@ -184,14 +194,16 @@ export default {
             );
             this.leftTable3[1].value = objDatas.map((item) =>
             // item.averagechargingenergy
-              this.getVal2(item.totalofcharging/item.totalofcharging)
+              this.getVal2(item.totalchargingenergy/item.totalofcharging)
             );
           }
         })
         .catch((err) => {
           this.$nextTick(() => {
-            // 以服务的方式调用的 Loading 需要异步关闭
-            loadingInstance.close();
+            if(this.loadingInstance!=null){
+              // 以服务的方式调用的 Loading 需要异步关闭
+              this.loadingInstance.close();
+            }
           });
         });
     },
