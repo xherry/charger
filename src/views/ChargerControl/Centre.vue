@@ -65,8 +65,7 @@
                   'w100',
                   item.chargertype != 'PolyU' ||
                   item.status == 'Disconnected' ||
-                  item.status == 'OffLine' ||
-                  item.status == 'Disabled'
+                  item.status == 'OffLine'
                     ? 'Disable'
                     : '',
                 ]"
@@ -76,23 +75,47 @@
                 <li>
                   <p>{{ item.chargerno }}</p>
                 </li>
-                <li>
+                <li
+                  :class="[
+                    item.chargertype != 'PolyU' ||
+                    item.status == 'Disconnected' ||
+                    item.status == 'OffLine'
+                      ? 'Disable'
+                      : '',
+                  ]"
+                >
                   <img
                     v-if="
                       item.chargertype == 'PolyU' &&
                       item.status != 'Disconnected' &&
-                      item.status != 'Offline' &&
+                      item.status != 'OffLine' &&
                       item.status != 'Disabled'
                     "
                     src="../../assets/index/useraccount/04.png"
                     alt=""
-                    @click="setStatus(1, item.status, item.chargerno, item.centre, index,item.chargertype)"
+                    @click="
+                      setStatus(
+                        1,
+                        item.status,
+                        item.chargerno,
+                        item.centre,
+                        index,
+                        item.chargertype
+                      )
+                    "
                   />
                   <div class="cancelX" v-else>
                     <p>x</p>
                     <img
                       @click="
-                        setStatus(0, item.status, item.chargerno, item.centre, index,item.chargertype)
+                        setStatus(
+                          0,
+                          item.status,
+                          item.chargerno,
+                          item.centre,
+                          index,
+                          item.chargertype
+                        )
                       "
                       src="../../assets/index/useraccount/03.png"
                       alt=""
@@ -103,17 +126,22 @@
                   <div class="flex uconcrol w100">
                     <div
                       @click="
-                        setStatus(3, item.status, item.chargerno, item.centre, index,item.chargertype)
+                        setStatus(
+                          3,
+                          item.status,
+                          item.chargerno,
+                          item.centre,
+                          index,
+                          item.chargertype
+                        )
                       "
+                      :class="[item.status != 'InUse' ? 'Disable' : '']"
                     >
                       <div
                         class="canceld"
-                        v-if="
-                          item.chargertype == 'PolyU' &&
-                          item.status == 'InUse'
-                        "
+                        v-if="item.chargertype == 'PolyU' && item.status == 'InUse'"
                       >
-                          <!-- item.status != 'Disconnected' &&
+                        <!-- item.status != 'Disconnected' &&
                           item.status != 'Offline' &&
                           item.status != 'Disable' && -->
                         <img
@@ -133,18 +161,20 @@
                     </div>
                     <div
                       @click="
-                        setStatus(2, item.status, item.chargerno, item.centre, index,item.chargertype)
+                        setStatus(
+                          2,
+                          item.status,
+                          item.chargerno,
+                          item.centre,
+                          index,
+                          item.chargertype
+                        )
                       "
+                      :class="[item.status != 'Charging' ? 'Disable' : '']"
                     >
-                          <!-- item.status != 'Disconnected' &&
-                          item.status != 'Offline' &&
-                          item.status != 'Disable' && -->
-                          <!-- item.status == 'Charging' -->
                       <div
                         class="canceld"
-                        v-if="
-                          item.chargertype == 'PolyU' && item.status == 'Charging'
-                        "
+                        v-if="item.chargertype == 'PolyU' && item.status == 'Charging'"
                       >
                         <img
                           class="kkxz"
@@ -153,7 +183,6 @@
                         />
                       </div>
                       <div class="canceld" v-else>
-                        <!-- <p>x</p> -->
                         <img
                           class="kknxz"
                           src="../../assets/index/useraccount/end.png"
@@ -167,32 +196,38 @@
                   <div class="flex uconcrol w100">
                     <div
                       @click="
-                        setStatus(4, item.status, item.chargerno, item.centre, index,item.chargertype)
+                        setStatus(
+                          4,
+                          item.status,
+                          item.chargerno,
+                          item.centre,
+                          index,
+                          item.chargertype
+                        )
                       "
+                      :class="[ item.status == 'Disabled' || item.priorityFormula == 'Full'? 'Disable': '']"
                     >
                       <div class="canceld">
-                        <!-- v-if="
-                            item.status != 'Disconnected' &&
-                            item.status != 'OffLine' &&
-                            item.status == 'Disabled'
-                          " -->
-                        <p v-if="item.priorityFormula=='LMS'" class="full"></p>
-                        <p v-else  ></p>
+                        <p v-if="item.priorityFormula == 'LMS'" class="full"></p>
+                        <p v-else></p>
                       </div>
                     </div>
                     <div
                       @click="
-                        setStatus(5, item.status, item.chargerno, item.centre, index,item.chargertype)
+                        setStatus(
+                          5,
+                          item.status,
+                          item.chargerno,
+                          item.centre,
+                          index,
+                          item.chargertype
+                        )
                       "
+                      :class="[ item.status == 'Disabled' || item.priorityFormula == 'Full' ? 'Disable' : '']"
                     >
                       <div class="canceld">
-                        <!-- v-if="
-                            item.status != 'Disconnected' &&
-                            item.status != 'OffLine' &&
-                            item.status == 'Disabled'
-                          " -->
-                        <p v-if="item.priorityFormula=='Full'" class="full"></p>
-                        <p v-else  ></p>
+                        <p v-if="item.priorityFormula == 'Full'" class="full"></p>
+                        <p v-else></p>
                       </div>
                     </div>
                   </div>
@@ -202,23 +237,14 @@
           </div>
           <div v-else>
             <ul class="uldatas w100 p12">
-              <li><p>{{loadingName}}</p></li>
+              <li>
+                <p>{{ loadingName }}</p>
+              </li>
             </ul>
           </div>
         </div>
       </div>
     </div>
-    <!-- <div class="pagination">
-      <el-pagination
-        @current-change="sizeChange"
-        background
-        layout=" prev, pager, next, jumper, ->, total, slot"
-        :total="count"
-        hide-on-single-page
-        :page-size="10"
-      >
-      </el-pagination>
-    </div> -->
   </div>
 </template>
 
@@ -246,27 +272,29 @@ export default {
       count: 0,
       page: 1,
       chargerNo: null,
-      loadingName:'No Data!',
-      loadingInstance:null
+      loadingName: "No Data!",
+      loadingInstance: null,
     };
   },
   created() {
     let loginInfos = JSON.parse(localStorage.getItem("userLogins"));
     if (Object.keys(loginInfos).length != 0) {
       this.ctypes = {
-        centreId:  loginInfos.cid,
-        value: this.$store.state.centerType.filter((item) =>item.cid == loginInfos.cid)[0].value,
+        centreId: loginInfos.cid,
+        value: this.$store.state.centerType.filter(
+          (item) => item.cid == loginInfos.cid
+        )[0].value,
       };
       this.getNowData();
     }
     // console.log(this.$store.state.loginInfos);
   },
   mounted() {},
-  beforeDestroy(){
-    if(this.loadingInstance!=null){
+  beforeDestroy() {
+    if (this.loadingInstance != null) {
       this.loadingInstance.close();
     }
-    this.loadingInstance = null
+    this.loadingInstance = null;
   },
   methods: {
     loadMore() {
@@ -282,7 +310,7 @@ export default {
       this.getNowData();
     },
     // 操作开关
-    setStatus(type, status, chargerno, centre, index,chargertype) {
+    setStatus(type, status, chargerno, centre, index, chargertype) {
       let data = {
         userIds: localStorage.getItem("userId"),
         type: type,
@@ -375,17 +403,17 @@ export default {
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
-      this.loadingName = "please wait..."
+      this.loadingName = "please wait...";
       findByDetails(data)
         .then((res) => {
           // console.log(res, "查询充电桩的实时数据");
           this.$nextTick(() => {
-            if(this.loadingInstance!=null){
+            if (this.loadingInstance != null) {
               // 以服务的方式调用的 Loading 需要异步关闭
               this.loadingInstance.close();
             }
           });
-          this.loadingName = "No Data!"
+          this.loadingName = "No Data!";
           if (res.code == 100) {
             this.chargerInfoList = [
               ...this.chargerInfoList,
@@ -399,7 +427,7 @@ export default {
             // 以服务的方式调用的 Loading 需要异步关闭
             this.loadingInstance.close();
           });
-          this.loadingName = "No Data!"
+          this.loadingName = "No Data!";
         });
     },
   },

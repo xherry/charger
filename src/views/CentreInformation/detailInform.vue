@@ -77,10 +77,11 @@
       </div>
       <div class="dialog02">
         <div class="cartword">
-          <p class="diaName">Charging Time（Hour）</p>
+          <p class="diaName">Charging Time</p>
           <p class="diaValue">
-            {{ chargerInfo.chargingtime | value2 }}
-            {{ chargerInfo.chargingtime ? "min" : "" }}
+            {{chargerInfo.chargingtime | ctVal }}
+            <!-- {{ chargerInfo.chargingtime | value2 }}
+            {{ chargerInfo.chargingtime ? "min" : "" }} -->
           </p>
         </div>
       </div>
@@ -231,7 +232,7 @@ export default {
     },
     //根据条件查询充电状态
     getIndividualCharger() {
-      this.getNowDataloadingInstance = this.$loading({
+      this.loadingInstance = this.$loading({
         text: "Loading...",
         background: "rgba(0,0,0,.5)",
       });
@@ -254,7 +255,7 @@ export default {
               this.loadingInstance.close();
             }
           });
-          // console.log("根据条件查询充电状态", res);
+          console.log("根据条件查询充电状态", res);
           if (res.code == 100) {
             this.chargerInfo = res.extend.chargerInfo || {};
             if (!res.extend.chargerInfo) {
@@ -445,7 +446,7 @@ export default {
   margin-top: 24px;
 }
 .diaName {
-  font-size: 14px;
+  font-size: 18px;
   color: #edf5ff;
 }
 .diaValue {

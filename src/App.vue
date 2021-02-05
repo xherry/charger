@@ -92,7 +92,7 @@ export default {
   background: url("./assets/index/overview/09.png") no-repeat;
   background-size: 100% 100%;
   color: #59baf2;
-  font-size: 22px;
+  font-size: 25px;
   padding: 0 26px 0 42px;
   box-sizing: border-box;
   margin-bottom: 20px;
@@ -126,7 +126,7 @@ export default {
   height: 80px;
   background-size: 100% 100%;
   color: #ffffff;
-  font-size: 22px;
+  font-size: 25px;
   padding: 0 26px 0 42px;
   box-sizing: border-box;
   margin-bottom: 20px;

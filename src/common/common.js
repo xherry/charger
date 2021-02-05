@@ -87,3 +87,13 @@ Vue.filter("changeVal", (val) => {
         return ""
     }
 })
+Vue.filter("ctVal", (val) => {
+    if (val) {
+        let newVal = val * 3600;
+        let hour = Math.floor(newVal / 3600);
+        let minute = Math.floor(newVal % 3600 / 60);
+        return (hour >= 10 ? hour : "0" + hour) + ":" + (minute >= 10 ? minute : '0' + minute)
+    } else {
+        return ""
+    }
+})

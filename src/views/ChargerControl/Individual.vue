@@ -82,10 +82,11 @@
       </div>
       <div class="dialog02">
         <div class="cartword">
-          <p class="diaName">Charging Time（Hour）</p>
+          <!-- （Hour） -->
+          <p class="diaName">Charging Time</p>
           <p class="diaValue">
-            {{ chargerInfo.chargingtime | value2 }}
-            {{ chargerInfo.chargingtime ? "Hour" : "" }}
+            {{ chargerInfo.chargingtime | ctVal }}
+            <!-- {{ chargerInfo.chargingtime ? "Hour" : "" }} -->
           </p>
         </div>
       </div>
@@ -215,9 +216,9 @@
               chargerInfo.status &&
               chargerInfo.chargertype == 'PolyU' &&
               chargerInfo.status != 'Disconnected' &&
-              chargerInfo.status != 'Offline' &&
+              chargerInfo.status != 'OffLine' &&
               chargerInfo.status != 'Disabled'&&
-              chargerInfo.priorityFormula=='LMS'
+              chargerInfo.priorityFormula=='Full'
                 ? 'blues'
                 : 'garys',
               'button',
@@ -231,9 +232,9 @@
               chargerInfo.status &&
               chargerInfo.chargertype == 'PolyU' &&
               chargerInfo.status != 'Disconnected' &&
-              chargerInfo.status != 'Offline' &&
+              chargerInfo.status != 'OffLine' &&
               chargerInfo.status != 'Disabled'&&
-              chargerInfo.priorityFormula=='Full'
+              chargerInfo.priorityFormula=='LMS'
                 ? 'greens'
                 : 'garys',
               'button',
@@ -466,7 +467,7 @@ export default {
       }
       if (
         this.chargerInfo.status == "Disconnected" ||
-        this.chargerInfo.status == "Offline"
+        this.chargerInfo.status == "OffLine"
       ) {
         this.$message.warning("Equipment offline");
         return;

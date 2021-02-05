@@ -83,10 +83,11 @@
       </div>
       <div class="dialog02">
         <div class="cartword">
-          <p class="diaName">Charging Time（Hour）</p>
+          <!-- （Hour） -->
+          <p class="diaName">Charging Time</p>
           <p class="diaValue">
-            {{ chargerInfo.chargingtime | value2 }}
-            {{ chargerInfo.chargingtime ? "Hour" : "" }}
+            {{ chargerInfo.chargingtime | ctVal }}
+            <!-- {{ chargerInfo.chargingtime ? "Hour" : "" }} -->
           </p>
         </div>
       </div>
@@ -496,7 +497,7 @@ export default {
   margin-top: 24px;
 }
 .diaName {
-  font-size: 14px;
+  font-size: 18px;
   color: #edf5ff;
 }
 .diaValue {
